@@ -3,17 +3,17 @@ import {View, Text, Platform, Image} from 'react-native';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
-import TabBarIcon from '../components/TabBarIcon/TabBarIcon';
+import HomeScreen from '../containers/Home/index';
 
-class HomeScreen extends React.Component {
-  render() {
-    return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Text>Home Screen</Text>
-      </View>
-    );
-  }
-}
+// class HomeScreen extends React.Component {
+//   render() {
+//     return (
+//       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+//         <Text>Home Screen</Text>
+//       </View>
+//     );
+//   }
+// }
 
 class ShopScreen extends React.Component {
   render() {
