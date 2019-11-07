@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, Button } from 'react-native';
-class ExtendScreen extends React.Component {
+import { View, Text } from 'react-native';
+class Home4Screen extends React.Component {
   static navigationOptions = {
     title: '悬赏详情',
     headerStyle: {
@@ -13,18 +13,12 @@ class ExtendScreen extends React.Component {
   };
 
   render() {
-    const { navigation } = this.props;
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Shop Screen2</Text>
-        <Button
-          buttonStyle={{ marginVertical: 10 }}
-          title={'跳转到Home4界面'}
-          onPress={() => navigation.navigate('Home4')}
-        />
+        <Text>Home4Screen</Text>
       </View>
     );
   }
 }
 
-export default ExtendScreen;
+export default Home4Screen;

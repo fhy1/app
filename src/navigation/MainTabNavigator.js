@@ -64,7 +64,7 @@ const route = navigation => {
   }
 };
 
-const AppNavigator = createBottomTabNavigator(
+const MainTabNavigator = createBottomTabNavigator(
   {
     Home: {
       screen: HomeScreen,
@@ -202,5 +202,5 @@ const AppNavigator = createBottomTabNavigator(
   },
 );
 
-AppNavigator.path = '';
-export default AppNavigator;
+MainTabNavigator.path = '';
+export default MainTabNavigator;

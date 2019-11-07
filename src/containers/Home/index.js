@@ -21,7 +21,7 @@ class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    let {width} = Dimensions.get('window');
+    let { width } = Dimensions.get('window');
     this.setState({
       swiperHeight: (180 * width) / 350,
       width: width,
@@ -29,8 +29,8 @@ class HomeScreen extends React.Component {
   }
 
   render() {
-    const {swiperHeight, width} = this.state;
-    const {navigation} = this.props;
+    const { swiperHeight, width } = this.state;
+    const { navigation } = this.props;
     images = [
       require('../../assets/banner.png'),
       require('../../assets/banner.png'),
@@ -41,13 +41,13 @@ class HomeScreen extends React.Component {
       <View style={styles.homeView}>
         <ScrollView contentContainerStyle={styles.contentContainer}>
           <Swiper
-            style={{width: width, height: swiperHeight}} //样式
+            style={{ width: width, height: swiperHeight }} //样式
             height={swiperHeight} //组件高度
             loop={true} //如果设置为false，那么滑动到最后一张时，再次滑动将不会滑到第一张图片。
             autoplay={true} //自动轮播
             autoplayTimeout={4} //每隔4秒切换
             horizontal={true} //水平方向，为false可设置为竖直方向
-            paginationStyle={{bottom: 20}} //小圆点的位置：距离底部10px
+            paginationStyle={{ bottom: 20 }} //小圆点的位置：距离底部10px
             showsButtons={false} //为false时不显示控制按钮
             showsPagination={true} //为false不显示下方圆点
             dot={
