@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-class Home4Screen extends React.Component {
+import {View, Text} from 'react-native';
+class HallScreen extends React.Component {
   static navigationOptions = {
-    title: '悬赏详情',
+    title: '全部任务',
     headerStyle: {
       backgroundColor: '#FFDB44',
     },
@@ -14,11 +14,11 @@ class Home4Screen extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Text>Home4Screen</Text>
       </View>
     );
   }
 }
 
-export default Home4Screen;
+export default HallScreen;
