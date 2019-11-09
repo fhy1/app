@@ -4,16 +4,7 @@ import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import HomeScreen from '../containers/Home/index';
-
-// class HomeScreen extends React.Component {
-//   render() {
-//     return (
-//       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-//         <Text>Home Screen</Text>
-//       </View>
-//     );
-//   }
-// }
+import HallScreen from '../containers/hall/index';
 
 class ShopScreen extends React.Component {
   render() {
@@ -64,6 +55,13 @@ const route = navigation => {
   }
 };
 
+const route2 = navigation => {
+  if (!navigation.isFocused()) {
+    // 路由方法, 动态跳转到对应界面
+    navigation.navigate('Hall');
+  }
+};
+
 const MainTabNavigator = createBottomTabNavigator(
   {
     Home: {
@@ -86,9 +84,28 @@ const MainTabNavigator = createBottomTabNavigator(
         },
       },
     },
-    Shops: {
-      screen: ShopScreen,
-      path: '/shop',
+    hall: {
+      screen: HallScreen,
+      path: '/hall',
+      navigationOptions: ({navigation}) => ({
+        tabBarLabel: '推广',
+        tabBarIcon: ({focused, tintColor}) => {
+          return focused ? (
+            <Image
+              style={{width: 16.5, height: 19.5}}
+              source={require('../assets/home.png')}
+            />
+          ) : (
+            <Image
+              style={{width: 16.5, height: 19.5}}
+              source={require('../assets/hall.png')}
+            />
+          );
+        },
+        tabBarOnPress: () => {
+          route2(navigation);
+        },
+      }),
       navigationOptions: {
         tabBarLabel: '大厅',
         tabBarIcon: ({focused, tintColor}) => {
@@ -148,22 +165,6 @@ const MainTabNavigator = createBottomTabNavigator(
           route(navigation);
         },
       }),
-      // {
-      //   tabBarLabel: '推广',
-      //   tabBarIcon: ({focused, tintColor}) => {
-      //     return focused ? (
-      //       <Image
-      //         style={{width: 19, height: 19}}
-      //         source={require('../assets/home.png')}
-      //       />
-      //     ) : (
-      //       <Image
-      //         style={{width: 18, height: 20}}
-      //         source={require('../assets/extend.png')}
-      //       />
-      //     );
-      //   },
-      // },
     },
     MyInfo: {
       screen: MyInfoScreen,
