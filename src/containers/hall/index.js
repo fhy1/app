@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, View, Text, Image
+  StyleSheet, View, Text, Image, TouchableOpacity, FlatList
 } from 'react-native';
 import { connect } from 'react-redux';
 import { fetchHalljob } from '../../actions/hall';
@@ -20,72 +20,89 @@ class HallScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      labels: ['默认', '最新', '新人', '简单', '高价'],
+      labelStatus: 0
     };
   }
 
   componentDidMount = () => {
-    this.props.fetchHalljob();
+    // this.props.fetchHalljob();
+  }
+
+  onHandelPress = (index) => {
+    console.log(111)
+    this.setState({
+      labelStatus: index
+    })
   }
 
   render() {
     const { hall } = this.props;
-    console.log(hall)
+    const { labels, labelStatus } = this.state;
+    console.log('hall', hall)
     console.log(hall.list)
     console.log(hall.list.data)
     return (
       <View style={styles.hallView}>
         <View style={styles.hallTitleView}>
           <View style={styles.hallTitle}>
-            <View style={styles.hallTitleText}>
-              <Text style={styles.hallTitleTextClick}>默认</Text>
-            </View>
-            <View style={styles.hallTitleText}>
-              <Text style={styles.hallTitleTextNormal}>最新</Text>
-            </View>
-            <View style={styles.hallTitleText}>
-              <Text style={styles.hallTitleTextNormal}>新人</Text>
-            </View>
-            <View style={styles.hallTitleText}>
-              <Text style={styles.hallTitleTextNormal}>简单</Text>
-            </View>
-            <View style={styles.hallTitleText}>
-              <Text style={styles.hallTitleTextNormal}>高价</Text>
-            </View>
+            {
+              labels.map((item, index) => {
+                return index == labelStatus ?
+                  <View style={[styles.hallTitleText, styles.hallTitleClick]} key={index}>
+                    <Text style={styles.hallTitleTextClick}>{item}</Text>
+                  </View> : <View style={styles.hallTitleText} onResponderGrant={this.onHandelPress} key={index}>
+                    <TouchableOpacity style={styles.hallTitleTextTouch} onPress={this.onHandelPress.bind(this, index)}><Text style={styles.hallTitleTextNormal}>{item}</Text></TouchableOpacity>
+                  </View>
+              })
+            }
           </View>
         </View>
-        <View style={styles.hallList}>
-          <View style={styles.hallListIcon}>
-            <Image
-              style={styles.hallListIconImg}
-              source={require('../../assets/head.png')}></Image>
-          </View>
-          <View style={styles.hallListBody}>
-            <View><Text style={styles.hallListBodyText}>超级简单的任务</Text></View>
-            <View style={styles.hallListBodyView}>
-              <View style={styles.hallListBodybtn1}>
-                <View style={styles.hallListBodybtn}>
-                  <Text>云闪付</Text>
+        <FlatList style={styles.hallFlatList} data={[{ title: '超级简单的任务' }, { title: '超级简单的任务' }]}
+          ItemSeparatorComponent={() => (
+            <View style={styles.hallFlatListLine}></View>
+          )}
+          renderItem={({ item, index, separators }) => (
+            <TouchableOpacity
+            // onPress={() => this._onPress(item)}
+            // onShowUnderlay={separators.highlight}
+            // onHideUnderlay={separators.unhighlight}
+            >
+              <View style={styles.hallList}>
+                <View style={styles.hallListIcon}>
+                  <Image
+                    style={styles.hallListIconImg}
+                    source={require('../../assets/head.png')}></Image>
+                </View>
+                <View style={styles.hallListBody}>
+                  <View><Text style={styles.hallListBodyText}>超级简单的任务</Text></View>
+                  <View style={styles.hallListBodyView}>
+                    <View style={styles.hallListBodybtn1}>
+                      <View style={styles.hallListBodybtn}>
+                        <Text>云闪付</Text>
+                      </View>
+                    </View>
+                    <View style={styles.hallListBodybtn2}>
+                      <View style={styles.hallListBodybtn}>
+                        <Text>认证转发</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.hallListRight}>
+                  <View style={styles.hallListRightBody}>
+                    <View>
+                      <Text style={styles.hallListRightTop}>赏2.25元</Text>
+                    </View>
+                    <View>
+                      <Text style={styles.hallListRightBottom}>剩余15份</Text>
+                    </View>
+                  </View>
                 </View>
               </View>
-              <View style={styles.hallListBodybtn2}>
-                <View style={styles.hallListBodybtn}>
-                  <Text>认证转发</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-          <View style={styles.hallListRight}>
-            <View style={styles.hallListRightBody}>
-              <View>
-                <Text style={styles.hallListRightTop}>赏2.25元</Text>
-              </View>
-              <View>
-                <Text style={styles.hallListRightBottom}>剩余15份</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-        <Text>Home4Screen</Text>
+            </TouchableOpacity>
+          )} />
+        {/* <Text>Home4Screen {hall.data.data.pageSize}</Text> */}
       </View>
     );
   }
@@ -110,7 +127,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     color: '#666666',
     fontSize: 14,
-    fontWeight: "normal"
+    fontWeight: "normal",
+  },
+  hallTitleClick: {
+    borderBottomColor: '#FD3F3F',
+    borderBottomWidth: 1
+  },
+  hallTitleTextTouch: {
+    width: '100%',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   hallTitleTextClick: {
     fontSize: 14,
@@ -186,6 +213,16 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     color: '#666666',
+  },
+  hallFlatList: {
+    paddingLeft: 15,
+    paddingRight: 15,
+    backgroundColor: '#FFFFFF'
+  },
+  hallFlatListLine: {
+    width: '100%',
+    height: 1,
+    backgroundColor: '#DDDDDD'
   }
 })
 

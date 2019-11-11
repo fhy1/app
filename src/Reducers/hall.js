@@ -14,34 +14,14 @@ const INITIAL_STATE = {
   },
 };
 
-export default handleActions(
-  {
-    [FETCH_HALL_REQUEST]: (state, action) => ({
-      ...state,
-      list: {
-        ...state.list
-      },
-    }),
+// 通过dispatch action进入
+export default function update(state = INITIAL_STATE, action) {
 
-    FETCH_HALL_SUCCESS: (state, action) => ({
-      ...state,
-      list: {
-        ...state.list,
-        isFetching: false,
-        data: action.payload,
-        error: null,
-      },
-    }),
-
-    [FETCH_HALL_FAILURE]: (state, action) => ({
-      ...state,
-      list: {
-        ...state.list,
-        isFetching: false,
-        error: action.payload,
-        data: {},
-      },
-    }),
-  },
-  INITIAL_STATE,
-);
+  // 根据不同的action type进行state的更新
+  switch (action.type) {
+    case FETCH_HALL_SUCCESS:
+      return Object.assign({}, state, { data: action.json.data })
+    default:
+      return state
+  }
+}
