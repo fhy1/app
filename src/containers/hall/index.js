@@ -1,9 +1,14 @@
 import React from 'react';
 import {
-  StyleSheet, View, Text, Image, TouchableOpacity, FlatList
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  FlatList,
 } from 'react-native';
-import { connect } from 'react-redux';
-import { fetchHalljob } from '../../actions/hall';
+import {connect} from 'react-redux';
+import {fetchHalljob} from '../../actions/hall';
 
 class HallScreen extends React.Component {
   static navigationOptions = {
@@ -21,48 +26,60 @@ class HallScreen extends React.Component {
     super(props);
     this.state = {
       labels: ['默认', '最新', '新人', '简单', '高价'],
-      labelStatus: 0
+      labelStatus: 0,
     };
   }
 
   componentDidMount = () => {
     // this.props.fetchHalljob();
-  }
+  };
 
-  onHandelPress = (index) => {
-    console.log(111)
+  onHandelPress = index => {
+    console.log(111);
     this.setState({
-      labelStatus: index
-    })
-  }
+      labelStatus: index,
+    });
+  };
 
   render() {
-    const { hall } = this.props;
-    const { labels, labelStatus } = this.state;
-    console.log('hall', hall)
-    console.log(hall.list)
-    console.log(hall.list.data)
+    const {hall} = this.props;
+    const {labels, labelStatus} = this.state;
+    console.log('hall', hall);
+    console.log(hall.list);
+    console.log(hall.list.data);
     return (
       <View style={styles.hallView}>
         <View style={styles.hallTitleView}>
           <View style={styles.hallTitle}>
-            {
-              labels.map((item, index) => {
-                return index == labelStatus ?
-                  <View style={[styles.hallTitleText, styles.hallTitleClick]} key={index}>
-                    <Text style={styles.hallTitleTextClick}>{item}</Text>
-                  </View> : <View style={styles.hallTitleText} onResponderGrant={this.onHandelPress} key={index}>
-                    <TouchableOpacity style={styles.hallTitleTextTouch} onPress={this.onHandelPress.bind(this, index)}><Text style={styles.hallTitleTextNormal}>{item}</Text></TouchableOpacity>
-                  </View>
-              })
-            }
+            {labels.map((item, index) => {
+              return index == labelStatus ? (
+                <View
+                  style={[styles.hallTitleText, styles.hallTitleClick]}
+                  key={index}>
+                  <Text style={styles.hallTitleTextClick}>{item}</Text>
+                </View>
+              ) : (
+                <View
+                  style={styles.hallTitleText}
+                  onResponderGrant={this.onHandelPress}
+                  key={index}>
+                  <TouchableOpacity
+                    style={styles.hallTitleTextTouch}
+                    onPress={this.onHandelPress.bind(this, index)}>
+                    <Text style={styles.hallTitleTextNormal}>{item}</Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
           </View>
         </View>
-        <FlatList style={styles.hallFlatList} data={[{ title: '超级简单的任务' }, { title: '超级简单的任务' }]}
+        <FlatList
+          style={styles.hallFlatList}
+          data={[{title: '超级简单的任务'}, {title: '超级简单的任务'}]}
           ItemSeparatorComponent={() => (
             <View style={styles.hallFlatListLine}></View>
           )}
-          renderItem={({ item, index, separators }) => (
+          renderItem={({item, index, separators}) => (
             <TouchableOpacity
             // onPress={() => this._onPress(item)}
             // onShowUnderlay={separators.highlight}
@@ -75,7 +92,9 @@ class HallScreen extends React.Component {
                     source={require('../../assets/head.png')}></Image>
                 </View>
                 <View style={styles.hallListBody}>
-                  <View><Text style={styles.hallListBodyText}>超级简单的任务</Text></View>
+                  <View>
+                    <Text style={styles.hallListBodyText}>超级简单的任务</Text>
+                  </View>
                   <View style={styles.hallListBodyView}>
                     <View style={styles.hallListBodybtn1}>
                       <View style={styles.hallListBodybtn}>
@@ -101,7 +120,8 @@ class HallScreen extends React.Component {
                 </View>
               </View>
             </TouchableOpacity>
-          )} />
+          )}
+        />
         {/* <Text>Home4Screen {hall.data.data.pageSize}</Text> */}
       </View>
     );
@@ -127,11 +147,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     color: '#666666',
     fontSize: 14,
-    fontWeight: "normal",
+    fontWeight: 'normal',
   },
   hallTitleClick: {
     borderBottomColor: '#FD3F3F',
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
   },
   hallTitleTextTouch: {
     width: '100%',
@@ -142,60 +162,60 @@ const styles = StyleSheet.create({
   hallTitleTextClick: {
     fontSize: 14,
     color: '#444444',
-    fontWeight: "bold"
+    fontWeight: 'bold',
   },
   hallTitleTextNormal: {
     fontSize: 14,
     color: '#666666',
-    fontWeight: "normal"
+    fontWeight: 'normal',
   },
   hallList: {
     height: 68,
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
   },
   hallListIcon: {
     width: 36,
     height: '100%',
-    alignItems: "center"
+    alignItems: 'center',
   },
   hallListIconImg: {
     width: 36,
     height: 36,
-    marginTop: 16
+    marginTop: 16,
   },
   hallListBody: {
     flex: 1,
-    justifyContent: "center",
-    paddingLeft: 12
+    justifyContent: 'center',
+    paddingLeft: 12,
   },
   hallListBodyView: {
     flexDirection: 'row',
-    marginTop: 6
+    marginTop: 6,
   },
   hallListBodyText: {
     fontSize: 14,
     color: '#444444',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   hallListBodybtn1: {
     width: 60,
     height: 22,
     borderRadius: 4,
     overflow: 'hidden',
-    marginRight: 10
+    marginRight: 10,
   },
   hallListBodybtn2: {
     width: 72,
     height: 22,
     borderRadius: 4,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   hallListBodybtn: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFDB44'
+    backgroundColor: '#FFDB44',
   },
   hallListRight: {
     width: 80,
@@ -203,7 +223,7 @@ const styles = StyleSheet.create({
   },
   hallListRightBody: {
     flex: 1,
-    justifyContent: "center"
+    justifyContent: 'center',
   },
   hallListRightTop: {
     fontSize: 14,
@@ -217,14 +237,14 @@ const styles = StyleSheet.create({
   hallFlatList: {
     paddingLeft: 15,
     paddingRight: 15,
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
   },
   hallFlatListLine: {
     width: '100%',
     height: 1,
-    backgroundColor: '#DDDDDD'
-  }
-})
+    backgroundColor: '#DDDDDD',
+  },
+});
 
 function mapStateToProps(state) {
   return {
@@ -240,6 +260,6 @@ function mapDispatchToProps(dispatch) {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(HallScreen);
 // export default HallScreen;
