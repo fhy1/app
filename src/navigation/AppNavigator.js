@@ -1,5 +1,7 @@
+// @ts-nocheck
 import React from 'react';
 import {createAppContainer, createSwitchNavigator} from 'react-navigation';
+import {Image} from 'react-native';
 
 import MainTabNavigator from './MainTabNavigator';
 import {createStackNavigator} from 'react-navigation-stack';
@@ -16,9 +18,25 @@ export default createAppContainer(
     },
     Extend: {
       screen: ExtendScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
     },
     Hall: {
       screen: HallScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
     },
   }),
 );

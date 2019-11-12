@@ -19,6 +19,8 @@ class HallScreen extends React.Component {
     headerTintColor: '#fff',
     headerTitleStyle: {
       fontWeight: 'bold',
+      flex: 1,
+      textAlign: 'center',
     },
   };
 
@@ -81,14 +83,16 @@ class HallScreen extends React.Component {
           )}
           renderItem={({item, index, separators}) => (
             <TouchableOpacity
-            // onPress={() => this._onPress(item)}
-            // onShowUnderlay={separators.highlight}
-            // onHideUnderlay={separators.unhighlight}
+              key={index}
+              // onPress={() => this._onPress(item)}
+              // onShowUnderlay={separators.highlight}
+              // onHideUnderlay={separators.unhighlight}
             >
               <View style={styles.hallList}>
                 <View style={styles.hallListIcon}>
                   <Image
                     style={styles.hallListIconImg}
+                    // @ts-ignore
                     source={require('../../assets/head.png')}></Image>
                 </View>
                 <View style={styles.hallListBody}>

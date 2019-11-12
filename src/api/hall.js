@@ -1,33 +1,38 @@
-import { paramToQuery, checkStatus, parseJSON, fetchOptions } from '../utils/fetch';
 import {
-  FETCH_HALL_SUCCESS,
-} from '../constants/hall';
+  paramToQuery,
+  checkStatus,
+  parseJSON,
+  fetchOptions,
+} from '../utils/fetch';
+import {FETCH_HALL_SUCCESS} from '../constants/hall';
 
 const API = 'hall/job';
 
-export const getSuccess = (json) => {
+export const getSuccess = json => {
   return {
     type: FETCH_HALL_SUCCESS,
-    json
-  }
-}
+    json,
+  };
+};
 
 export function fetchHalljob(params = {}) {
   const url = paramToQuery(`${API}?pageNo=1&pageSize=10&label=0`);
   return dispatch => {
-    return fetch(url, {
-      ...fetchOptions(),
-    })
-      .then((res) => { console.log(res.status); return res.json() })
-      .then((data) => {
-        dispatch(getSuccess(data))
+    return fetch(url)
+      .then(res => {
+        console.log(res.status);
+        return res.json();
       })
-      .catch((e) => { console.log(e.message) })
-  }
+      .then(data => {
+        dispatch(getSuccess(data));
+      })
+      .catch(e => {
+        console.log(e.message);
+      });
+  };
   // return fetch(url, {
   //   ...fetchOptions(),
   // }).then(checkStatus)
   //   .then(parseJSON)
   //   .then(json => json);
 }
-

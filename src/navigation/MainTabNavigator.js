@@ -1,15 +1,17 @@
+// @ts-nocheck
 import React from 'react';
-import { View, Text, Platform, Image } from 'react-native';
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
+import {View, Text, Platform, Image} from 'react-native';
+import {createAppContainer} from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
+import {createBottomTabNavigator} from 'react-navigation-tabs';
 import HomeScreen from '../containers/Home/index';
 import HallScreen from '../containers/hall/index';
+import ExtendScreen from '../containers/extend/index';
 
 class ShopScreen extends React.Component {
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Text>Shop Screen1</Text>
       </View>
     );
@@ -19,7 +21,7 @@ class ShopScreen extends React.Component {
 class ShopScreen1 extends React.Component {
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Text>Shop Screen111</Text>
 
         <Image source={require('../assets/home.png')} />
@@ -31,7 +33,7 @@ class ShopScreen1 extends React.Component {
 class ShopScreen2 extends React.Component {
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Text>Shop Screen2</Text>
       </View>
     );
@@ -41,7 +43,7 @@ class ShopScreen2 extends React.Component {
 class MyInfoScreen extends React.Component {
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Text>MyInfo Screen</Text>
       </View>
     );
@@ -69,38 +71,38 @@ const MainTabNavigator = createBottomTabNavigator(
       path: '/',
       navigationOptions: {
         tabBarLabel: '首页',
-        tabBarIcon: ({ focused, tintColor }) => {
+        tabBarIcon: ({focused, tintColor}) => {
           return focused ? (
             <Image
-              style={{ width: 19, height: 19 }}
+              style={{width: 19, height: 19}}
               source={require('../assets/home.png')}
             />
           ) : (
-              <Image
-                style={{ width: 19, height: 19 }}
-                source={require('../assets/hall.png')}
-              />
-            );
+            <Image
+              style={{width: 19, height: 19}}
+              source={require('../assets/hall.png')}
+            />
+          );
         },
       },
     },
     hall: {
       screen: HallScreen,
       path: '/hall',
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: ({navigation}) => ({
         tabBarLabel: '大厅',
-        tabBarIcon: ({ focused, tintColor }) => {
+        tabBarIcon: ({focused, tintColor}) => {
           return focused ? (
             <Image
-              style={{ width: 16.5, height: 19.5 }}
+              style={{width: 16.5, height: 19.5}}
               source={require('../assets/home.png')}
             />
           ) : (
-              <Image
-                style={{ width: 16.5, height: 19.5 }}
-                source={require('../assets/hall.png')}
-              />
-            );
+            <Image
+              style={{width: 16.5, height: 19.5}}
+              source={require('../assets/hall.png')}
+            />
+          );
         },
         tabBarOnPress: () => {
           route2(navigation);
@@ -123,43 +125,43 @@ const MainTabNavigator = createBottomTabNavigator(
       //   },
       // },
     },
-    Shops1: {
-      screen: ShopScreen1,
+    extend: {
+      screen: ExtendScreen,
       path: '/shop1',
       navigationOptions: {
         tabBarLabel: '经纪人',
-        tabBarIcon: ({ focused, tintColor }) => {
+        tabBarIcon: ({focused, tintColor}) => {
           return focused ? (
             <Image
-              style={{ width: 19, height: 19 }}
+              style={{width: 19, height: 19}}
               source={require('../assets/home.png')}
             />
           ) : (
-              <Image
-                style={{ width: 19.5, height: 17 }}
-                source={require('../assets/agent.png')}
-              />
-            );
+            <Image
+              style={{width: 19.5, height: 17}}
+              source={require('../assets/agent.png')}
+            />
+          );
         },
       },
     },
     Shops2: {
       screen: ShopScreen2,
       path: '/shop2',
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: ({navigation}) => ({
         tabBarLabel: '推广',
-        tabBarIcon: ({ focused, tintColor }) => {
+        tabBarIcon: ({focused, tintColor}) => {
           return focused ? (
             <Image
-              style={{ width: 19, height: 19 }}
+              style={{width: 19, height: 19}}
               source={require('../assets/home.png')}
             />
           ) : (
-              <Image
-                style={{ width: 18, height: 20 }}
-                source={require('../assets/extend.png')}
-              />
-            );
+            <Image
+              style={{width: 18, height: 20}}
+              source={require('../assets/extend.png')}
+            />
+          );
         },
         tabBarOnPress: () => {
           route(navigation);
@@ -171,18 +173,18 @@ const MainTabNavigator = createBottomTabNavigator(
       path: '/myinfo',
       navigationOptions: {
         tabBarLabel: '我的',
-        tabBarIcon: ({ focused, tintColor }) => {
+        tabBarIcon: ({focused, tintColor}) => {
           return focused ? (
             <Image
-              style={{ width: 19, height: 19 }}
+              style={{width: 19, height: 19}}
               source={require('../assets/home.png')}
             />
           ) : (
-              <Image
-                style={{ width: 18, height: 20 }}
-                source={require('../assets/myinfo.png')}
-              />
-            );
+            <Image
+              style={{width: 18, height: 20}}
+              source={require('../assets/myinfo.png')}
+            />
+          );
         },
       },
     },

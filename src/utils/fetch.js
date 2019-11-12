@@ -1,16 +1,15 @@
-
-let apiUrl = 'http://111.231.50.113:9099/'
+let apiUrl = 'http://111.231.50.113:9099/';
 
 export function parseJSON(response) {
-  console.log('hehe:', response)
-  console.log('hehe:', response.json())
+  console.log('hehe:', response);
+  console.log('hehe:', response.json());
   return response.json();
 }
 
 export function checkStatus(response) {
   if (!response.ok) {
     const error = new Error(response.statusText);
-    error.response = response;
+    // error.response = response;
     throw error;
   }
 
