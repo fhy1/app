@@ -4,7 +4,7 @@ import {
   Image,
   StyleSheet,
   ScrollView,
-  Dimensions,
+  Text,
 } from 'react-native';
 
 class MyInfoScreen extends React.Component {
@@ -17,26 +17,21 @@ class MyInfoScreen extends React.Component {
   }
 
   componentDidMount() {
-    let { width } = Dimensions.get('window');
-    this.setState({
-      swiperHeight: (180 * width) / 350,
-      width: width,
-    });
+
   }
 
   render() {
-    const { swiperHeight, width } = this.state;
-    const { navigation } = this.props;
-    images = [
-      require('../../assets/banner.png'),
-      require('../../assets/banner.png'),
-      require('../../assets/banner.png'),
-      require('../../assets/banner.png'),
-    ];
     return (
       <View style={styles.homeView}>
         <ScrollView contentContainerStyle={styles.contentContainer}>
-
+          <View style={styles.myinfoMore}>
+            <View style={styles.myinfoMoreView}>
+              <View style={styles.myinfoMoreItem}>
+                <Image />
+                <Text>我的任务</Text>
+              </View>
+            </View>
+          </View>
         </ScrollView>
       </View>
     );
@@ -48,10 +43,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
-  contentContainer: {
-
+  myinfoMore: {
+    paddingLeft: 15,
+    paddingRight: 15,
   },
-
+  myinfoMoreView: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 4,
+    overflow: 'hidden'
+  },
+  myinfoMoreItem: {
+    height: 48,
+    borderBottomWidth: 1,
+    borderBottomColor: '#DDDDDD'
+  }
 });
 
 export default MyInfoScreen;
