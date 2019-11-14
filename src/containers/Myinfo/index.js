@@ -17,10 +17,10 @@ class MyInfoScreen extends React.Component {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   render() {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     return (
       <View style={styles.homeView}>
         <ScrollView>
@@ -33,7 +33,7 @@ class MyInfoScreen extends React.Component {
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
                     <FitImage
-                      style={{width: 21, height: 22}}
+                      style={{ width: 21, height: 22 }}
                       // @ts-ignore
                       source={require('../../assets/task.png')}
                       resizeMode="contain"
@@ -44,7 +44,7 @@ class MyInfoScreen extends React.Component {
                   </View>
                   <View style={styles.myinfoMoreGo}>
                     <FitImage
-                      style={{width: 15, height: 30}}
+                      style={{ width: 15, height: 30 }}
                       // @ts-ignore
                       source={require('../../assets/go.png')}
                       resizeMode="contain"
@@ -60,7 +60,7 @@ class MyInfoScreen extends React.Component {
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
                     <FitImage
-                      style={{width: 21.5, height: 21}}
+                      style={{ width: 21.5, height: 21 }}
                       // @ts-ignore
                       source={require('../../assets/release.png')}
                       resizeMode="contain"
@@ -71,7 +71,7 @@ class MyInfoScreen extends React.Component {
                   </View>
                   <View style={styles.myinfoMoreGo}>
                     <FitImage
-                      style={{width: 15, height: 30}}
+                      style={{ width: 15, height: 30 }}
                       // @ts-ignore
                       source={require('../../assets/go.png')}
                       resizeMode="contain"
@@ -86,7 +86,7 @@ class MyInfoScreen extends React.Component {
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
                     <FitImage
-                      style={{width: 21, height: 19}}
+                      style={{ width: 21, height: 19 }}
                       // @ts-ignore
                       source={require('../../assets/report.png')}
                       resizeMode="contain"
@@ -97,7 +97,7 @@ class MyInfoScreen extends React.Component {
                   </View>
                   <View style={styles.myinfoMoreGo}>
                     <FitImage
-                      style={{width: 15, height: 30}}
+                      style={{ width: 15, height: 30 }}
                       // @ts-ignore
                       source={require('../../assets/go.png')}
                       resizeMode="contain"
@@ -112,7 +112,7 @@ class MyInfoScreen extends React.Component {
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
                     <FitImage
-                      style={{width: 22, height: 15}}
+                      style={{ width: 22, height: 15 }}
                       // @ts-ignore
                       source={require('../../assets/tutorial.png')}
                       resizeMode="contain"
@@ -123,7 +123,7 @@ class MyInfoScreen extends React.Component {
                   </View>
                   <View style={styles.myinfoMoreGo}>
                     <FitImage
-                      style={{width: 15, height: 30}}
+                      style={{ width: 15, height: 30 }}
                       // @ts-ignore
                       source={require('../../assets/go.png')}
                       resizeMode="contain"
@@ -138,7 +138,7 @@ class MyInfoScreen extends React.Component {
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
                     <FitImage
-                      style={{width: 22, height: 21}}
+                      style={{ width: 22, height: 21 }}
                       // @ts-ignore
                       source={require('../../assets/opinion.png')}
                       resizeMode="contain"
@@ -149,7 +149,7 @@ class MyInfoScreen extends React.Component {
                   </View>
                   <View style={styles.myinfoMoreGo}>
                     <FitImage
-                      style={{width: 15, height: 30}}
+                      style={{ width: 15, height: 30 }}
                       // @ts-ignore
                       source={require('../../assets/go.png')}
                       resizeMode="contain"
@@ -159,12 +159,12 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Extend');
+                  navigation.navigate('Blacklist');
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
                     <FitImage
-                      style={{width: 21, height: 22}}
+                      style={{ width: 21, height: 22 }}
                       // @ts-ignore
                       source={require('../../assets/blacklist.png')}
                       resizeMode="contain"
@@ -175,7 +175,7 @@ class MyInfoScreen extends React.Component {
                   </View>
                   <View style={styles.myinfoMoreGo}>
                     <FitImage
-                      style={{width: 15, height: 30}}
+                      style={{ width: 15, height: 30 }}
                       // @ts-ignore
                       source={require('../../assets/go.png')}
                       resizeMode="contain"
@@ -187,10 +187,10 @@ class MyInfoScreen extends React.Component {
                 onPress={() => {
                   navigation.navigate('Extend');
                 }}>
-                <View style={[styles.myinfoMoreItem, {borderBottomWidth: 0}]}>
+                <View style={[styles.myinfoMoreItem, { borderBottomWidth: 0 }]}>
                   <View style={styles.myinfoMoreIcon}>
                     <FitImage
-                      style={{width: 22, height: 22}}
+                      style={{ width: 22, height: 22 }}
                       // @ts-ignore
                       source={require('../../assets/setting.png')}
                       resizeMode="contain"
@@ -201,7 +201,7 @@ class MyInfoScreen extends React.Component {
                   </View>
                   <View style={styles.myinfoMoreGo}>
                     <FitImage
-                      style={{width: 15, height: 30}}
+                      style={{ width: 15, height: 30 }}
                       // @ts-ignore
                       source={require('../../assets/go.png')}
                       resizeMode="contain"
