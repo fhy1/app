@@ -1,11 +1,12 @@
 import React from 'react';
 import {
   View,
-  Image,
   StyleSheet,
   ScrollView,
   Text,
+  TouchableOpacity,
 } from 'react-native';
+import FitImage from 'react-native-fit-image';
 
 class MyInfoScreen extends React.Component {
   constructor(props) {
@@ -16,20 +17,198 @@ class MyInfoScreen extends React.Component {
     };
   }
 
-  componentDidMount() {
-
-  }
+  componentDidMount() {}
 
   render() {
+    const {navigation} = this.props;
     return (
       <View style={styles.homeView}>
-        <ScrollView contentContainerStyle={styles.contentContainer}>
+        <ScrollView>
           <View style={styles.myinfoMore}>
             <View style={styles.myinfoMoreView}>
-              <View style={styles.myinfoMoreItem}>
-                <Image />
-                <Text>我的任务</Text>
-              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Task');
+                }}>
+                <View style={styles.myinfoMoreItem}>
+                  <View style={styles.myinfoMoreIcon}>
+                    <FitImage
+                      style={{width: 21, height: 22}}
+                      // @ts-ignore
+                      source={require('../../assets/task.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <View style={styles.myinfoMoreTxt}>
+                    <Text style={styles.myinfoMoreTxtTitle}>我的任务</Text>
+                  </View>
+                  <View style={styles.myinfoMoreGo}>
+                    <FitImage
+                      style={{width: 15, height: 30}}
+                      // @ts-ignore
+                      source={require('../../assets/go.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Extend');
+                }}>
+                <View style={styles.myinfoMoreItem}>
+                  <View style={styles.myinfoMoreIcon}>
+                    <FitImage
+                      style={{width: 21.5, height: 21}}
+                      // @ts-ignore
+                      source={require('../../assets/release.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <View style={styles.myinfoMoreTxt}>
+                    <Text style={styles.myinfoMoreTxtTitle}>发布/悬赏管理</Text>
+                  </View>
+                  <View style={styles.myinfoMoreGo}>
+                    <FitImage
+                      style={{width: 15, height: 30}}
+                      // @ts-ignore
+                      source={require('../../assets/go.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Extend');
+                }}>
+                <View style={styles.myinfoMoreItem}>
+                  <View style={styles.myinfoMoreIcon}>
+                    <FitImage
+                      style={{width: 21, height: 19}}
+                      // @ts-ignore
+                      source={require('../../assets/report.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <View style={styles.myinfoMoreTxt}>
+                    <Text style={styles.myinfoMoreTxtTitle}>举报维权</Text>
+                  </View>
+                  <View style={styles.myinfoMoreGo}>
+                    <FitImage
+                      style={{width: 15, height: 30}}
+                      // @ts-ignore
+                      source={require('../../assets/go.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Extend');
+                }}>
+                <View style={styles.myinfoMoreItem}>
+                  <View style={styles.myinfoMoreIcon}>
+                    <FitImage
+                      style={{width: 22, height: 15}}
+                      // @ts-ignore
+                      source={require('../../assets/tutorial.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <View style={styles.myinfoMoreTxt}>
+                    <Text style={styles.myinfoMoreTxtTitle}>教程协助</Text>
+                  </View>
+                  <View style={styles.myinfoMoreGo}>
+                    <FitImage
+                      style={{width: 15, height: 30}}
+                      // @ts-ignore
+                      source={require('../../assets/go.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Opinion');
+                }}>
+                <View style={styles.myinfoMoreItem}>
+                  <View style={styles.myinfoMoreIcon}>
+                    <FitImage
+                      style={{width: 22, height: 21}}
+                      // @ts-ignore
+                      source={require('../../assets/opinion.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <View style={styles.myinfoMoreTxt}>
+                    <Text style={styles.myinfoMoreTxtTitle}>意见反馈</Text>
+                  </View>
+                  <View style={styles.myinfoMoreGo}>
+                    <FitImage
+                      style={{width: 15, height: 30}}
+                      // @ts-ignore
+                      source={require('../../assets/go.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Extend');
+                }}>
+                <View style={styles.myinfoMoreItem}>
+                  <View style={styles.myinfoMoreIcon}>
+                    <FitImage
+                      style={{width: 21, height: 22}}
+                      // @ts-ignore
+                      source={require('../../assets/blacklist.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <View style={styles.myinfoMoreTxt}>
+                    <Text style={styles.myinfoMoreTxtTitle}>小黑屋</Text>
+                  </View>
+                  <View style={styles.myinfoMoreGo}>
+                    <FitImage
+                      style={{width: 15, height: 30}}
+                      // @ts-ignore
+                      source={require('../../assets/go.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Extend');
+                }}>
+                <View style={[styles.myinfoMoreItem, {borderBottomWidth: 0}]}>
+                  <View style={styles.myinfoMoreIcon}>
+                    <FitImage
+                      style={{width: 22, height: 22}}
+                      // @ts-ignore
+                      source={require('../../assets/setting.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <View style={styles.myinfoMoreTxt}>
+                    <Text style={styles.myinfoMoreTxtTitle}>设置</Text>
+                  </View>
+                  <View style={styles.myinfoMoreGo}>
+                    <FitImage
+                      style={{width: 15, height: 30}}
+                      // @ts-ignore
+                      source={require('../../assets/go.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
@@ -51,13 +230,32 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     borderRadius: 4,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   myinfoMoreItem: {
     height: 48,
-    borderBottomWidth: 1,
-    borderBottomColor: '#DDDDDD'
-  }
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#DDDDDD',
+    flexDirection: 'row',
+  },
+  myinfoMoreIcon: {
+    width: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  myinfoMoreGo: {
+    width: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  myinfoMoreTxt: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  myinfoMoreTxtTitle: {
+    fontSize: 16,
+    color: '#444444',
+  },
 });
 
 export default MyInfoScreen;

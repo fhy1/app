@@ -40,7 +40,7 @@ class HomeScreen extends React.Component {
     ];
     return (
       <View style={styles.homeView}>
-        <ScrollView contentContainerStyle={styles.contentContainer}>
+        <ScrollView>
           <Swiper
             style={{width: width, height: swiperHeight}} //样式
             height={swiperHeight} //组件高度

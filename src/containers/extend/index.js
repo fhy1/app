@@ -28,19 +28,19 @@ class ExtendScreen extends React.Component {
   };
 
   render() {
-    const { navigation } = this.props;
-    const { width } = Dimensions.get('window');
+    const {navigation} = this.props;
+    const {width} = Dimensions.get('window');
     const newwidth = (width - 420) / 2;
     const navImageHeight = (width / 748) * 433;
     let dashView = [];
     for (let i = 0; i < 70; i++) {
-      dashView.push(<View key={i} style={styles.extendDashed}></View>)
+      dashView.push(<View key={i} style={styles.extendDashed}></View>);
     }
 
     return (
       <View style={styles.extendView}>
         <ScrollView>
-          <View style={[styles.extendTop, { paddingLeft: newwidth }]}>
+          <View style={[styles.extendTop, {paddingLeft: newwidth}]}>
             <FitImage
               // @ts-ignore
               source={require('../../assets/friend.png')}
@@ -48,7 +48,7 @@ class ExtendScreen extends React.Component {
               resizeMode="contain"
             />
           </View>
-          <View style={{ width: width, height: navImageHeight }}>
+          <View style={{width: width, height: navImageHeight}}>
             <FitImage
               // @ts-ignore
               source={require('../../assets/person.png')}
@@ -59,7 +59,7 @@ class ExtendScreen extends React.Component {
             <View
               style={[
                 styles.extendEwm,
-                { width: width, height: navImageHeight },
+                {width: width, height: navImageHeight},
               ]}>
               <View
                 style={{
@@ -72,7 +72,7 @@ class ExtendScreen extends React.Component {
           <View
             style={[
               styles.extendShare,
-              { marginTop: -(navImageHeight - (width / 375) * 110) / 2 + 15 },
+              {marginTop: -(navImageHeight - (width / 375) * 110) / 2 + 15},
             ]}>
             <View style={styles.extendShareView}>
               <Image
@@ -81,37 +81,53 @@ class ExtendScreen extends React.Component {
                 source={require('../../assets/hb.png')}
               />
               <View style={styles.extendShareTitle}>
-                <Text style={styles.extendShareText}>点击二维码，生成专属推广页</Text>
+                <Text style={styles.extendShareText}>
+                  点击二维码，生成专属推广页
+                </Text>
               </View>
-              <View style={styles.extendDashedLine}>
-                {dashView}
-              </View>
+              <View style={styles.extendDashedLine}>{dashView}</View>
               <View style={styles.extendShareBody}>
                 <View style={styles.extendShareBodyView}>
                   <View style={styles.extendShareBodyImg}>
-                    <FitImage style={styles.extendShareBodyIcon} source={require('../../assets/pyq.png')}
-                      resizeMode="contain" />
+                    <FitImage
+                      style={styles.extendShareBodyIcon}
+                      // @ts-ignore
+                      source={require('../../assets/pyq.png')}
+                      resizeMode="contain"
+                    />
                   </View>
                   <Text style={styles.extendShareBodyText}>朋友圈</Text>
                 </View>
                 <View style={styles.extendShareBodyView}>
                   <View style={styles.extendShareBodyImg}>
-                    <FitImage style={styles.extendShareBodyIcon} source={require('../../assets/wx.png')}
-                      resizeMode="contain" />
+                    <FitImage
+                      style={styles.extendShareBodyIcon}
+                      // @ts-ignore
+                      source={require('../../assets/wx.png')}
+                      resizeMode="contain"
+                    />
                   </View>
                   <Text style={styles.extendShareBodyText}>微信好友</Text>
                 </View>
                 <View style={styles.extendShareBodyView}>
                   <View style={styles.extendShareBodyImg}>
-                    <FitImage style={styles.extendShareBodyIcon} source={require('../../assets/kj.png')}
-                      resizeMode="contain" />
+                    <FitImage
+                      style={styles.extendShareBodyIcon}
+                      // @ts-ignore
+                      source={require('../../assets/kj.png')}
+                      resizeMode="contain"
+                    />
                   </View>
                   <Text style={styles.extendShareBodyText}>qq空间</Text>
                 </View>
                 <View style={styles.extendShareBodyView}>
                   <View style={styles.extendShareBodyImg}>
-                    <FitImage style={styles.extendShareBodyIcon} source={require('../../assets/qq.png')}
-                      resizeMode="contain" />
+                    <FitImage
+                      style={styles.extendShareBodyIcon}
+                      // @ts-ignore
+                      source={require('../../assets/qq.png')}
+                      resizeMode="contain"
+                    />
                   </View>
                   <Text style={styles.extendShareBodyText}>qq好友</Text>
                 </View>
@@ -126,30 +142,54 @@ class ExtendScreen extends React.Component {
               <View style={styles.extendShareTitle}>
                 <Text style={styles.extendShareText}>我的邀请</Text>
               </View>
-              <View style={styles.extendDashedLine}>
-                {dashView}
-              </View>
-              <View style={[styles.extendShareBody, { height: 72 }]}>
+              <View style={styles.extendDashedLine}>{dashView}</View>
+              <View style={[styles.extendShareBody, {height: 72}]}>
                 <View style={styles.extendShareBodyView}>
-                  <Text style={{ color: '#444444', fontWeight: 'bold', fontSize: 14, marginBottom: 6 }}>邀请好友</Text>
-                  <Text style={{ color: '#F75139', fontWeight: 'bold', fontSize: 18 }}>50人</Text>
+                  <Text
+                    style={{
+                      color: '#444444',
+                      fontWeight: 'bold',
+                      fontSize: 14,
+                      marginBottom: 6,
+                    }}>
+                    邀请好友
+                  </Text>
+                  <Text
+                    style={{
+                      color: '#F75139',
+                      fontWeight: 'bold',
+                      fontSize: 18,
+                    }}>
+                    50人
+                  </Text>
                 </View>
                 <View style={styles.extendShareBodyView}>
-                  <Text style={{ color: '#444444', fontWeight: 'bold', fontSize: 14, marginBottom: 6 }}>获得奖励</Text>
-                  <Text style={{ color: '#F75139', fontWeight: 'bold', fontSize: 18 }}>18元</Text>
+                  <Text
+                    style={{
+                      color: '#444444',
+                      fontWeight: 'bold',
+                      fontSize: 14,
+                      marginBottom: 6,
+                    }}>
+                    获得奖励
+                  </Text>
+                  <Text
+                    style={{
+                      color: '#F75139',
+                      fontWeight: 'bold',
+                      fontSize: 18,
+                    }}>
+                    18元
+                  </Text>
                 </View>
               </View>
             </View>
-            <View style={[styles.extendShareView, { marginTop: 20 }]}>
+            <View style={[styles.extendShareView, {marginTop: 20}]}>
               <View style={styles.extendShareTitle}>
                 <Text style={styles.extendShareText}>本月推广排行榜</Text>
               </View>
-              <View style={styles.extendDashedLine}>
-                {dashView}
-              </View>
-              <View>
-
-              </View>
+              <View style={styles.extendDashedLine}>{dashView}</View>
+              <View></View>
             </View>
           </View>
         </ScrollView>
@@ -207,12 +247,12 @@ const styles = StyleSheet.create({
   extendShareTitle: {
     height: 36,
     justifyContent: 'center',
-    alignItems: "center",
+    alignItems: 'center',
   },
   extendShareText: {
     color: '#F23718',
     fontSize: 16,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   extendDashedLine: {
     height: 1,
@@ -232,11 +272,11 @@ const styles = StyleSheet.create({
   extendShareBodyView: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   extendShareBodyText: {
     fontSize: 14,
-    color: '#666666'
+    color: '#666666',
   },
   extendShareBodyImg: {
     width: 58.5,
@@ -247,16 +287,16 @@ const styles = StyleSheet.create({
     borderColor: '#ff583f',
     borderWidth: 1,
     backgroundColor: '#dddddd',
-    marginBottom: 3
+    marginBottom: 3,
   },
   extendShareBodyIcon: {
     width: 40,
-    height: 40
+    height: 40,
   },
   extendBtnView: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 23
+    marginBottom: 23,
   },
   extendBtn: {
     marginTop: 15,
@@ -270,7 +310,7 @@ const styles = StyleSheet.create({
   extendBtnTxt: {
     color: '#D41E00',
     fontSize: 18,
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
 export default ExtendScreen;
