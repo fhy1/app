@@ -33,7 +33,7 @@ class HallScreen extends React.Component {
   }
 
   componentDidMount = () => {
-    // this.props.fetchHalljob();
+    this.props.fetchHalljob();
   };
 
   onHandelPress = index => {
@@ -262,8 +262,5 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(HallScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(HallScreen);
 // export default HallScreen;

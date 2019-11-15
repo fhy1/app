@@ -1,9 +1,4 @@
-import {
-  paramToQuery,
-  checkStatus,
-  parseJSON,
-  fetchOptions,
-} from '../utils/fetch';
+import {paramToQuery} from '../utils/fetch';
 import {FETCH_HALL_SUCCESS} from '../constants/hall';
 
 const API = 'hall/job';
@@ -30,9 +25,4 @@ export function fetchHalljob(params = {}) {
         console.log(e.message);
       });
   };
-  // return fetch(url, {
-  //   ...fetchOptions(),
-  // }).then(checkStatus)
-  //   .then(parseJSON)
-  //   .then(json => json);
 }

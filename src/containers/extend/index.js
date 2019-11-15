@@ -8,6 +8,8 @@ import {
   Dimensions,
 } from 'react-native';
 import FitImage from 'react-native-fit-image';
+import {connect} from 'react-redux';
+import {fetchExtendInvite} from '../../actions/extend';
 
 class ExtendScreen extends React.Component {
   static navigationOptions = {
@@ -27,8 +29,13 @@ class ExtendScreen extends React.Component {
     headerRight: <View />,
   };
 
+  componentDidMount = () => {
+    this.props.fetchExtendInvite();
+  };
+
   render() {
-    const {navigation} = this.props;
+    const {navigation, invite} = this.props;
+    console.log('exinvite', invite);
     const {width} = Dimensions.get('window');
     const newwidth = (width - 420) / 2;
     const navImageHeight = (width / 748) * 433;
@@ -36,7 +43,7 @@ class ExtendScreen extends React.Component {
     for (let i = 0; i < 70; i++) {
       dashView.push(<View key={i} style={styles.extendDashed}></View>);
     }
-
+    console.log(invite);
     return (
       <View style={styles.extendView}>
         <ScrollView>
@@ -189,7 +196,7 @@ class ExtendScreen extends React.Component {
                 <Text style={styles.extendShareText}>本月推广排行榜</Text>
               </View>
               <View style={styles.extendDashedLine}>{dashView}</View>
-              <View></View>
+              <View>{/* <Text>{invite[0].userId}</Text> */}</View>
             </View>
           </View>
         </ScrollView>
@@ -313,4 +320,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-export default ExtendScreen;
+
+function mapStateToProps(state) {
+  return {
+    invite: state.extend.invite,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    fetchExtendInvite: () => dispatch(fetchExtendInvite()),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ExtendScreen);
