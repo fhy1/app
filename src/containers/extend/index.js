@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import FitImage from 'react-native-fit-image';
 import {connect} from 'react-redux';
-import {fetchExtendInvite} from '../../actions/extend';
+import {fetchExtendInvite, fetchExtendUser} from '../../actions/extend';
 
 class ExtendScreen extends React.Component {
   static navigationOptions = {
@@ -30,12 +30,16 @@ class ExtendScreen extends React.Component {
   };
 
   componentDidMount = () => {
+    let {login} = this.props;
+    console.log(login);
     this.props.fetchExtendInvite();
+    this.props.fetchExtendUser(login.userId);
   };
 
   render() {
-    const {navigation, invite} = this.props;
+    const {invite, user} = this.props;
     console.log('exinvite', invite);
+    console.log('exuser', user);
     const {width} = Dimensions.get('window');
     const newwidth = (width - 420) / 2;
     const navImageHeight = (width / 748) * 433;
@@ -196,7 +200,74 @@ class ExtendScreen extends React.Component {
                 <Text style={styles.extendShareText}>本月推广排行榜</Text>
               </View>
               <View style={styles.extendDashedLine}>{dashView}</View>
-              <View>{/* <Text>{invite[0].userId}</Text> */}</View>
+              <View style={styles.extendRankListTitle}>
+                <View style={styles.extendRank}>
+                  {/* <Image
+                    style={styles.extendRank}
+                    source={require('../../assets/one.png')}
+                  /> */}
+                </View>
+                <View style={styles.extendRankWidth}>
+                  <Text style={styles.extendRankTitleTxt}>用户</Text>
+                </View>
+                <View style={styles.extendRankWidth}>
+                  <Text style={styles.extendRankTitleTxt}>推广人数</Text>
+                </View>
+                <View style={styles.extendRankWidth}>
+                  <Text style={styles.extendRankTitleTxt}>获得奖励</Text>
+                </View>
+              </View>
+              <View style={styles.extendRankList}>
+                <View style={styles.extendRank}>
+                  <Image
+                    style={styles.extendRank}
+                    source={require('../../assets/one.png')}
+                  />
+                </View>
+                <View style={styles.extendRankWidth}>
+                  <Text style={styles.extendRankTxt}>用户</Text>
+                </View>
+                <View style={styles.extendRankWidth}>
+                  <Text style={styles.extendRankTxt}>推广人数</Text>
+                </View>
+                <View style={styles.extendRankWidth}>
+                  <Text style={styles.extendRankTxt}>获得奖励</Text>
+                </View>
+              </View>
+              <View style={styles.extendRankList}>
+                <View style={styles.extendRank}>
+                  <Image
+                    style={styles.extendRank}
+                    source={require('../../assets/one.png')}
+                  />
+                </View>
+                <View style={styles.extendRankWidth}>
+                  <Text style={styles.extendRankTxt}>用户</Text>
+                </View>
+                <View style={styles.extendRankWidth}>
+                  <Text style={styles.extendRankTxt}>推广人数</Text>
+                </View>
+                <View style={styles.extendRankWidth}>
+                  <Text style={styles.extendRankTxt}>获得奖励</Text>
+                </View>
+              </View>
+              <View style={styles.extendRankList}>
+                <View style={styles.extendRank}>
+                  <Image
+                    style={styles.extendRank}
+                    source={require('../../assets/one.png')}
+                  />
+                </View>
+                <View style={styles.extendRankWidth}>
+                  <Text style={styles.extendRankTxt}>用户</Text>
+                </View>
+                <View style={styles.extendRankWidth}>
+                  <Text style={styles.extendRankTxt}>推广人数</Text>
+                </View>
+                <View style={styles.extendRankWidth}>
+                  <Text style={styles.extendRankTxt}>获得奖励</Text>
+                </View>
+              </View>
             </View>
           </View>
         </ScrollView>
@@ -319,17 +390,47 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  extendRankListTitle: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  extendRank: {
+    width: 40,
+    height: 44,
+  },
+  extendRankWidth: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  extendRankTitleTxt: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'bold',
+  },
+  extendRankList: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  extendRankTxt: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'normal',
+  },
 });
 
 function mapStateToProps(state) {
   return {
     invite: state.extend.invite,
+    user: state.extend.user,
+    login: state.login.login,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     fetchExtendInvite: () => dispatch(fetchExtendInvite()),
+    fetchExtendUser: userId => dispatch(fetchExtendUser(userId)),
   };
 }
 

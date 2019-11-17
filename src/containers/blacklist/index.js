@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Image,
-  FlatList,
-} from 'react-native';
+import {View, StyleSheet, Text, FlatList} from 'react-native';
 
 class blacklistScreen extends React.Component {
   static navigationOptions = {
@@ -33,10 +26,10 @@ class blacklistScreen extends React.Component {
     };
   }
 
-  componentDidMount() { }
+  componentDidMount() {}
 
   render() {
-    const { labels } = this.state;
+    const {labels} = this.state;
 
     return (
       <View style={styles.blacklistView}>
@@ -44,24 +37,22 @@ class blacklistScreen extends React.Component {
           <View style={styles.blacklistTitle}>
             {labels.map((item, index) => {
               return (
-                <View
-                  style={styles.blacklistTitleText}
-                  key={index}>
+                <View style={styles.blacklistTitleText} key={index}>
                   <Text style={styles.blacklistTitleTextClick}>{item}</Text>
                 </View>
-              )
+              );
             })}
           </View>
         </View>
         <FlatList
           style={styles.blacklistList}
-          data={[{ title: '超级简单的任务' }, { title: '超级简单的任务' }]}
+          data={[{title: '超级简单的任务'}, {title: '超级简单的任务'}]}
           ItemSeparatorComponent={() => (
             <View style={styles.blacklistListLine}>
               <View style={styles.blacklistListLinebg} />
             </View>
           )}
-          renderItem={({ item, index, separators }) => (
+          renderItem={({item, index, separators}) => (
             <View style={styles.blackList}>
               <View style={styles.blackListView}>
                 <Text style={styles.blackListTxt}>张三三三</Text>
@@ -75,9 +66,7 @@ class blacklistScreen extends React.Component {
               <View style={styles.blackListView}>
                 <View style={styles.blackListViewBox}>
                   <Text style={styles.blackListViewBoxtxt}>
-                    恶意辱骂商家语
-                    言不文明太不文
-                    明了
+                    恶意辱骂商家语 言不文明太不文 明了
                   </Text>
                 </View>
               </View>
@@ -96,7 +85,7 @@ const styles = StyleSheet.create({
   },
   blacklistTitleView: {
     height: 40,
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
   },
   blacklistTitle: {
     flex: 1,
@@ -114,12 +103,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   blacklistList: {
-    marginTop: 10
+    marginTop: 10,
   },
   blacklistListLine: {
     paddingLeft: 15,
     paddingRight: 15,
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
   },
   blacklistListLinebg: {
     height: 1,
@@ -129,28 +118,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingTop: 10,
     paddingBottom: 10,
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
   },
   blackListView: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   blackListTxt: {
     fontSize: 12,
-    color: '#444444'
+    color: '#444444',
   },
   blackListViewBox: {
     width: 80,
     padding: 6,
-    textAlign: "justify",
+    textAlign: 'justify',
     backgroundColor: '#F3F3F3',
   },
   blackListViewBoxtxt: {
     fontSize: 10,
     lineHeight: 15,
-    color: '#444444'
-  }
+    color: '#444444',
+  },
 });
 
 export default blacklistScreen;

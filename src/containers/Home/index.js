@@ -11,6 +11,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
+import {loadStorage} from '../../utils/storage';
+import {getLogin} from '../../api/login';
+import {connect} from 'react-redux';
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -21,23 +24,40 @@ class HomeScreen extends React.Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     let {width} = Dimensions.get('window');
     this.setState({
       swiperHeight: (180 * width) / 350,
       width: width,
     });
+    const data = await loadStorage('userNews');
+    console.log('持久化', data);
+    // if (data !== 'err') {
+    // }
+    const data2 = {
+      city: null,
+      country: null,
+      headimgurl: null,
+      isAdmin: 0,
+      isMember: 1,
+      memberTime: null,
+      nickName: null,
+      openid: null,
+      phone: '13337903991',
+      province: null,
+      reason: null,
+      sex: null,
+      status: 0,
+      uid: '1856659',
+      upUID: null,
+      userId: 7,
+    };
+    this.props.getLogin(data2);
   }
 
   render() {
     const {swiperHeight, width} = this.state;
     const {navigation} = this.props;
-    images = [
-      require('../../assets/banner.png'),
-      require('../../assets/banner.png'),
-      require('../../assets/banner.png'),
-      require('../../assets/banner.png'),
-    ];
     return (
       <View style={styles.homeView}>
         <ScrollView>
@@ -277,4 +297,16 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+function mapStateToProps(state) {
+  return {
+    // hall: state.hall,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    getLogin: data => dispatch(getLogin(data)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
