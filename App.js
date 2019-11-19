@@ -1,8 +1,7 @@
 import React, {useEffect} from 'react';
 import {ToastAndroid, BackHandler} from 'react-native';
 import AppMain from './src/index';
-
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import 'react-native-gesture-handler';
 let firstClick = 0;
 
 const App: () => React$Node = () => {

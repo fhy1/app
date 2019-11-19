@@ -45,7 +45,7 @@ class ExtendScreen extends React.Component {
     const navImageHeight = (width / 748) * 433;
     let dashView = [];
     for (let i = 0; i < 70; i++) {
-      dashView.push(<View key={i} style={styles.extendDashed}></View>);
+      dashView.push(<View key={i} style={styles.extendDashed} />);
     }
     console.log(invite);
     return (

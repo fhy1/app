@@ -1,4 +1,3 @@
-fetchUserCode;
 import {paramToQuery} from '../utils/fetch';
 import {
   FETCH_USER_CODE,

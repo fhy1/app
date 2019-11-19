@@ -1,5 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, Text, FlatList} from 'react-native';
+import {connect} from 'react-redux';
+import {fetchBlacklistUser} from '../../actions/blacklist';
 
 class blacklistScreen extends React.Component {
   static navigationOptions = {
@@ -26,7 +28,10 @@ class blacklistScreen extends React.Component {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    const {login} = this.props;
+    this.props.fetchBlacklistUser(login.phone);
+  }
 
   render() {
     const {labels} = this.state;
@@ -142,4 +147,19 @@ const styles = StyleSheet.create({
   },
 });
 
-export default blacklistScreen;
+function mapStateToProps(state) {
+  return {
+    login: state.login.login,
+    blacklist: state.blacklist.blacklist,
+    user: state.extend.user,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    fetchBlacklistUser: phone => dispatch(fetchBlacklistUser(phone)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(blacklistScreen);
+// export default blacklistScreen;
