@@ -11,6 +11,10 @@ import OpinionScreen from '../containers/opinion/index';
 import TaskScreen from '../containers/task/index';
 import BlacklistScreen from '../containers/blacklist/index';
 import LoginScreen from '../containers/Login/index';
+import ReleaseScreen from '../containers/release/index';
+import ReleaseTaskScreen from '../containers/releaseTask/index';
+import ApplyScreen from '../containers/apply/index';
+import ReportScreen from '../containers/report/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -77,6 +81,50 @@ export default createAppContainer(
     },
     Login: {
       screen: LoginScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Release: {
+      screen: ReleaseScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    ReleaseTask: {
+      screen: ReleaseTaskScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Apply: {
+      screen: ApplyScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Report: {
+      screen: ReportScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image

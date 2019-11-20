@@ -185,7 +185,7 @@ class MyInfoScreen extends React.Component {
 
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Extend');
+                  navigation.navigate('Release');
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
@@ -211,7 +211,33 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Extend');
+                  navigation.navigate('Apply');
+                }}>
+                <View style={styles.myinfoMoreItem}>
+                  <View style={styles.myinfoMoreIcon}>
+                    <FitImage
+                      style={{width: 22, height: 22}}
+                      // @ts-ignore
+                      source={require('../../assets/apply.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <View style={styles.myinfoMoreTxt}>
+                    <Text style={styles.myinfoMoreTxtTitle}>审核任务</Text>
+                  </View>
+                  <View style={styles.myinfoMoreGo}>
+                    <FitImage
+                      style={{width: 15, height: 30}}
+                      // @ts-ignore
+                      source={require('../../assets/go.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Report');
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
@@ -317,7 +343,7 @@ class MyInfoScreen extends React.Component {
                 onPress={() => {
                   navigation.navigate('Extend');
                 }}>
-                <View style={[styles.myinfoMoreItem, {borderBottomWidth: 0}]}>
+                <View style={[styles.myinfoMoreItem]}>
                   <View style={styles.myinfoMoreIcon}>
                     <FitImage
                       style={{width: 22, height: 22}}
@@ -328,6 +354,32 @@ class MyInfoScreen extends React.Component {
                   </View>
                   <View style={styles.myinfoMoreTxt}>
                     <Text style={styles.myinfoMoreTxtTitle}>设置</Text>
+                  </View>
+                  <View style={styles.myinfoMoreGo}>
+                    <FitImage
+                      style={{width: 15, height: 30}}
+                      // @ts-ignore
+                      source={require('../../assets/go.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Extend');
+                }}>
+                <View style={[styles.myinfoMoreItem, {borderBottomWidth: 0}]}>
+                  <View style={styles.myinfoMoreIcon}>
+                    <FitImage
+                      style={{width: 22, height: 22}}
+                      // @ts-ignore
+                      source={require('../../assets/invite.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <View style={styles.myinfoMoreTxt}>
+                    <Text style={styles.myinfoMoreTxtTitle}>我的邀请码</Text>
                   </View>
                   <View style={styles.myinfoMoreGo}>
                     <FitImage
