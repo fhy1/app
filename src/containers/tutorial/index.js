@@ -6,8 +6,8 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
-import FitImage from 'react-native-fit-image';
 import {connect} from 'react-redux';
 
 class TutorialScreen extends React.Component {
@@ -31,18 +31,64 @@ class TutorialScreen extends React.Component {
   componentDidMount = () => {};
 
   render() {
+    const {navigation} = this.props;
     return (
-      <View style={styles.extendView}>
-        <ScrollView></ScrollView>
+      <View style={styles.tutorialView}>
+        <ScrollView>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('TutorialDetail');
+            }}>
+            <View style={styles.tutorialList}>
+              <Text style={styles.tutorialListTxt}>发布任务</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('TutorialDetail');
+            }}>
+            <View style={styles.tutorialList}>
+              <Text style={styles.tutorialListTxt}>发布任务</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('TutorialDetail');
+            }}>
+            <View style={styles.tutorialList}>
+              <Text style={styles.tutorialListTxt}>发布任务</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('TutorialDetail');
+            }}>
+            <View style={styles.tutorialList}>
+              <Text style={styles.tutorialListTxt}>发布任务</Text>
+            </View>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  extendView: {
+  tutorialView: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F3F3F3',
+  },
+  tutorialList: {
+    height: 45,
+    backgroundColor: '#FFFFFF',
+    borderTopColor: '#DDDDDD',
+    borderTopWidth: 1,
+    justifyContent: 'center',
+    paddingLeft: 15,
+  },
+  tutorialListTxt: {
+    color: '#444444',
+    fontSize: 14,
   },
 });
 
@@ -54,4 +100,4 @@ function mapDispatchToProps(dispatch) {
   return {};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(InviteScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(TutorialScreen);

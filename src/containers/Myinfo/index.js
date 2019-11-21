@@ -135,9 +135,14 @@ class MyInfoScreen extends React.Component {
                   <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
                   <Text style={styles.navViewMoneyMiddleTxt2}>10</Text>
                 </View>
-                <View style={styles.navViewMoneybtn}>
-                  <Text style={styles.navViewMoneybtnTxt}>提现</Text>
-                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('Withdraw');
+                  }}>
+                  <View style={styles.navViewMoneybtn}>
+                    <Text style={styles.navViewMoneybtnTxt}>提现</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
               <View style={styles.navViewLine}></View>
               <View style={styles.navViewMoney}>
@@ -148,9 +153,14 @@ class MyInfoScreen extends React.Component {
                   <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
                   <Text style={styles.navViewMoneyMiddleTxt2}>10</Text>
                 </View>
-                <View style={styles.navViewMoneybtn}>
-                  <Text style={styles.navViewMoneybtnTxt}>提现</Text>
-                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('Withdraw');
+                  }}>
+                  <View style={styles.navViewMoneybtn}>
+                    <Text style={styles.navViewMoneybtnTxt}>提现</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -263,7 +273,7 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Extend');
+                  navigation.navigate('Tutorial');
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
@@ -341,7 +351,7 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Extend');
+                  navigation.navigate('Setting');
                 }}>
                 <View style={[styles.myinfoMoreItem]}>
                   <View style={styles.myinfoMoreIcon}>
@@ -367,7 +377,7 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Extend');
+                  navigation.navigate('Invite');
                 }}>
                 <View style={[styles.myinfoMoreItem, {borderBottomWidth: 0}]}>
                   <View style={styles.myinfoMoreIcon}>

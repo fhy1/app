@@ -15,6 +15,11 @@ import ReleaseScreen from '../containers/release/index';
 import ReleaseTaskScreen from '../containers/releaseTask/index';
 import ApplyScreen from '../containers/apply/index';
 import ReportScreen from '../containers/report/index';
+import TutorialScreen from '../containers/tutorial/index';
+import TutorialDetailScreen from '../containers/tutorialDetail/index';
+import SettingScreen from '../containers/setting/index';
+import InviteScreen from '../containers/invite/index';
+import WithdrawScreen from '../containers/withdraw/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -125,6 +130,61 @@ export default createAppContainer(
     },
     Report: {
       screen: ReportScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Tutorial: {
+      screen: TutorialScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    TutorialDetail: {
+      screen: TutorialDetailScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Setting: {
+      screen: SettingScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Invite: {
+      screen: InviteScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Withdraw: {
+      screen: WithdrawScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image

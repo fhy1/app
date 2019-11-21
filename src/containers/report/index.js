@@ -49,24 +49,24 @@ class ReportScreen extends React.Component {
     const {labels, labelStatus} = this.state;
     return (
       <View style={styles.reportView}>
-        <View style={styles.releaseTitleView}>
-          <View style={styles.releaseTitle}>
+        <View style={styles.reportTitleView}>
+          <View style={styles.reportTitle}>
             {labels.map((item, index) => {
               return index == labelStatus ? (
                 <View
-                  style={[styles.releaseTitleText, styles.releaseTitleClick]}
+                  style={[styles.reportTitleText, styles.reportTitleClick]}
                   key={index}>
-                  <Text style={styles.releaseTitleTextClick}>{item}</Text>
+                  <Text style={styles.reportTitleTextClick}>{item}</Text>
                 </View>
               ) : (
                 <TouchableOpacity
-                  style={styles.releaseTitleTextTouch}
+                  style={styles.reportTitleTextTouch}
                   key={index}
                   onPress={this.onHandelPress.bind(this, index)}>
                   <View
-                    style={styles.releaseTitleText}
+                    style={styles.reportTitleText}
                     onResponderGrant={this.onHandelPress}>
-                    <Text style={styles.releaseTitleTextNormal}>{item}</Text>
+                    <Text style={styles.reportTitleTextNormal}>{item}</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -74,41 +74,44 @@ class ReportScreen extends React.Component {
           </View>
         </View>
         <FlatList
-          style={styles.releaseFlatList}
+          style={styles.reportFlatList}
           data={[
             {title: '超级简单的任务', id: '1'},
             {title: '超级简单的任务', id: '2'},
           ]}
           ItemSeparatorComponent={() => (
-            <View style={styles.releaseFlatListLine} />
+            <View style={styles.reportFlatListLine} />
           )}
           renderItem={({item, index, separators}) => (
-            <View style={styles.releaseList} key={item.id}>
-              <View style={styles.releaseListTitle}>
-                <Text style={styles.releaseListTitleTxt}>点赞关注即可</Text>
-                <Text style={styles.releaseListTitleMoney}>赏2.25元</Text>
+            <View style={styles.reportList} key={item.id}>
+              <View style={styles.reportListTitle}>
+                <Text style={styles.reportListTitleTxt}>点赞关注即可</Text>
+                <Text style={styles.reportListTitleMoney}>赏2.25元</Text>
               </View>
-              <View style={styles.releaseListNav}>
-                <Text style={styles.releaseListNavTxt}>
+              <View style={styles.reportListNav}>
+                <Text style={styles.reportListNavTxt}>
                   发布时间： 2019-11-10
                 </Text>
                 <Text
-                  style={[
-                    styles.releaseListNavTxt,
-                    styles.releaseListNavRight,
-                  ]}>
+                  style={[styles.reportListNavTxt, styles.reportListNavRight]}>
                   剩余100份
                 </Text>
               </View>
-              <View style={styles.releaseListBtnView}>
-                <View style={styles.releaseListBtn}>
-                  <Text style={styles.releaseListBtnTxt}>公众号</Text>
+              <View style={styles.reportListBtnView}>
+                <View style={styles.reportListBtn}>
+                  <Text style={styles.reportListBtnTxt}>公众号</Text>
                 </View>
-                <View style={styles.releaseListBtn}>
-                  <Text style={styles.releaseListBtnTxt}>点赞关注</Text>
+                <View style={styles.reportListBtn}>
+                  <Text style={styles.reportListBtnTxt}>点赞关注</Text>
                 </View>
               </View>
-              <View style={styles.releaseListLine}></View>
+              <View style={styles.reportListLine}></View>
+              <View>
+                <Text>举报原因：</Text>
+              </View>
+              <View>
+                <Text>举报结果：通过</Text>
+              </View>
             </View>
           )}
           keyExtractor={item => item.id}
@@ -123,15 +126,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
-  releaseTitleView: {
+  reportTitleView: {
     height: 40,
   },
-  releaseTitle: {
+  reportTitle: {
     flex: 1,
     flexDirection: 'row',
     backgroundColor: '#F2F2F2',
   },
-  releaseTitleText: {
+  reportTitleText: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -139,72 +142,72 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'normal',
   },
-  releaseTitleClick: {
+  reportTitleClick: {
     borderBottomColor: '#FD3F3F',
     borderBottomWidth: 1,
   },
-  releaseTitleTextTouch: {
+  reportTitleTextTouch: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  releaseTitleTextClick: {
+  reportTitleTextClick: {
     fontSize: 14,
     color: '#444444',
     fontWeight: 'bold',
   },
-  releaseTitleTextNormal: {
+  reportTitleTextNormal: {
     fontSize: 14,
     color: '#666666',
     fontWeight: 'normal',
   },
-  releaseFlatList: {
+  reportFlatList: {
     backgroundColor: '#F3F3F3',
   },
-  releaseFlatListLine: {
+  reportFlatListLine: {
     height: 10,
     backgroundColor: '#F3F3F3',
   },
-  releaseList: {
+  reportList: {
     backgroundColor: '#FFFFFF',
     paddingLeft: 15,
     paddingRight: 15,
   },
-  releaseListTitle: {
+  reportListTitle: {
     flexDirection: 'row',
     paddingTop: 12,
     paddingBottom: 12,
   },
-  releaseListNav: {
+  reportListNav: {
     flexDirection: 'row',
   },
-  releaseListBtnView: {
+  reportListBtnView: {
     flexDirection: 'row',
     paddingTop: 10,
     paddingBottom: 10,
   },
-  releaseListTitleTxt: {
+  reportListTitleTxt: {
     color: '#444444',
     fontSize: 14,
     fontWeight: 'bold',
   },
-  releaseListTitleMoney: {
+  reportListTitleMoney: {
     position: 'absolute',
     right: 0,
     top: 12,
     fontSize: 14,
     color: '#FD3F3F',
   },
-  releaseListNavTxt: {
+  reportListNavTxt: {
     color: '#666666',
     fontSize: 12,
   },
-  releaseListNavRight: {
+  reportListNavRight: {
     position: 'absolute',
     right: 0,
     top: 0,
   },
-  releaseListBtn: {
+  reportListBtn: {
     paddingLeft: 12,
     paddingRight: 12,
     height: 22,
@@ -214,12 +217,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFDB44',
     marginRight: 10,
   },
-  releaseListBtnTxt: {
+  reportListBtnTxt: {
     fontSize: 12,
     color: '#444444',
     fontWeight: 'normal',
   },
-  releaseListLine: {
+  reportListLine: {
     height: 0.5,
     backgroundColor: '#DDDDDD',
   },
