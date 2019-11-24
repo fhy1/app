@@ -1,5 +1,8 @@
 import {paramToQuery} from '../utils/fetch';
-import {FETCH_BLACKLIST_USER} from '../constants/blacklist';
+import {
+  FETCH_BLACKLIST_USER,
+  CLEAR_BLACKLIST_USER,
+} from '../constants/blacklist';
 
 const BLACK = 'user/black';
 
@@ -9,11 +12,14 @@ export const getBlacklist = json => {
     json,
   };
 };
+export const clearBlacklist = () => {
+  return {
+    type: CLEAR_BLACKLIST_USER,
+  };
+};
 
-export function fetchBlacklistUser(phone) {
-  const url = paramToQuery(
-    `${BLACK}?pageNo=${1}&pageSize=${10}&phone=${phone}`,
-  );
+export function fetchBlacklistUser(pageNo, pageSize) {
+  const url = paramToQuery(`${BLACK}?pageNo=${pageNo}&pageSize=${pageSize}`);
   console.log('url', url);
   return dispatch => {
     return fetch(url)
@@ -26,7 +32,7 @@ export function fetchBlacklistUser(phone) {
         if (data.error) {
           return Promise.reject(data);
         } else {
-          dispatch(getBlacklist(data.data));
+          dispatch(getBlacklist(data));
         }
       })
       .catch(e => {

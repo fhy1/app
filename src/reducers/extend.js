@@ -6,9 +6,9 @@ const INITIAL_STATE = {
   list: {
     isFetching: false,
     error: null,
-    invite: [{userId: 0}],
-    user: [{userId: 0}],
   },
+  invite: [],
+  user: {totalNum: 0, totalMoney: 0},
 };
 
 // 通过dispatch action进入
@@ -18,7 +18,9 @@ export default function update(state = INITIAL_STATE, action) {
     case FETCH_EXTEND_INVITE:
       return Object.assign({}, state, {invite: action.json.data});
     case FETCH_EXTEND_USER:
-      return Object.assign({}, state, {user: action.json.data});
+      return Object.assign({}, state, {
+        user: action.json.data ? action.json.data : state.user,
+      });
     default:
       return state;
   } //invite

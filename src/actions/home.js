@@ -1,23 +1,14 @@
-import {
-  FETCH_HOME_REQUEST,
-  FETCH_HOME_SUCCESS,
-  FETCH_HOME_FAILURE,
-} from '../constants/home';
-// import * as backupAPI from '../api/backup';
+import * as homeAPI from '../api/home';
 
-export function fetchBackups(params) {
-  return dispatch => dispatch({
-    types: [
-      FETCH_HOME_REQUEST,
-      FETCH_HOME_SUCCESS,
-      FETCH_HOME_FAILURE,
-    ],
-    meta: {
-      refresh,
-    },
-    payload: {
-      params
-      // promise: backupAPI.fetchBackups(params),
-    },
-  });
+export function fetchHomeImg() {
+  return dispatch => dispatch(homeAPI.fetchHomeImg());
+}
+export function fetchHomeSignIn(userId) {
+  return dispatch => dispatch(homeAPI.fetchHomeSignIn(userId));
+}
+export function SignInHome(userId) {
+  return dispatch => dispatch(homeAPI.SignInHome(userId));
+}
+export function fetchHomeRecommend(pageNo, pageSize) {
+  return dispatch => dispatch(homeAPI.fetchHomeRecommend(pageNo, pageSize));
 }

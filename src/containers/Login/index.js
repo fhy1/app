@@ -86,7 +86,6 @@ class LoginScreen extends React.Component {
         showFlag: true,
       });
 
-      WToast.show(toastOpts);
       this.Time = setInterval(() => {
         this.setState(state => {
           if (state.clickTime === 0) {

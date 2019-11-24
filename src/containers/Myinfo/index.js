@@ -349,7 +349,7 @@ class MyInfoScreen extends React.Component {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('Setting');
                 }}>
@@ -374,7 +374,7 @@ class MyInfoScreen extends React.Component {
                     />
                   </View>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('Invite');

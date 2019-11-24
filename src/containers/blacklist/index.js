@@ -2,6 +2,7 @@ import React from 'react';
 import {View, StyleSheet, Text, FlatList} from 'react-native';
 import {connect} from 'react-redux';
 import {fetchBlacklistUser} from '../../actions/blacklist';
+import {clearBlacklist} from '../../api/blacklist';
 
 class blacklistScreen extends React.Component {
   static navigationOptions = {
@@ -24,18 +25,41 @@ class blacklistScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      labels: ['违规用户', '处罚方式', '恢复时间', '违规原因'],
+      labels: ['违规用户', '恢复时间', '违规原因'],
+      pageNo: 1,
+      pageSize: 15,
     };
   }
 
-  componentDidMount() {
-    const {login} = this.props;
-    this.props.fetchBlacklistUser(login.phone);
-  }
+  componentDidMount = () => {
+    const {pageNo, pageSize} = this.state;
+    this.props.fetchBlacklistUser(pageNo, pageSize);
+  };
+
+  componentWillUnmount = () => {
+    this.props.clearBlacklist();
+  };
+
+  fetchListNext = () => {
+    const {black} = this.props;
+    if (black.pageNum < black.pages) {
+      const {pageNo} = this.state;
+      this.setState(
+        {
+          pageNo: pageNo + 1,
+        },
+        () => {
+          const {pageNo, pageSize} = this.state;
+          this.props.fetchBlacklistUser(pageNo, pageSize);
+        },
+      );
+    }
+  };
 
   render() {
     const {labels} = this.state;
-
+    const {black, blacklist} = this.props;
+    console.log(('blacklistblacklist', blacklist));
     return (
       <View style={styles.blacklistView}>
         <View style={styles.blacklistTitleView}>
@@ -51,32 +75,58 @@ class blacklistScreen extends React.Component {
         </View>
         <FlatList
           style={styles.blacklistList}
-          data={[{title: '超级简单的任务'}, {title: '超级简单的任务'}]}
+          data={blacklist}
           ItemSeparatorComponent={() => (
             <View style={styles.blacklistListLine}>
               <View style={styles.blacklistListLinebg} />
             </View>
           )}
+          ListEmptyComponent={() => (
+            <View style={styles.blackListEmpty}>
+              <Text style={styles.blackListEmptyTxt}>暂无数据</Text>
+            </View>
+          )}
+          refreshing={false}
+          ListFooterComponent={() =>
+            blacklist.length > 0 ? (
+              <View style={styles.blackListEmpty}>
+                <Text style={styles.blackListEmptyTxt}>
+                  {black.pageNum == black.pages
+                    ? '没有更多了，亲'
+                    : '正在加载中，请稍等~'}
+                </Text>
+              </View>
+            ) : null
+          }
+          onEndReachedThreshold={0}
+          onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
             <View style={styles.blackList}>
               <View style={styles.blackListView}>
-                <Text style={styles.blackListTxt}>张三三三</Text>
+                <Text style={styles.blackListTxt}>
+                  {item.nickname
+                    ? item.nickname
+                    : `${item.phone.substring(0, 3)}****${item.phone.substring(
+                        item.phone.length - 4,
+                      )}`}
+                </Text>
               </View>
-              <View style={styles.blackListView}>
+              {/* <View style={styles.blackListView}>
                 <Text style={styles.blackListTxt}>永久禁言永久</Text>
-              </View>
+              </View> */}
               <View style={styles.blackListView}>
                 <Text style={styles.blackListTxt}>永久有效</Text>
               </View>
               <View style={styles.blackListView}>
                 <View style={styles.blackListViewBox}>
                   <Text style={styles.blackListViewBoxtxt}>
-                    恶意辱骂商家语 言不文明太不文 明了
+                    {item.reason || ''}
                   </Text>
                 </View>
               </View>
             </View>
           )}
+          keyExtractor={item => JSON.stringify(item.userId)}
         />
       </View>
     );
@@ -145,19 +195,31 @@ const styles = StyleSheet.create({
     lineHeight: 15,
     color: '#444444',
   },
+  blackListEmpty: {
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  blackListEmptyTxt: {
+    fontWeight: 'bold',
+    fontSize: 12,
+    color: '#444444',
+  },
 });
 
 function mapStateToProps(state) {
   return {
     login: state.login.login,
+    black: state.blacklist.black,
     blacklist: state.blacklist.blacklist,
-    user: state.extend.user,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchBlacklistUser: phone => dispatch(fetchBlacklistUser(phone)),
+    fetchBlacklistUser: (pageNo, pageSize) =>
+      dispatch(fetchBlacklistUser(pageNo, pageSize)),
+    clearBlacklist: () => dispatch(clearBlacklist()),
   };
 }
 

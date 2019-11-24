@@ -1,8 +1,8 @@
-import {handleActions} from 'redux-actions';
 import {
-  FETCH_HOME_REQUEST,
-  FETCH_HOME_SUCCESS,
-  FETCH_HOME_FAILURE,
+  FETCH_HOME_IMG,
+  FETCH_HOME_SIGNIN,
+  HOME_SIGNIN,
+  HOME_SIGNIN_RECOMMEND,
 } from '../constants/home';
 
 const INITIAL_STATE = {
@@ -10,39 +10,26 @@ const INITIAL_STATE = {
   list: {
     isFetching: false,
     error: null,
-    data: [],
   },
+  img: [],
+  recommendList: [],
+  signStatus: 0,
 };
 
-export default handleActions(
-  {
-    [FETCH_HOME_REQUEST]: (state, action) => ({
-      ...state,
-      list: {
-        ...state.list,
-        isFetching: !(action.meta && action.meta.refresh),
-      },
-    }),
-
-    [FETCH_HOME_SUCCESS]: (state, action) => ({
-      ...state,
-      list: {
-        ...state.list,
-        isFetching: false,
-        data: action.payload,
-        error: null,
-      },
-    }),
-
-    [FETCH_HOME_FAILURE]: (state, action) => ({
-      ...state,
-      list: {
-        ...state.list,
-        isFetching: false,
-        error: action.payload,
-        data: [],
-      },
-    }),
-  },
-  INITIAL_STATE,
-);
+// 通过dispatch action进入
+export default function update(state = INITIAL_STATE, action) {
+  // 根据不同的action type进行state的更新
+  switch (action.type) {
+    case FETCH_HOME_IMG:
+      return Object.assign({}, state, {img: action.json.data});
+    case FETCH_HOME_SIGNIN:
+      return Object.assign({}, state, {signStatus: action.json.data});
+    case HOME_SIGNIN:
+      return Object.assign({}, state, {signStatus: 1});
+    case HOME_SIGNIN_RECOMMEND:
+      console.log('List', action.json.data.list);
+      return Object.assign({}, state, {recommendList: action.json.data.list});
+    default:
+      return state;
+  } //invite
+}

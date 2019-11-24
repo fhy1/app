@@ -10,6 +10,7 @@ import {
 import FitImage from 'react-native-fit-image';
 import {connect} from 'react-redux';
 import {fetchExtendInvite, fetchExtendUser} from '../../actions/extend';
+import QRCode from 'react-native-qrcode-svg';
 
 class ExtendScreen extends React.Component {
   static navigationOptions = {
@@ -37,7 +38,7 @@ class ExtendScreen extends React.Component {
   };
 
   render() {
-    const {invite, user} = this.props;
+    const {invite, user, login} = this.props;
     console.log('exinvite', invite);
     console.log('exuser', user);
     const {width} = Dimensions.get('window');
@@ -77,7 +78,18 @@ class ExtendScreen extends React.Component {
                   width: (width / 375) * 110,
                   height: (width / 375) * 110,
                   backgroundColor: '#FFFFFF',
-                }}></View>
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <QRCode
+                  value={login.uid}
+                  logoBorderRadius={1}
+                  color={'#191919'}
+                  backgroundColor={'#ffffff'}
+                  logoSize={30}
+                  size={(width / 375) * 110 - 10}
+                />
+              </View>
             </View>
           </View>
           <View
@@ -92,9 +104,7 @@ class ExtendScreen extends React.Component {
                 source={require('../../assets/hb.png')}
               />
               <View style={styles.extendShareTitle}>
-                <Text style={styles.extendShareText}>
-                  点击二维码，生成专属推广页
-                </Text>
+                <Text style={styles.extendShareText}>分享好友，一起赚钱</Text>
               </View>
               <View style={styles.extendDashedLine}>{dashView}</View>
               <View style={styles.extendShareBody}>
@@ -171,7 +181,7 @@ class ExtendScreen extends React.Component {
                       fontWeight: 'bold',
                       fontSize: 18,
                     }}>
-                    50人
+                    {user.totalNum}人
                   </Text>
                 </View>
                 <View style={styles.extendShareBodyView}>
@@ -190,7 +200,7 @@ class ExtendScreen extends React.Component {
                       fontWeight: 'bold',
                       fontSize: 18,
                     }}>
-                    18元
+                    {user.totalMoney}元
                   </Text>
                 </View>
               </View>
@@ -217,57 +227,58 @@ class ExtendScreen extends React.Component {
                   <Text style={styles.extendRankTitleTxt}>获得奖励</Text>
                 </View>
               </View>
-              <View style={styles.extendRankList}>
-                <View style={styles.extendRank}>
-                  <Image
-                    style={styles.extendRank}
-                    source={require('../../assets/one.png')}
-                  />
-                </View>
-                <View style={styles.extendRankWidth}>
-                  <Text style={styles.extendRankTxt}>用户</Text>
-                </View>
-                <View style={styles.extendRankWidth}>
-                  <Text style={styles.extendRankTxt}>推广人数</Text>
-                </View>
-                <View style={styles.extendRankWidth}>
-                  <Text style={styles.extendRankTxt}>获得奖励</Text>
-                </View>
-              </View>
-              <View style={styles.extendRankList}>
-                <View style={styles.extendRank}>
-                  <Image
-                    style={styles.extendRank}
-                    source={require('../../assets/one.png')}
-                  />
-                </View>
-                <View style={styles.extendRankWidth}>
-                  <Text style={styles.extendRankTxt}>用户</Text>
-                </View>
-                <View style={styles.extendRankWidth}>
-                  <Text style={styles.extendRankTxt}>推广人数</Text>
-                </View>
-                <View style={styles.extendRankWidth}>
-                  <Text style={styles.extendRankTxt}>获得奖励</Text>
-                </View>
-              </View>
-              <View style={styles.extendRankList}>
-                <View style={styles.extendRank}>
-                  <Image
-                    style={styles.extendRank}
-                    source={require('../../assets/one.png')}
-                  />
-                </View>
-                <View style={styles.extendRankWidth}>
-                  <Text style={styles.extendRankTxt}>用户</Text>
-                </View>
-                <View style={styles.extendRankWidth}>
-                  <Text style={styles.extendRankTxt}>推广人数</Text>
-                </View>
-                <View style={styles.extendRankWidth}>
-                  <Text style={styles.extendRankTxt}>获得奖励</Text>
-                </View>
-              </View>
+              {invite.map((item, index) => {
+                let itemImg = '';
+                if (index == 0) {
+                  itemImg = (
+                    <Image
+                      style={styles.extendRank}
+                      source={require('../../assets/one.png')}
+                    />
+                  );
+                } else if (index == 1) {
+                  itemImg = (
+                    <Image
+                      style={styles.extendRank}
+                      source={require('../../assets/two.png')}
+                    />
+                  );
+                } else if (index == 2) {
+                  itemImg = (
+                    <Image
+                      style={styles.extendRank}
+                      source={require('../../assets/three.png')}
+                    />
+                  );
+                } else {
+                  itemImg = index++;
+                }
+                return (
+                  <View style={styles.extendRankList} key={index}>
+                    <View style={styles.extendRank}>{itemImg}</View>
+                    <View style={styles.extendRankWidth}>
+                      <Text style={styles.extendRankTxt}>
+                        {item.nickname
+                          ? item.nickname
+                          : `${item.phone.substring(
+                              0,
+                              3,
+                            )}****${item.phone.substring(
+                              item.phone.length - 4,
+                            )}`}
+                      </Text>
+                    </View>
+                    <View style={styles.extendRankWidth}>
+                      <Text style={styles.extendRankTxt}>{item.totalNum}</Text>
+                    </View>
+                    <View style={styles.extendRankWidth}>
+                      <Text style={styles.extendRankTxt}>
+                        {item.totalMoney}
+                      </Text>
+                    </View>
+                  </View>
+                );
+              })}
             </View>
           </View>
         </ScrollView>
@@ -305,6 +316,7 @@ const styles = StyleSheet.create({
   extendShare: {
     paddingLeft: 15,
     paddingRight: 15,
+    paddingBottom: 15,
   },
   extendShareView: {
     flex: 1,

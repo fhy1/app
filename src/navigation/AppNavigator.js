@@ -20,6 +20,7 @@ import TutorialDetailScreen from '../containers/tutorialDetail/index';
 import SettingScreen from '../containers/setting/index';
 import InviteScreen from '../containers/invite/index';
 import WithdrawScreen from '../containers/withdraw/index';
+import HallDetailScreen from '../containers/hallDetail/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -185,6 +186,17 @@ export default createAppContainer(
     },
     Withdraw: {
       screen: WithdrawScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    HallDetail: {
+      screen: HallDetailScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image

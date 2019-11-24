@@ -7,8 +7,10 @@ import {
   Image,
   FlatList,
 } from 'react-native';
+import {connect} from 'react-redux';
+import {fetchTaskCode, fetchTaskCodeNext} from '../../actions/task';
 
-class taskScreen extends React.Component {
+class TaskScreen extends React.Component {
   static navigationOptions = {
     title: '我的任务',
     headerStyle: {
@@ -29,43 +31,78 @@ class taskScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      labels: ['未审核', '已审核'],
-      labelStatus: 0,
+      labels: [
+        {title: '进行中', id: 1},
+        {title: '待审核', id: 3},
+        {title: '审核通过', id: 4},
+        {title: '审核拒绝', id: 5},
+      ],
+      labelStatus: 1,
+      pageNo: 1,
+      pageSize: 15,
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    const {pageNo, pageSize, labelStatus} = this.state;
+    const {login} = this.props;
+    this.props.fetchTaskCode(pageNo, pageSize, login.userId, labelStatus);
+  }
 
   onHandelPress = index => {
-    console.log(111);
+    const {pageNo, pageSize} = this.state;
+    const {login} = this.props;
     this.setState({
       labelStatus: index,
     });
+    this.props.fetchTaskCode(pageNo, pageSize, login.userId, index);
+  };
+
+  fetchListNext = () => {
+    const {task, login} = this.props;
+    if (task.pageNum < task.pages) {
+      const {pageNo} = this.state;
+      this.setState(
+        {
+          pageNo: pageNo + 1,
+        },
+        () => {
+          const {pageNo, pageSize, labelStatus} = this.state;
+          this.props.fetchTaskCodeNext(
+            pageNo,
+            pageSize,
+            login.userId,
+            labelStatus,
+          );
+        },
+      );
+    }
   };
 
   render() {
     const {labels, labelStatus} = this.state;
-
+    const {taskList, task} = this.props;
+    console.log('task', task);
     return (
       <View style={styles.taskView}>
         <View style={styles.taskTitleView}>
           <View style={styles.taskTitle}>
             {labels.map((item, index) => {
-              return index == labelStatus ? (
+              return item.id == labelStatus ? (
                 <View
                   style={[styles.taskTitleText, styles.taskTitleClick]}
-                  key={index}>
-                  <Text style={styles.taskTitleTextClick}>{item}</Text>
+                  key={item.id}>
+                  <Text style={styles.taskTitleTextClick}>{item.title}</Text>
                 </View>
               ) : (
                 <TouchableOpacity
                   style={styles.taskTitleTextTouch}
-                  onPress={this.onHandelPress.bind(this, index)}>
+                  onPress={this.onHandelPress.bind(this, item.id)}
+                  key={item.id}>
                   <View
                     style={styles.taskTitleText}
-                    onResponderGrant={this.onHandelPress}
-                    key={index}>
-                    <Text style={styles.taskTitleTextNormal}>{item}</Text>
+                    onResponderGrant={this.onHandelPress}>
+                    <Text style={styles.taskTitleTextNormal}>{item.title}</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -74,10 +111,34 @@ class taskScreen extends React.Component {
         </View>
         <FlatList
           style={styles.taskFlatList}
-          data={[{title: '超级简单的任务'}, {title: '超级简单的任务'}]}
+          data={taskList}
           ItemSeparatorComponent={() => (
             <View style={styles.taskFlatListLine}></View>
           )}
+          ListEmptyComponent={() => (
+            <View style={styles.taskFlatListEmpty}>
+              <Text style={styles.taskFlatListEmptyTxt}>暂无数据</Text>
+            </View>
+          )}
+          refreshing={false}
+          getItemLayout={(data, index) => ({
+            length: 68,
+            offset: 68 * index + 1,
+            index,
+          })}
+          ListFooterComponent={() =>
+            taskList.length > 0 ? (
+              <View style={styles.taskFlatListEmpty}>
+                <Text style={styles.taskFlatListEmptyTxt}>
+                  {task.pageNum == task.pages
+                    ? '没有更多了，亲'
+                    : '正在加载中，请稍等~'}
+                </Text>
+              </View>
+            ) : null
+          }
+          onEndReachedThreshold={0}
+          onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
             <TouchableOpacity
               key={index}
@@ -122,6 +183,7 @@ class taskScreen extends React.Component {
               </View>
             </TouchableOpacity>
           )}
+          keyExtractor={item => JSON.stringify(item.jobId)}
         />
       </View>
     );
@@ -242,6 +304,34 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#DDDDDD',
   },
+  taskFlatListEmpty: {
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  taskFlatListEmptyTxt: {
+    fontWeight: 'bold',
+    fontSize: 12,
+    color: '#444444',
+  },
 });
 
-export default taskScreen;
+function mapStateToProps(state) {
+  return {
+    taskList: state.task.taskList,
+    task: state.task.task,
+    login: state.login.login,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    fetchTaskCode: (pageNo, pageSize, userId, status) =>
+      dispatch(fetchTaskCode(pageNo, pageSize, userId, status)),
+    fetchTaskCodeNext: (pageNo, pageSize, userId, status) =>
+      dispatch(fetchTaskCodeNext(pageNo, pageSize, userId, status)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskScreen);
+// export default taskScreen;

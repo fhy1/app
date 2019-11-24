@@ -1,0 +1,2 @@
+export const FETCH_TASK_JOB = 'FETCH_TASK_JOB';
+export const FETCH_TASK_JOB_NEXT = 'FETCH_TASK_JOB_NEXT';

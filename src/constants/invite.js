@@ -1,0 +1,1 @@
+export const FETCH_INVITE_RULE = 'FETCH_INVITE_RULE';

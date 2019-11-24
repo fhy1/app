@@ -10,10 +10,18 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import Swiper from 'react-native-swiper';
+// import Swiper from 'react-native-swiper';
 import {loadStorage} from '../../utils/storage';
 import {getLogin} from '../../api/login';
 import {connect} from 'react-redux';
+import {
+  fetchHomeImg,
+  fetchHomeSignIn,
+  SignInHome,
+  fetchHomeRecommend,
+} from '../../actions/home';
+import {paramToQuery2} from '../../utils/fetch';
+import {WToast} from 'react-native-smart-tip';
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -21,6 +29,7 @@ class HomeScreen extends React.Component {
     this.state = {
       swiperHeight: 0,
       width: 0,
+      signFlag: true,
     };
   }
 
@@ -48,20 +57,59 @@ class HomeScreen extends React.Component {
       reason: null,
       sex: null,
       status: 0,
-      uid: '1856659',
+      // uid: '1856659',
+      uid: '39143550',
       upUID: null,
       userId: 7,
     };
     this.props.getLogin(data2);
+    this.props.fetchHomeImg();
+    this.props.fetchHomeSignIn(data2.userId);
+    this.props.fetchHomeRecommend(1, 10);
+    // userId;
   }
 
-  render() {
-    const {swiperHeight, width} = this.state;
+  handelOnClickSign = () => {
+    const {login} = this.props;
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    this.setState({
+      signFlag: false,
+    });
+    this.props.SignInHome(login.userId).then(
+      () => {
+        toastOpts.data = '签到成功';
+        WToast.show(toastOpts);
+      },
+      () => {
+        toastOpts.data = '签到失败';
+        WToast.show(toastOpts);
+        this.setState({
+          signFlag: true,
+        });
+      },
+    );
+  };
+
+  handelOnJumpToHall = index => {
     const {navigation} = this.props;
+    navigation.navigate('Hall', {
+      labelStatus: index,
+    });
+  };
+
+  render() {
+    const {swiperHeight, width, signFlag} = this.state;
+    const {navigation, img, signStatus, recommendList} = this.props;
     return (
       <View style={styles.homeView}>
         <ScrollView>
-          <Swiper
+          {/* <Swiper
             style={{width: width, height: swiperHeight}} //样式
             height={swiperHeight} //组件高度
             loop={true} //如果设置为false，那么滑动到最后一张时，再次滑动将不会滑到第一张图片。
@@ -101,24 +149,28 @@ class HomeScreen extends React.Component {
                 }}
               />
             }>
-            <Image
-              // @ts-ignore
-              source={require('../../assets/banner.png')}
-              style={styles.swiperImage}
-            />
-            <Image
-              source={require('../../assets/banner.png')}
-              style={styles.swiperImage}
-            />
-            <Image
-              source={require('../../assets/banner.png')}
-              style={styles.swiperImage}
-            />
-            <Image
-              source={require('../../assets/banner.png')}
-              style={styles.swiperImage}
-            />
-          </Swiper>
+            {img && img.length > 0 ? (
+              img.map(item => {
+                let url = paramToQuery2(item.img);
+                return (
+                  <Image
+                    key={item.imgId}
+                    source={{uri: url}}
+                    style={styles.swiperImage}
+                  />
+                );
+              })
+            ) : (
+              <Image
+                source={require('../../assets/banner.png')}
+                style={styles.swiperImage}
+              />
+            )}
+          </Swiper> */}
+          <Image
+            source={require('../../assets/banner.png')}
+            style={{width: width, height: swiperHeight}}
+          />
           <View style={styles.navView}>
             <View style={styles.navSearch}>
               <Image
@@ -132,20 +184,39 @@ class HomeScreen extends React.Component {
             </View>
             <View style={styles.navTitle}>
               <View style={styles.navTitleCard}>
-                <View style={styles.navTitleCardIcon}>
-                  <Image
-                    style={styles.navTitleCardImg}
-                    source={require('../../assets/newpeople.png')}
-                  />
-                  <Text>新人专区</Text>
-                </View>
-                <View style={styles.navTitleCardIcon}>
-                  <Image
-                    style={styles.navTitleCardImg}
-                    source={require('../../assets/sign.png')}
-                  />
-                  <Text>签到打卡</Text>
-                </View>
+                <TouchableOpacity
+                  style={styles.navTitleCardIcon}
+                  onPress={this.handelOnJumpToHall.bind(this, 1)}>
+                  <View style={styles.navTitleCardIcon}>
+                    <Image
+                      style={styles.navTitleCardImg}
+                      source={require('../../assets/newpeople.png')}
+                    />
+                    <Text>新人专区</Text>
+                  </View>
+                </TouchableOpacity>
+                {signFlag ? (
+                  <TouchableOpacity
+                    style={styles.navTitleCardIcon}
+                    onPress={this.handelOnClickSign}>
+                    <View style={styles.navTitleCardIcon}>
+                      <Image
+                        style={styles.navTitleCardImg}
+                        source={require('../../assets/sign.png')}
+                      />
+                      <Text>签到打卡</Text>
+                    </View>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.navTitleCardIcon}>
+                    <Image
+                      style={styles.navTitleCardImg}
+                      source={require('../../assets/service.png')}
+                    />
+                    <Text>签到打卡</Text>
+                  </View>
+                )}
+
                 <View style={styles.navTitleCardIcon}>
                   <Image
                     style={styles.navTitleCardImg}
@@ -155,50 +226,114 @@ class HomeScreen extends React.Component {
                 </View>
               </View>
               <View style={styles.navTitleCard}>
-                <View style={styles.navTitleCardIcon}>
-                  <Image
-                    style={styles.navTitleCardImg}
-                    source={require('../../assets/new.png')}
-                  />
-                  <Text>最新任务</Text>
-                </View>
-                <View style={styles.navTitleCardIcon}>
-                  <Image
-                    style={styles.navTitleCardImg}
-                    source={require('../../assets/easy.png')}
-                  />
-                  <Text>简单任务</Text>
-                </View>
-                <View style={styles.navTitleCardIcon}>
-                  <Image
-                    style={styles.navTitleCardImg}
-                    source={require('../../assets/highprice.png')}
-                  />
-                  <Text>高价悬赏</Text>
-                </View>
+                <TouchableOpacity
+                  style={styles.navTitleCardIcon}
+                  onPress={this.handelOnJumpToHall.bind(this, 4)}>
+                  <View style={styles.navTitleCardIcon}>
+                    <Image
+                      style={styles.navTitleCardImg}
+                      source={require('../../assets/new.png')}
+                    />
+                    <Text>最新任务</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.navTitleCardIcon}
+                  onPress={this.handelOnJumpToHall.bind(this, 2)}>
+                  <View style={styles.navTitleCardIcon}>
+                    <Image
+                      style={styles.navTitleCardImg}
+                      source={require('../../assets/easy.png')}
+                    />
+                    <Text>简单任务</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.navTitleCardIcon}
+                  onPress={this.handelOnJumpToHall.bind(this, 3)}>
+                  <View style={styles.navTitleCardIcon}>
+                    <Image
+                      style={styles.navTitleCardImg}
+                      source={require('../../assets/highprice.png')}
+                    />
+                    <Text>高价悬赏</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
             <View style={styles.bodyTitle}>
               <Text>推荐悬赏</Text>
             </View>
             <View style={styles.bodyList}>
-              <View style={styles.bodyListItem}></View>
-              <View style={styles.bodyListItem}></View>
-              <View style={styles.bodyListItem}></View>
-              <View style={styles.bodyListItem}></View>
-              <View style={styles.bodyListItem}></View>
-              <View style={styles.bodyListItem}></View>
-              <View style={styles.bodyListItem}></View>
-              <View style={styles.bodyListItem}></View>
-              <View style={styles.bodyListItem}></View>
-              <View style={styles.bodyListItem}></View>
-              <View style={styles.bodyListItemLast}></View>
+              {recommendList
+                ? recommendList.map((item, index) => {
+                    return (
+                      <TouchableOpacity
+                        key={item.jobId}
+                        // onPress={() => this._onPress(item)}
+                      >
+                        <View
+                          style={
+                            index != recommendList.length - 1
+                              ? styles.homeList
+                              : [styles.homeList, {borderBottomWidth: 0}]
+                          }>
+                          <View style={styles.homeListIcon}>
+                            {item.headimgurl ? (
+                              <Image
+                                style={styles.homeListIconImg}
+                                // @ts-ignore
+                                source={{uri: paramToQuery2(item.headimgurl)}}
+                              />
+                            ) : (
+                              <Image
+                                style={styles.homeListIconImg}
+                                // @ts-ignore
+                                source={require('../../assets/head.png')}
+                              />
+                            )}
+                          </View>
+                          <View style={styles.homeListBody}>
+                            <View>
+                              <Text style={styles.homeListBodyText}>
+                                {item.jobTitle}
+                              </Text>
+                            </View>
+                            <View style={styles.homeListBodyView}>
+                              <View style={styles.homeListBodybtn1}>
+                                <View style={styles.homeListBodybtn}>
+                                  <Text>{item.jobSource}</Text>
+                                </View>
+                              </View>
+                              <View style={styles.homeListBodybtn2}>
+                                <View style={styles.homeListBodybtn}>
+                                  <Text>{item.typeName}</Text>
+                                </View>
+                              </View>
+                            </View>
+                          </View>
+                          <View style={styles.homeListRight}>
+                            <View style={styles.homeListRightBody}>
+                              <View>
+                                <Text style={styles.homeListRightTop}>
+                                  赏{item.releasePrice}元
+                                </Text>
+                              </View>
+                              <View>
+                                <Text style={styles.homeListRightBottom}>
+                                  剩余{item.surplusNum}份
+                                </Text>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })
+                : null}
             </View>
             <View style={styles.bottomTiTle}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('Extend');
-                }}>
+              <TouchableOpacity onPress={this.handelOnJumpToHall.bind(this, 0)}>
                 <Text>-查看更多悬赏-</Text>
               </TouchableOpacity>
             </View>
@@ -255,6 +390,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
+  navTitleCardIconTab: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   navTitleCardIcon: {
     flex: 1,
     alignItems: 'center',
@@ -295,17 +435,92 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  homeList: {
+    height: 68,
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#DDDDDD',
+  },
+  homeListIcon: {
+    width: 36,
+    height: '100%',
+    alignItems: 'center',
+  },
+  homeListIconImg: {
+    width: 36,
+    height: 36,
+    marginTop: 16,
+  },
+  homeListBody: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 12,
+  },
+  homeListBodyView: {
+    flexDirection: 'row',
+    marginTop: 6,
+  },
+  homeListBodyText: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'bold',
+  },
+  homeListBodybtn1: {
+    width: 60,
+    height: 22,
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginRight: 10,
+  },
+  homeListBodybtn2: {
+    width: 72,
+    height: 22,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  homeListBodybtn: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFDB44',
+  },
+  homeListRight: {
+    width: 80,
+    height: '100%',
+  },
+  homeListRightBody: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  homeListRightTop: {
+    fontSize: 14,
+    color: '#FD3F3F',
+  },
+  homeListRightBottom: {
+    marginTop: 8,
+    fontSize: 12,
+    color: '#666666',
+  },
 });
 
 function mapStateToProps(state) {
   return {
-    // hall: state.hall,
+    img: state.home.img,
+    signStatus: state.home.signStatus,
+    login: state.login.login,
+    recommendList: state.home.recommendList,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     getLogin: data => dispatch(getLogin(data)),
+    fetchHomeImg: () => dispatch(fetchHomeImg()),
+    fetchHomeSignIn: userId => dispatch(fetchHomeSignIn(userId)),
+    SignInHome: userId => dispatch(SignInHome(userId)),
+    fetchHomeRecommend: (pageNo, pageSize) =>
+      dispatch(fetchHomeRecommend(pageNo, pageSize)),
   };
 }
 
