@@ -1,8 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, Text, FlatList} from 'react-native';
 import {connect} from 'react-redux';
-import {fetchBlacklistUser} from '../../actions/blacklist';
-import {clearBlacklist} from '../../api/blacklist';
+import {fetchBlacklistUser} from '../../api/blacklist';
 
 class blacklistScreen extends React.Component {
   static navigationOptions = {
@@ -28,16 +27,19 @@ class blacklistScreen extends React.Component {
       labels: ['违规用户', '恢复时间', '违规原因'],
       pageNo: 1,
       pageSize: 15,
+      blacklist: [],
+      black: {},
     };
   }
 
   componentDidMount = () => {
     const {pageNo, pageSize} = this.state;
-    this.props.fetchBlacklistUser(pageNo, pageSize);
-  };
-
-  componentWillUnmount = () => {
-    this.props.clearBlacklist();
+    fetchBlacklistUser(pageNo, pageSize).then(black => {
+      this.setState({
+        black: black.data,
+        blacklist: black.data.list,
+      });
+    });
   };
 
   fetchListNext = () => {
@@ -49,16 +51,20 @@ class blacklistScreen extends React.Component {
           pageNo: pageNo + 1,
         },
         () => {
-          const {pageNo, pageSize} = this.state;
-          this.props.fetchBlacklistUser(pageNo, pageSize);
+          const {pageNo, pageSize, blacklist} = this.state;
+          fetchBlacklistUser(pageNo, pageSize).then(black => {
+            this.setState({
+              black: black.data,
+              blacklist: blacklist.concat(black.data.list),
+            });
+          });
         },
       );
     }
   };
 
   render() {
-    const {labels} = this.state;
-    const {black, blacklist} = this.props;
+    const {labels, black, blacklist} = this.state;
     console.log(('blacklistblacklist', blacklist));
     return (
       <View style={styles.blacklistView}>
@@ -216,11 +222,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    fetchBlacklistUser: (pageNo, pageSize) =>
-      dispatch(fetchBlacklistUser(pageNo, pageSize)),
-    clearBlacklist: () => dispatch(clearBlacklist()),
-  };
+  return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(blacklistScreen);

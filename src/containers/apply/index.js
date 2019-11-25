@@ -10,6 +10,7 @@ import {
   FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
+import {fetchAudit} from '../../api/apply';
 
 class ApplyScreen extends React.Component {
   static navigationOptions = {
@@ -34,9 +35,18 @@ class ApplyScreen extends React.Component {
     this.state = {
       labels: ['未审核', '已审核'],
       labelStatus: 0,
+      applyList: [],
     };
   }
-  componentDidMount = () => {};
+  componentDidMount = async () => {
+    try {
+      const data = await fetchAudit();
+      console.log(data);
+      this.setState({
+        applyList: data.data,
+      });
+    } catch (error) {}
+  };
 
   onHandelPress = index => {
     this.setState({
@@ -45,7 +55,8 @@ class ApplyScreen extends React.Component {
   };
   onFinish = () => {};
   render() {
-    const {labels, labelStatus} = this.state;
+    const {labels, labelStatus, applyList} = this.state;
+    const {login} = this.props;
     return (
       <View style={styles.applyView}>
         <View style={styles.applyTitleView}>
@@ -60,11 +71,11 @@ class ApplyScreen extends React.Component {
               ) : (
                 <TouchableOpacity
                   style={styles.applyTitleTextTouch}
-                  onPress={this.onHandelPress.bind(this, index)}>
+                  onPress={this.onHandelPress.bind(this, index)}
+                  key={index}>
                   <View
                     style={styles.applyTitleText}
-                    onResponderGrant={this.onHandelPress}
-                    key={index}>
+                    onResponderGrant={this.onHandelPress}>
                     <Text style={styles.applyTitleTextNormal}>{item}</Text>
                   </View>
                 </TouchableOpacity>
@@ -72,13 +83,10 @@ class ApplyScreen extends React.Component {
             })}
           </View>
         </View>
-
+        <Text>{login.userId}</Text>
         <FlatList
           style={styles.releaseFlatList}
-          data={[
-            {title: '超级简单的任务', id: '1'},
-            {title: '超级简单的任务', id: '2'},
-          ]}
+          data={applyList}
           ItemSeparatorComponent={() => (
             <View style={styles.releaseFlatListLine} />
           )}
@@ -112,7 +120,7 @@ class ApplyScreen extends React.Component {
               </View>
             </View>
           )}
-          keyExtractor={item => item.id}
+          keyExtractor={(item, index) => JSON.stringify(index)}
         />
       </View>
     );
@@ -217,7 +225,9 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  return {};
+  return {
+    login: state.login.login,
+  };
 }
 
 function mapDispatchToProps(dispatch) {

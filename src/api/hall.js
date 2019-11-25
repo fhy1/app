@@ -55,20 +55,23 @@ export function fetchHalljob(pageNo, pageSize, labelStatus, typeId) {
     `${JOB}?pageNo=${pageNo}&pageSize=${pageSize}&label=${labelStatus}&typeId=${typeId}`,
   );
   console.log(url);
-  return dispatch => {
-    return fetch(url)
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        console.log('job', data.status);
-        console.log('jobList', data);
-        dispatch(getHallJob(data));
-      })
-      .catch(e => {
-        console.log(e.message);
-      });
-  };
+  return fetch(url)
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      console.log('job', data.status);
+      console.log('jobList', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
+    })
+    .catch(e => {
+      console.log(e.message);
+      return Promise.reject(e.message);
+    });
 }
 export function fetchHalljobNext(pageNo, pageSize, labelStatus, typeId) {
   const url = paramToQuery(
@@ -82,28 +85,36 @@ export function fetchHalljobNext(pageNo, pageSize, labelStatus, typeId) {
       })
       .then(data => {
         console.log('jobNext', data);
-        dispatch(getHallTypeNext(data));
+        if (data.error) {
+          return Promise.reject(data);
+        } else {
+          return data;
+        }
       })
       .catch(e => {
         console.log(e.message);
+        return Promise.reject(e.message);
       });
   };
 }
 export function fetchHallType() {
   const url = paramToQuery(`${TYPE}`);
-  return dispatch => {
-    return fetch(url)
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        console.log('type', data.status);
-        dispatch(getHallType(data));
-      })
-      .catch(e => {
-        console.log(e.message);
-      });
-  };
+  return fetch(url)
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      console.log('type', data.status);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
+    })
+    .catch(e => {
+      console.log(e.message);
+      return Promise.reject(e.message);
+    });
 }
 export function fetchHallDetail(jobId, userId) {
   const url = paramToQuery(`${DETAIL}?jobId=${jobId}&userId=${userId}`);

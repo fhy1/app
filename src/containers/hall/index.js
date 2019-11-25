@@ -10,12 +10,12 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {
-  fetchHalljob,
-  fetchHallType,
-  fetchHalljobNext,
-} from '../../actions/hall';
-import {clearList} from '../../api/hall';
+// import {
+//   fetchHalljob,
+//   fetchHallType,
+//   fetchHalljobNext,
+// } from '../../actions/hall';
+import {fetchHalljob, fetchHallType, fetchHalljobNext} from '../../api/hall';
 
 class HallScreen extends React.Component {
   static navigationOptions = ({navigation}) => {
@@ -110,30 +110,38 @@ class HallScreen extends React.Component {
       typeName: '全部任务',
       pageNo: 1,
       pageSize: 15,
+      hallType: [],
+      jobList: [],
+      job: {},
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     const {isChoose, typeName, pageNo, pageSize, typeId} = this.state;
     let labelStatus = 0;
     if (this.props.navigation.state.params) {
-      labelStatus = this.props.navigation.state.params.labelStatus;
+      labelStatus = this.props.navigation.state.params.labelStatus
+        ? this.props.navigation.state.params.labelStatus
+        : 0;
     }
-    console.log(labelStatus);
     this.props.navigation.setParams({goToclick: this.goToclick});
     this.props.navigation.setParams({changeChoose: this.changeChoose});
     this.props.navigation.setParams({isChoose: isChoose});
     this.props.navigation.setParams({typeName: typeName});
-    this.props.fetchHallType();
+    const [type, job] = await Promise.all([
+      fetchHallType(),
+      fetchHalljob(pageNo, pageSize, labelStatus, typeId),
+    ]);
     this.setState({
       labelStatus: labelStatus,
+      hallType: type.data,
+      job: job.data,
+      jobList: job.data.list,
     });
-    this.props.fetchHalljob(pageNo, pageSize, labelStatus, typeId);
   };
 
   componentWillUnmount = () => {
-    console.log('xxxxx');
-    this.props.clearList();
+    // this.props.clearList();
   };
 
   changeChoose = () => {
@@ -153,9 +161,14 @@ class HallScreen extends React.Component {
       isChoose: false,
       typeName: typeName,
       pageNo: 1,
-      pageSize: 10,
+      pageSize: 15,
     });
-    this.props.fetchHalljob(1, 10, labelStatus, typeId);
+    fetchHalljob(1, 15, labelStatus, typeId).then(job => {
+      this.setState({
+        job: job.data,
+        jobList: job.data.list,
+      });
+    });
   };
 
   goToclick = () => {
@@ -168,22 +181,35 @@ class HallScreen extends React.Component {
     this.setState({
       labelStatus: index,
       pageNo: 1,
-      pageSize: 10,
+      pageSize: 15,
     });
-    this.props.fetchHalljob(1, 10, index, typeId);
+    fetchHalljob(1, 15, index, typeId).then(job => {
+      this.setState({
+        job: job.data,
+        jobList: job.data.list,
+      });
+    });
   };
 
   fetchListNext = () => {
-    const {job} = this.props;
+    const {job} = this.state;
+    console.log(111);
+    console.log(job);
     if (job.pageNum < job.pages) {
+      console.log(111);
       const {pageNo} = this.state;
       this.setState(
         {
           pageNo: pageNo + 1,
         },
         () => {
-          const {pageNo, pageSize, labelStatus, typeId} = this.state;
-          this.props.fetchHalljobNext(pageNo, pageSize, labelStatus, typeId);
+          const {pageNo, pageSize, labelStatus, typeId, jobList} = this.state;
+          fetchHalljob(pageNo, pageSize, labelStatus, typeId).then(job => {
+            this.setState({
+              job: job.data,
+              jobList: jobList.concat(job.data.list),
+            });
+          });
         },
       );
     }
@@ -197,11 +223,16 @@ class HallScreen extends React.Component {
   };
 
   render() {
-    const {hallType, jobList, job} = this.props;
     const {width, height} = Dimensions.get('window');
-    const {labels, labelStatus, isChoose, typeId} = this.state;
-    console.log('jobList:', jobList);
-    console.log('job:', job);
+    const {
+      labels,
+      labelStatus,
+      isChoose,
+      typeId,
+      hallType,
+      jobList,
+      job,
+    } = this.state;
     return (
       <View style={styles.hallView}>
         <View style={styles.hallTitleView}>
@@ -546,12 +577,12 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchHalljob: (pageNo, pageSize, labelStatus, typeId) =>
-      dispatch(fetchHalljob(pageNo, pageSize, labelStatus, typeId)),
-    fetchHallType: () => dispatch(fetchHallType()),
-    fetchHalljobNext: (pageNo, pageSize, labelStatus, typeId) =>
-      dispatch(fetchHalljobNext(pageNo, pageSize, labelStatus, typeId)),
-    clearList: () => dispatch(clearList()),
+    // fetchHalljob: (pageNo, pageSize, labelStatus, typeId) =>
+    //   dispatch(fetchHalljob(pageNo, pageSize, labelStatus, typeId)),
+    // fetchHallType: () => dispatch(fetchHallType()),
+    // fetchHalljobNext: (pageNo, pageSize, labelStatus, typeId) =>
+    //   dispatch(fetchHalljobNext(pageNo, pageSize, labelStatus, typeId)),
+    // clearList: () => dispatch(clearList()),
   };
 }
 

@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import FitImage from 'react-native-fit-image';
 import {connect} from 'react-redux';
-import {fetchExtendInvite, fetchExtendUser} from '../../actions/extend';
+// import { fetchExtendInvite, fetchExtendUser } from '../../actions/extend';
+import {fetchExtendInvite, fetchExtendUser} from '../../api/extend';
 import QRCode from 'react-native-qrcode-svg';
 
 class ExtendScreen extends React.Component {
@@ -30,17 +31,32 @@ class ExtendScreen extends React.Component {
     headerRight: <View />,
   };
 
-  componentDidMount = () => {
+  constructor(props) {
+    super(props);
+    this.state = {
+      invite: [],
+      user: {},
+    };
+  }
+
+  componentDidMount = async () => {
     let {login} = this.props;
     console.log(login);
-    this.props.fetchExtendInvite();
-    this.props.fetchExtendUser(login.userId);
+    const [invite, user] = await Promise.all([
+      fetchExtendInvite(),
+      fetchExtendUser(login.userId),
+    ]);
+    this.setState({
+      invite: invite.data ? invite.data : [],
+      user: user.data ? user.data : {},
+    });
+    // this.props.fetchExtendInvite();
+    // this.props.fetchExtendUser(login.userId);
   };
 
   render() {
-    const {invite, user, login} = this.props;
-    console.log('exinvite', invite);
-    console.log('exuser', user);
+    const {login} = this.props;
+    const {invite, user} = this.state;
     const {width} = Dimensions.get('window');
     const newwidth = (width - 420) / 2;
     const navImageHeight = (width / 748) * 433;
@@ -48,7 +64,6 @@ class ExtendScreen extends React.Component {
     for (let i = 0; i < 70; i++) {
       dashView.push(<View key={i} style={styles.extendDashed} />);
     }
-    console.log(invite);
     return (
       <View style={styles.extendView}>
         <ScrollView>
@@ -60,7 +75,7 @@ class ExtendScreen extends React.Component {
               resizeMode="contain"
             />
           </View>
-          <View style={{width: width, height: navImageHeight}}>
+          <View style={{width: width, height: navImageHeight, marginTop: -10}}>
             <FitImage
               // @ts-ignore
               source={require('../../assets/person.png')}
@@ -181,7 +196,7 @@ class ExtendScreen extends React.Component {
                       fontWeight: 'bold',
                       fontSize: 18,
                     }}>
-                    {user.totalNum}人
+                    {user.totalNum || 0} 人
                   </Text>
                 </View>
                 <View style={styles.extendShareBodyView}>
@@ -200,7 +215,7 @@ class ExtendScreen extends React.Component {
                       fontWeight: 'bold',
                       fontSize: 18,
                     }}>
-                    {user.totalMoney}元
+                    {user.totalMoney || 0} 元
                   </Text>
                 </View>
               </View>
@@ -253,6 +268,7 @@ class ExtendScreen extends React.Component {
                 } else {
                   itemImg = index++;
                 }
+
                 return (
                   <View style={styles.extendRankList} key={index}>
                     <View style={styles.extendRank}>{itemImg}</View>
@@ -260,12 +276,14 @@ class ExtendScreen extends React.Component {
                       <Text style={styles.extendRankTxt}>
                         {item.nickname
                           ? item.nickname
-                          : `${item.phone.substring(
+                          : item.phone
+                          ? `${item.phone.substring(
                               0,
                               3,
                             )}****${item.phone.substring(
                               item.phone.length - 4,
-                            )}`}
+                            )}`
+                          : '-'}
                       </Text>
                     </View>
                     <View style={styles.extendRankWidth}>
@@ -433,16 +451,16 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
   return {
-    invite: state.extend.invite,
-    user: state.extend.user,
+    // invite: state.extend.invite,
+    // user: state.extend.user,
     login: state.login.login,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchExtendInvite: () => dispatch(fetchExtendInvite()),
-    fetchExtendUser: userId => dispatch(fetchExtendUser(userId)),
+    // fetchExtendInvite: () => dispatch(fetchExtendInvite()),
+    // fetchExtendUser: userId => dispatch(fetchExtendUser(userId)),
   };
 }
 

@@ -8,7 +8,7 @@ import {
   FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {fetchTaskCode, fetchTaskCodeNext} from '../../actions/task';
+import {fetchTaskCode} from '../../api/task';
 
 class TaskScreen extends React.Component {
   static navigationOptions = {
@@ -40,14 +40,26 @@ class TaskScreen extends React.Component {
       labelStatus: 1,
       pageNo: 1,
       pageSize: 15,
+      taskList: [],
+      task: {},
     };
   }
 
-  componentDidMount() {
+  componentDidMount = async () => {
     const {pageNo, pageSize, labelStatus} = this.state;
     const {login} = this.props;
-    this.props.fetchTaskCode(pageNo, pageSize, login.userId, labelStatus);
-  }
+    const task = await fetchTaskCode(
+      pageNo,
+      pageSize,
+      login.userId,
+      labelStatus,
+    );
+    console.log(task);
+    this.setState({
+      task: task.data,
+      taskList: task.data.list,
+    });
+  };
 
   onHandelPress = index => {
     const {pageNo, pageSize} = this.state;
@@ -55,7 +67,12 @@ class TaskScreen extends React.Component {
     this.setState({
       labelStatus: index,
     });
-    this.props.fetchTaskCode(pageNo, pageSize, login.userId, index);
+    fetchTaskCode(pageNo, pageSize, login.userId, index).then(task => {
+      this.setState({
+        task: task.data,
+        taskList: task.data.list,
+      });
+    });
   };
 
   fetchListNext = () => {
@@ -67,12 +84,14 @@ class TaskScreen extends React.Component {
           pageNo: pageNo + 1,
         },
         () => {
-          const {pageNo, pageSize, labelStatus} = this.state;
-          this.props.fetchTaskCodeNext(
-            pageNo,
-            pageSize,
-            login.userId,
-            labelStatus,
+          const {pageNo, pageSize, labelStatus, taskList} = this.state;
+          fetchTaskCode(pageNo, pageSize, login.userId, labelStatus).then(
+            task => {
+              this.setState({
+                task: task.data,
+                taskList: taskList.concat(task.data.list),
+              });
+            },
           );
         },
       );
@@ -80,8 +99,7 @@ class TaskScreen extends React.Component {
   };
 
   render() {
-    const {labels, labelStatus} = this.state;
-    const {taskList, task} = this.props;
+    const {labels, labelStatus, taskList, task} = this.state;
     console.log('task', task);
     return (
       <View style={styles.taskView}>
@@ -325,12 +343,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    fetchTaskCode: (pageNo, pageSize, userId, status) =>
-      dispatch(fetchTaskCode(pageNo, pageSize, userId, status)),
-    fetchTaskCodeNext: (pageNo, pageSize, userId, status) =>
-      dispatch(fetchTaskCodeNext(pageNo, pageSize, userId, status)),
-  };
+  return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TaskScreen);

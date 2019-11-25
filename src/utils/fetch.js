@@ -1,6 +1,9 @@
 // const apiUrl = 'http://111.231.50.113:9099/';
-const apiUrl = 'http://192.168.1.8:9099/';
-const apiUrl2 = 'http://192.168.1.8:9099';
+// const apiUrl2 = 'http://111.231.50.113:9099';
+// const apiUrl = 'http://192.168.1.8:9099/';
+// const apiUrl2 = 'http://192.168.1.8:9099';
+const apiUrl = 'http://212.64.70.14:9099/';
+const apiUrl2 = 'http://212.64.70.14:9099';
 
 export function parseJSON(response) {
   console.log('hehe:', response);

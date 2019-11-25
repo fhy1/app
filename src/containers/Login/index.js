@@ -9,7 +9,6 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import Swiper from 'react-native-swiper';
 import {WToast} from 'react-native-smart-tip';
 import {
   fetchUserCode,
@@ -174,56 +173,15 @@ class LoginScreen extends React.Component {
       <View style={styles.loginView}>
         <ScrollView>
           <View>
-            <Swiper
+            <Image
+              // @ts-ignore
+              source={require('../../assets/login_bg.png')}
               style={{
                 width: topWidth,
                 height: topHeight,
                 marginTop: -1,
-              }} //样式
-              height={topHeight} //组件高度
-              loop={false} //如果设置为false，那么滑动到最后一张时，再次滑动将不会滑到第一张图片。
-              autoplay={false} //自动轮播
-              autoplayTimeout={4} //每隔4秒切换
-              horizontal={false} //水平方向，为false可设置为竖直方向
-              paginationStyle={{bottom: 20}} //小圆点的位置：距离底部10px
-              showsButtons={false} //为false时不显示控制按钮
-              showsPagination={false} //为false不显示下方圆点
-              dot={
-                <View
-                  style={{
-                    //未选中的圆点样式
-                    backgroundColor: 'rgba(0,0,0,.2)',
-                    width: 8,
-                    height: 8,
-                    borderRadius: 4,
-                    marginLeft: 10,
-                    marginRight: 9,
-                    marginTop: 9,
-                    marginBottom: 9,
-                  }}
-                />
-              }
-              activeDot={
-                <View
-                  style={{
-                    //选中的圆点样式
-                    backgroundColor: '#000000',
-                    width: 8,
-                    height: 8,
-                    borderRadius: 4,
-                    marginLeft: 10,
-                    marginRight: 9,
-                    marginTop: 9,
-                    marginBottom: 9,
-                  }}
-                />
-              }>
-              <Image
-                // @ts-ignore
-                source={require('../../assets/login_bg.png')}
-                style={styles.swiperImage}
-              />
-            </Swiper>
+              }}
+            />
             <View
               style={[
                 styles.loginHead,
@@ -303,10 +261,6 @@ const styles = StyleSheet.create({
     left: 0,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  swiperImage: {
-    width: '100%',
-    height: '100%',
   },
   loginTitle: {
     alignItems: 'center',

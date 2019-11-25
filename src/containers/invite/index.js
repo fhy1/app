@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import QRCode from 'react-native-qrcode-svg';
-import {fetchInviteRule} from '../../actions/invite';
+import {fetchInviteRule} from '../../api/invite';
 
 class InviteScreen extends React.Component {
   static navigationOptions = {
@@ -29,13 +29,23 @@ class InviteScreen extends React.Component {
     headerRight: <View />,
   };
 
-  componentDidMount = () => {
-    this.props.fetchInviteRule();
+  constructor(props) {
+    super(props);
+    this.state = {
+      inviteRule: [],
+    };
+  }
+
+  componentDidMount = async () => {
+    const inviteRule = await fetchInviteRule();
+    this.setState({
+      inviteRule: inviteRule.data,
+    });
   };
 
   render() {
-    const {login, inviteRule} = this.props;
-    console.log('inviteRule', inviteRule);
+    const {login} = this.props;
+    const {inviteRule} = this.state;
     let dashView = [];
     for (let i = 0; i < 70; i++) {
       dashView.push(<View key={i} style={styles.inviteDashed} />);
@@ -150,9 +160,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    fetchInviteRule: () => dispatch(fetchInviteRule()),
-  };
+  return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(InviteScreen);

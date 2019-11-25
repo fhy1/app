@@ -10,16 +10,22 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-// import Swiper from 'react-native-swiper';
-import {loadStorage} from '../../utils/storage';
+import Swiper from 'react-native-swiper';
+// import {loadStorage} from '../../utils/storage';
 import {getLogin} from '../../api/login';
 import {connect} from 'react-redux';
+// import {
+//   fetchHomeImg,
+//   fetchHomeSignIn,
+//   SignInHome,
+//   fetchHomeRecommend,
+// } from '../../actions/home';
 import {
   fetchHomeImg,
   fetchHomeSignIn,
   SignInHome,
   fetchHomeRecommend,
-} from '../../actions/home';
+} from '../../api/home';
 import {paramToQuery2} from '../../utils/fetch';
 import {WToast} from 'react-native-smart-tip';
 
@@ -30,6 +36,9 @@ class HomeScreen extends React.Component {
       swiperHeight: 0,
       width: 0,
       signFlag: true,
+      recommendList: [],
+      recommend: {},
+      homeImgs: [],
     };
   }
 
@@ -39,8 +48,8 @@ class HomeScreen extends React.Component {
       swiperHeight: (180 * width) / 350,
       width: width,
     });
-    const data = await loadStorage('userNews');
-    console.log('持久化', data);
+    // const data = await loadStorage('userNews');
+    // console.log('持久化', data);
     // if (data !== 'err') {
     // }
     const data2 = {
@@ -63,10 +72,18 @@ class HomeScreen extends React.Component {
       userId: 7,
     };
     this.props.getLogin(data2);
-    this.props.fetchHomeImg();
-    this.props.fetchHomeSignIn(data2.userId);
-    this.props.fetchHomeRecommend(1, 10);
-    // userId;
+    // this.props.fetchHomeImg();
+    const [homeImgs, signStatus, recommend] = await Promise.all([
+      fetchHomeImg(),
+      fetchHomeSignIn(data2.userId),
+      fetchHomeRecommend(1, 10),
+    ]);
+    this.setState({
+      homeImgs: homeImgs.data,
+      signFlag: signStatus.data == 2 ? true : false,
+      recommend: recommend.data,
+      recommendList: recommend.data.list,
+    });
   }
 
   handelOnClickSign = () => {
@@ -81,7 +98,7 @@ class HomeScreen extends React.Component {
     this.setState({
       signFlag: false,
     });
-    this.props.SignInHome(login.userId).then(
+    SignInHome(login.userId).then(
       () => {
         toastOpts.data = '签到成功';
         WToast.show(toastOpts);
@@ -104,12 +121,12 @@ class HomeScreen extends React.Component {
   };
 
   render() {
-    const {swiperHeight, width, signFlag} = this.state;
-    const {navigation, img, signStatus, recommendList} = this.props;
+    const {swiperHeight, width, signFlag, recommendList, homeImgs} = this.state;
+    const {navigation} = this.props;
     return (
       <View style={styles.homeView}>
         <ScrollView>
-          {/* <Swiper
+          <Swiper
             style={{width: width, height: swiperHeight}} //样式
             height={swiperHeight} //组件高度
             loop={true} //如果设置为false，那么滑动到最后一张时，再次滑动将不会滑到第一张图片。
@@ -149,8 +166,8 @@ class HomeScreen extends React.Component {
                 }}
               />
             }>
-            {img && img.length > 0 ? (
-              img.map(item => {
+            {homeImgs && homeImgs.length > 0 ? (
+              homeImgs.map(item => {
                 let url = paramToQuery2(item.img);
                 return (
                   <Image
@@ -165,12 +182,21 @@ class HomeScreen extends React.Component {
                 source={require('../../assets/banner.png')}
                 style={styles.swiperImage}
               />
-            )}
-          </Swiper> */}
-          <Image
+            )
+            /* <Image
+              source={require('../../assets/banner.png')}
+              style={styles.swiperImage}
+            />
+            <Image
+              source={require('../../assets/banner.png')}
+              style={styles.swiperImage}
+            /> */
+            }
+          </Swiper>
+          {/* <Image
             source={require('../../assets/banner.png')}
             style={{width: width, height: swiperHeight}}
-          />
+          /> */}
           <View style={styles.navView}>
             <View style={styles.navSearch}>
               <Image
@@ -211,7 +237,7 @@ class HomeScreen extends React.Component {
                   <View style={styles.navTitleCardIcon}>
                     <Image
                       style={styles.navTitleCardImg}
-                      source={require('../../assets/service.png')}
+                      source={require('../../assets/dissign.png')}
                     />
                     <Text>签到打卡</Text>
                   </View>
@@ -516,11 +542,11 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     getLogin: data => dispatch(getLogin(data)),
-    fetchHomeImg: () => dispatch(fetchHomeImg()),
-    fetchHomeSignIn: userId => dispatch(fetchHomeSignIn(userId)),
-    SignInHome: userId => dispatch(SignInHome(userId)),
-    fetchHomeRecommend: (pageNo, pageSize) =>
-      dispatch(fetchHomeRecommend(pageNo, pageSize)),
+    // fetchHomeImg: () => dispatch(fetchHomeImg()),
+    // fetchHomeSignIn: userId => dispatch(fetchHomeSignIn(userId)),
+    // SignInHome: userId => dispatch(SignInHome(userId)),
+    // fetchHomeRecommend: (pageNo, pageSize) =>
+    //   dispatch(fetchHomeRecommend(pageNo, pageSize)),
   };
 }
 
