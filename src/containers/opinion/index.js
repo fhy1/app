@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {WToast} from 'react-native-smart-tip';
 import {connect} from 'react-redux';
-import {clearOption, addOneOptions, fetchOptionAll} from '../../actions/option';
+import {addOneOptions, fetchOptionAll} from '../../api/option';
 
 class OpinionScreen extends React.Component {
   static navigationOptions = {
@@ -36,16 +36,20 @@ class OpinionScreen extends React.Component {
       ques: '',
       pageNo: 1,
       pageSize: 15,
+      option: {},
+      optionList: [],
     };
   }
 
   componentDidMount = () => {
     const {pageNo, pageSize} = this.state;
-    this.props.fetchOptionAll(pageNo, pageSize);
-  };
-
-  componentWillUnmount = () => {
-    this.props.clearOption();
+    fetchOptionAll(pageNo, pageSize).then(option => {
+      console.log(option);
+      this.setState({
+        option: option.data,
+        optionList: option.data.list,
+      });
+    });
   };
 
   addOpinion = () => {
@@ -122,9 +126,8 @@ class OpinionScreen extends React.Component {
   };
 
   render() {
-    const {modal, ques} = this.state;
+    const {modal, ques, option, optionList} = this.state;
     const {width, height} = Dimensions.get('window');
-    const {option, optionList} = this.props;
     return (
       <View style={styles.opinionView}>
         <View style={styles.opinionAddBtn}>
@@ -319,11 +322,11 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchOptionAll: (pageNo, pageSize) =>
-      dispatch(fetchOptionAll(pageNo, pageSize)),
-    addOneOptions: (userId, opinion) =>
-      dispatch(addOneOptions(userId, opinion)),
-    clearOption: () => dispatch(clearOption()),
+    // fetchOptionAll: (pageNo, pageSize) =>
+    //   dispatch(fetchOptionAll(pageNo, pageSize)),
+    // addOneOptions: (userId, opinion) =>
+    //   dispatch(addOneOptions(userId, opinion)),
+    // clearOption: () => dispatch(clearOption()),
   };
 }
 

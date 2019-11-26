@@ -33,88 +33,131 @@ class ApplyScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      labels: ['未审核', '已审核'],
-      labelStatus: 0,
+      labels: [
+        {title: '待审核', id: 2},
+        {title: '审核通过', id: 3},
+        {title: '审核拒绝', id: 4},
+      ],
+      labelStatus: 2,
+      apply: {},
       applyList: [],
+      pageNo: 1,
+      pageSize: 15,
     };
   }
   componentDidMount = async () => {
     try {
-      const data = await fetchAudit();
-      console.log(data);
+      const {login} = this.props;
+      const {pageNo, pageSize, labelStatus} = this.state;
+      const data = await fetchRelease(
+        pageNo,
+        pageSize,
+        labelStatus,
+        login.userId,
+      );
       this.setState({
-        applyList: data.data,
+        applyList: data.data.list,
       });
     } catch (error) {}
   };
 
-  onHandelPress = index => {
+  onHandelPress = async index => {
     this.setState({
       labelStatus: index,
+      pageNo: 1,
+      pageSize: 15,
     });
+    const {login} = this.props;
+    const {pageNo, pageSize} = this.state;
+    const data = await fetchRelease(pageNo, pageSize, index, login.userId).then(
+      data => {
+        this.setState({
+          applyList: data.data.list,
+        });
+      },
+    );
   };
   onFinish = () => {};
   render() {
-    const {labels, labelStatus, applyList} = this.state;
-    const {login} = this.props;
+    const {labels, labelStatus, apply, applyList} = this.state;
     return (
       <View style={styles.applyView}>
         <View style={styles.applyTitleView}>
           <View style={styles.applyTitle}>
-            {labels.map((item, index) => {
-              return index == labelStatus ? (
+            {labels.map(item => {
+              return item.id == labelStatus ? (
                 <View
                   style={[styles.applyTitleText, styles.applyTitleClick]}
-                  key={index}>
-                  <Text style={styles.applyTitleTextClick}>{item}</Text>
+                  key={item.id}>
+                  <Text style={styles.applyTitleTextClick}>{item.title}</Text>
                 </View>
               ) : (
                 <TouchableOpacity
                   style={styles.applyTitleTextTouch}
-                  onPress={this.onHandelPress.bind(this, index)}
-                  key={index}>
+                  onPress={this.onHandelPress.bind(this, item.id)}
+                  key={item.id}>
                   <View
                     style={styles.applyTitleText}
                     onResponderGrant={this.onHandelPress}>
-                    <Text style={styles.applyTitleTextNormal}>{item}</Text>
+                    <Text style={styles.applyTitleTextNormal}>
+                      {item.title}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               );
             })}
           </View>
         </View>
-        <Text>{login.userId}</Text>
         <FlatList
-          style={styles.releaseFlatList}
+          style={styles.applyFlatList}
           data={applyList}
           ItemSeparatorComponent={() => (
-            <View style={styles.releaseFlatListLine} />
+            <View style={styles.applyFlatListLine} />
           )}
+          ListEmptyComponent={() => (
+            <View style={styles.applyListEmpty}>
+              <Text style={styles.applyListEmptyTxt}>暂无数据</Text>
+            </View>
+          )}
+          refreshing={false}
+          ListFooterComponent={() =>
+            applyList.length > 0 ? (
+              <View style={styles.applyListEmpty}>
+                <Text style={styles.applyListEmptyTxt}>
+                  {apply.pageNum == apply.pages
+                    ? '没有更多了，亲'
+                    : '正在加载中，请稍等~'}
+                </Text>
+              </View>
+            ) : null
+          }
+          onEndReachedThreshold={1}
+          onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
-            <View style={styles.releaseList} key={item.id}>
-              <View style={styles.releaseListTitle}>
-                <Text style={styles.releaseListTitleTxt}>毛毛爱吃火腿</Text>
+            <View style={styles.applyList} key={item.id}>
+              <View style={styles.applyListTitle}>
+                <Text style={styles.applyListTitleTxt}>毛毛爱吃火腿</Text>
               </View>
-              <View style={styles.releaseListImg}></View>
-              <View style={styles.releaseListNav}>
-                <Text style={styles.releaseListNavTxt}>2019-11-10</Text>
+              <View style={styles.applyListImg}></View>
+              <View style={styles.applyListNav}>
+                <Text style={styles.applyListNavTxt}>2019-11-10</Text>
               </View>
-              <View style={styles.releaseListLine}></View>
-              <View style={styles.releaseListButton}>
+              <View style={styles.applyListLine}></View>
+              <View style={styles.applyListButton}>
                 <TouchableOpacity
-                  style={styles.releaseListButtonClick}
+                  style={styles.applyListButtonClick}
                   onPress={this.onFinish}>
                   <View>
-                    <Text style={styles.releaseListButtonTxt}>通过</Text>
+                    <Text style={styles.applyListButtonTxt}>通过</Text>
                   </View>
                 </TouchableOpacity>
-                <View style={styles.releaseListButtonLine}></View>
+                <View style={styles.applyListButtonLine}></View>
 
                 <TouchableOpacity
-                  style={styles.releaseListButtonClick}
+                  style={styles.applyListButtonClick}
                   onPress={this.onGoToApply}>
                   <View>
-                    <Text style={styles.releaseListButtonTxt}>不通过</Text>
+                    <Text style={styles.applyListButtonTxt}>不通过</Text>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -167,60 +210,70 @@ const styles = StyleSheet.create({
     color: '#666666',
     fontWeight: 'normal',
   },
-  releaseFlatList: {
+  applyFlatList: {
     backgroundColor: '#F3F3F3',
   },
-  releaseFlatListLine: {
+  applyFlatListLine: {
     height: 10,
     backgroundColor: '#F3F3F3',
   },
-  releaseList: {
+  applyList: {
     backgroundColor: '#FFFFFF',
     paddingLeft: 15,
     paddingRight: 15,
   },
-  releaseListTitle: {
+  applyListTitle: {
     flexDirection: 'row',
     paddingTop: 12,
     paddingBottom: 12,
   },
-  releaseListNav: {
+  applyListNav: {
     flexDirection: 'row',
   },
-  releaseListTitleTxt: {
+  applyListTitleTxt: {
     color: '#444444',
     fontSize: 14,
     fontWeight: 'bold',
   },
-  releaseListImg: {
+  applyListImg: {
     flexDirection: 'row',
   },
-  releaseListNavTxt: {
+  applyListNavTxt: {
     color: '#666666',
     fontSize: 12,
   },
-  releaseListLine: {
+  applyListLine: {
     height: 0.5,
     backgroundColor: '#DDDDDD',
   },
-  releaseListButton: {
+  applyListButton: {
     flexDirection: 'row',
   },
-  releaseListButtonLine: {
+  applyListButtonLine: {
     width: 1,
     backgroundColor: '#DDDDDD',
   },
-  releaseListButtonClick: {
+  applyListButtonClick: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 12.5,
     paddingBottom: 12.5,
   },
-  releaseListButtonTxt: {
+  applyListButtonTxt: {
     color: '#444444',
     fontSize: 14,
     fontWeight: 'normal',
+  },
+  applyListEmpty: {
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  applyListEmptyTxt: {
+    fontWeight: 'bold',
+    fontSize: 12,
+    color: '#444444',
   },
 });
 

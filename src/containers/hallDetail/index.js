@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {fetchHallDetail, fetchHallSignUp} from '../../actions/hall';
+import {fetchHallDetail, fetchHallSignUp} from '../../api/hall';
 import {paramToQuery2} from '../../utils/fetch';
 import {WToast} from 'react-native-smart-tip';
 
@@ -34,6 +34,8 @@ class HallDetailScreen extends React.Component {
     super(props);
     this.state = {
       imgH: [],
+      jobDetail: {},
+      jobStepList: [],
     };
   }
 
@@ -41,7 +43,13 @@ class HallDetailScreen extends React.Component {
     const jobId = this.props.navigation.state.params.jobId;
     const {login} = this.props;
     console.log(login);
-    this.props.fetchHallDetail(jobId, login.userId);
+    fetchHallDetail(jobId, login.userId).then(jobDetail => {
+      console.log(jobDetail);
+      this.setState({
+        jobDetail: jobDetail.data,
+        jobStepList: jobDetail.data.jobStepList,
+      });
+    });
   };
 
   //android
@@ -100,8 +108,7 @@ class HallDetailScreen extends React.Component {
   };
 
   render() {
-    const {jobDetail, jobStepList} = this.props;
-    const {imgH} = this.state;
+    const {imgH, jobDetail, jobStepList} = this.state;
     console.log('jobDetail:', jobDetail);
     console.log('jobStepList:', jobStepList);
     return (
@@ -464,10 +471,10 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchHallDetail: (jobId, userId) =>
-      dispatch(fetchHallDetail(jobId, userId)),
-    fetchHallSignUp: (jobId, userId) =>
-      dispatch(fetchHallSignUp(jobId, userId)),
+    // fetchHallDetail: (jobId, userId) =>
+    //   dispatch(fetchHallDetail(jobId, userId)),
+    // fetchHallSignUp: (jobId, userId) =>
+    //   dispatch(fetchHallSignUp(jobId, userId)),
   };
 }
 

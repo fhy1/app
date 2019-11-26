@@ -31,25 +31,23 @@ export const getLogin = json => {
 export function fetchUserCode(phone) {
   const url = paramToQuery(`${CODE}?phone=${phone}`);
   console.log('url', url);
-  return dispatch => {
-    return fetch(url)
-      .then(res => {
-        console.log(res.status);
-        return res.json();
-      })
-      .then(data => {
-        console.log('code', data);
-        if (data.error) {
-          return Promise.reject(data);
-        } else {
-          dispatch(getCode(data));
-        }
-      })
-      .catch(e => {
-        console.log('err1', e.message);
-        return Promise.reject(e.message);
-      });
-  };
+  return fetch(url)
+    .then(res => {
+      console.log(res.status);
+      return res.json();
+    })
+    .then(data => {
+      console.log('code', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
+    })
+    .catch(e => {
+      console.log('err1', e.message);
+      return Promise.reject(e.message);
+    });
 }
 
 export function fetchCheckCode(data) {
@@ -68,7 +66,7 @@ export function fetchCheckCode(data) {
         if (data.error) {
           return Promise.reject(data);
         } else {
-          dispatch(getCheckCode(data));
+          return data;
         }
       })
       .catch(e => {
@@ -93,7 +91,7 @@ export function fetchCheckEnroll(data) {
           return Promise.reject(data);
         } else {
           await saveStorage('userNews', data);
-          dispatch(getLogin(data.data));
+          return data;
         }
       })
       .catch(e => {

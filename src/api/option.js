@@ -30,25 +30,23 @@ export function fetchOptionAll(pageNo, pageSize) {
     `${OPTIONALL}?pageNo=${pageNo}&pageSize=${pageSize}`,
   );
   console.log('url', url);
-  return dispatch => {
-    return fetch(url)
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        console.log('option', data.status);
-        console.log('option', data);
-        if (data.error) {
-          return Promise.reject(data);
-        } else {
-          dispatch(getOption(data));
-        }
-      })
-      .catch(e => {
-        console.log('err1', e.message);
-        return Promise.reject(e.message);
-      });
-  };
+  return fetch(url)
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      console.log('option', data.status);
+      console.log('option', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
+    })
+    .catch(e => {
+      console.log('err1', e.message);
+      return Promise.reject(e.message);
+    });
 }
 
 export function addOneOptions(userId, opinion) {

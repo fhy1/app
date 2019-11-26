@@ -104,7 +104,6 @@ export function fetchHallType() {
       return res.json();
     })
     .then(data => {
-      console.log('type', data.status);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -118,19 +117,16 @@ export function fetchHallType() {
 }
 export function fetchHallDetail(jobId, userId) {
   const url = paramToQuery(`${DETAIL}?jobId=${jobId}&userId=${userId}`);
-  return dispatch => {
-    return fetch(url)
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        console.log('detail', data.status);
-        dispatch(getHallDeatil(data));
-      })
-      .catch(e => {
-        console.log(e.message);
-      });
-  };
+  return fetch(url)
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      return data;
+    })
+    .catch(e => {
+      console.log(e.message);
+    });
 }
 export function fetchHallSignUp(jobId, userId) {
   const url = paramToQuery(`${SIGNUP}?jobId=${jobId}&userId=${userId}`);

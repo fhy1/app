@@ -1,9 +1,11 @@
 import {paramToQuery} from '../utils/fetch';
 
-const audit = 'job/audit';
+const audit = 'job/release';
 
-export function fetchHalljob() {
-  const url = paramToQuery(`${audit}?pageNo=${1}&pageSize=${10}&userId=${7}`);
+export function fetchRelease(pageNo, pageSize, auditStatus, userId) {
+  const url = paramToQuery(
+    `${audit}?pageNo=${pageNo}&pageSize=${pageSize}&auditStatus=${auditStatus}&userId=${userId}`,
+  );
   console.log(url);
   return fetch(url)
     .then(res => {

@@ -10,12 +10,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {WToast} from 'react-native-smart-tip';
-import {
-  fetchUserCode,
-  fetchCheckCode,
-  fetchCheckEnroll,
-} from '../../actions/login';
+import {fetchUserCode, fetchCheckCode, fetchCheckEnroll} from '../../api/login';
 import {connect} from 'react-redux';
+import {pipe} from 'rxjs';
 
 class LoginScreen extends React.Component {
   static navigationOptions = {
@@ -101,7 +98,7 @@ class LoginScreen extends React.Component {
           }
         });
       }, 1000);
-      this.props.fetchUserCode(phone).then(
+      fetchUserCode(phone).then(
         () => {},
         e => {
           console.log(e);
@@ -140,10 +137,10 @@ class LoginScreen extends React.Component {
     };
     if (isPhone) {
       if (code) {
-        this.props.fetchCheckCode({phone, code}).then(
+        fetchCheckCode({phone, code}).then(
           () => {
             console.log('成功啦');
-            this.props.fetchCheckEnroll({phone}).then(() => {
+            fetchCheckEnroll({phone}).then(() => {
               navigation.navigate('Home');
             });
           },
@@ -337,9 +334,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchUserCode: phone => dispatch(fetchUserCode(phone)),
-    fetchCheckCode: data => dispatch(fetchCheckCode(data)),
-    fetchCheckEnroll: data => dispatch(fetchCheckEnroll(data)),
+    // fetchUserCode: phone => dispatch(fetchUserCode(phone)),
+    // fetchCheckCode: data => dispatch(fetchCheckCode(data)),
+    // fetchCheckEnroll: data => dispatch(fetchCheckEnroll(data)),
   };
 }
 

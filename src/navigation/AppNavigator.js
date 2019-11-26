@@ -21,6 +21,7 @@ import SettingScreen from '../containers/setting/index';
 import InviteScreen from '../containers/invite/index';
 import WithdrawScreen from '../containers/withdraw/index';
 import HallDetailScreen from '../containers/hallDetail/index';
+import SearchScreen from '../containers/search/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -197,6 +198,17 @@ export default createAppContainer(
     },
     HallDetail: {
       screen: HallDetailScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 11, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Search: {
+      screen: SearchScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image

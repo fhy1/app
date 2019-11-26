@@ -120,6 +120,18 @@ class HomeScreen extends React.Component {
     });
   };
 
+  handelOnJumpToDetail = jobId => {
+    const {navigation} = this.props;
+    navigation.navigate('HallDetail', {
+      jobId: jobId,
+    });
+  };
+
+  focusSearch = () => {
+    const {navigation} = this.props;
+    navigation.navigate('Search');
+  };
+
   render() {
     const {swiperHeight, width, signFlag, recommendList, homeImgs} = this.state;
     const {navigation} = this.props;
@@ -205,6 +217,7 @@ class HomeScreen extends React.Component {
               />
               <TextInput
                 style={styles.navSearchTextInput}
+                onFocus={this.focusSearch}
                 placeholder="搜索你喜欢的任务!"
               />
             </View>
@@ -296,8 +309,7 @@ class HomeScreen extends React.Component {
                     return (
                       <TouchableOpacity
                         key={item.jobId}
-                        // onPress={() => this._onPress(item)}
-                      >
+                        onPress={() => this.handelOnJumpToDetail(item.jobId)}>
                         <View
                           style={
                             index != recommendList.length - 1
