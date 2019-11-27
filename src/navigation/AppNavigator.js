@@ -22,6 +22,7 @@ import InviteScreen from '../containers/invite/index';
 import WithdrawScreen from '../containers/withdraw/index';
 import HallDetailScreen from '../containers/hallDetail/index';
 import SearchScreen from '../containers/search/index';
+import ReleaseStepScreen from '../containers/releaseStep/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -201,7 +202,7 @@ export default createAppContainer(
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image
-            style={{width: 11, height: 21}}
+            style={{width: 21, height: 21}}
             source={require('../assets/back.png')}
           />
         ),
@@ -212,7 +213,18 @@ export default createAppContainer(
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image
-            style={{width: 11, height: 21}}
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    ReleaseStep: {
+      screen: ReleaseStepScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
             source={require('../assets/back.png')}
           />
         ),

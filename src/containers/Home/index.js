@@ -134,7 +134,6 @@ class HomeScreen extends React.Component {
 
   render() {
     const {swiperHeight, width, signFlag, recommendList, homeImgs} = this.state;
-    const {navigation} = this.props;
     return (
       <View style={styles.homeView}>
         <ScrollView>
