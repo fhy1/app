@@ -51,26 +51,22 @@ export function fetchOptionAll(pageNo, pageSize) {
 
 export function addOneOptions(userId, opinion) {
   const url = paramToQuery(`${OPTION}?userId=${userId}&opinion=${opinion}`);
-  console.log('url', url);
-  return dispatch => {
-    return fetch(url, {
-      method: 'POST',
+
+  return fetch(url, {
+    method: 'POST',
+  })
+    .then(res => {
+      return res.json();
     })
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        console.log('option2', data.status);
-        console.log('option2', data);
-        if (data.error) {
-          return Promise.reject(data);
-        } else {
-          dispatch(addOption(data));
-        }
-      })
-      .catch(e => {
-        console.log('err1', e.message);
-        return Promise.reject(e.message);
-      });
-  };
+    .then(data => {
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
+    })
+    .catch(e => {
+      console.log('err1', e.message);
+      return Promise.reject(e.message);
+    });
 }

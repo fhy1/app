@@ -55,6 +55,7 @@ class OpinionScreen extends React.Component {
   addOpinion = () => {
     this.setState({
       modal: true,
+      ques: '',
     });
   };
 
@@ -76,17 +77,19 @@ class OpinionScreen extends React.Component {
     const {ques} = this.state;
     const {login} = this.props;
     if (ques != '') {
-      this.props.addOneOptions(login.userId, ques).then(
+      addOneOptions(login.userId, ques).then(
         () => {
           toastOpts.data = '反馈意见成功';
           WToast.show(toastOpts);
-          this.props.clearOption();
           this.setState({
             pageNo: 1,
             pageSize: 15,
           });
-          this.props.fetchOptionAll(1, 15).then(() => {
+          fetchOptionAll(1, 15).then(option => {
+            console.log(option);
             this.setState({
+              option: option.data,
+              optionList: option.data.list,
               modal: false,
               ques: '',
             });
@@ -95,6 +98,10 @@ class OpinionScreen extends React.Component {
         () => {
           toastOpts.data = '反馈意见失败';
           WToast.show(toastOpts);
+          this.setState({
+            modal: false,
+            ques: '',
+          });
         },
       );
     } else {
@@ -104,7 +111,7 @@ class OpinionScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {option} = this.props;
+    const {option} = this.state;
     if (option.pageNum < option.pages) {
       const {pageNo} = this.state;
       this.setState(
@@ -112,8 +119,14 @@ class OpinionScreen extends React.Component {
           pageNo: pageNo + 1,
         },
         () => {
-          const {pageNo, pageSize} = this.state;
-          this.props.fetchOptionAll(pageNo, pageSize);
+          const {pageNo, pageSize, optionList} = this.state;
+          fetchOptionAll(pageNo, pageSize).then(option => {
+            console.log(option);
+            this.setState({
+              option: option.data,
+              optionList: optionList.concat(option.data.list),
+            });
+          });
         },
       );
     }
@@ -127,6 +140,7 @@ class OpinionScreen extends React.Component {
 
   render() {
     const {modal, ques, option, optionList} = this.state;
+    console.log(option);
     const {width, height} = Dimensions.get('window');
     return (
       <View style={styles.opinionView}>
@@ -138,10 +152,10 @@ class OpinionScreen extends React.Component {
           </TouchableOpacity>
         </View>
         <FlatList
-          style={styles.optionList}
+          style={styles.optionFlatList}
           data={optionList}
           ItemSeparatorComponent={() => (
-            <View style={styles.optionListLine}>
+            <View style={styles.optionListLinecenter}>
               <View style={styles.optionListLinebg} />
             </View>
           )}
@@ -165,8 +179,33 @@ class OpinionScreen extends React.Component {
           onEndReachedThreshold={0}
           onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
-            <View style={styles.optionList}>
-              <Text>111</Text>
+            <View style={styles.optionList} key={item.id}>
+              <View style={styles.optionListTitle}>
+                <Text style={styles.optionListTitleTxt}>
+                  {item.nickname
+                    ? item.nickname
+                    : item.phone
+                    ? `${item.phone.substring(0, 3)}****${item.phone.substring(
+                        item.phone.length - 4,
+                      )}`
+                    : '-'}
+                </Text>
+              </View>
+              <View style={styles.optionListNav}>
+                <Text style={styles.optionListNavTxt}>
+                  提交时间： {item.commitTime}
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.optionListThing}>
+                  意见内容： {item.opinion}
+                </Text>
+              </View>
+              <View style={{marginTop: 6}}>
+                <Text style={styles.optionListThing}>
+                  客服反馈： {item.reply || '暂未回复'}
+                </Text>
+              </View>
             </View>
           )}
           keyExtractor={item => JSON.stringify(item.userId)}
@@ -215,8 +254,6 @@ const styles = StyleSheet.create({
   opinionView: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingLeft: 15,
-    paddingRight: 15,
   },
   opinionTopTitle: {
     alignItems: 'center',
@@ -275,6 +312,8 @@ const styles = StyleSheet.create({
   opinionAddBtn: {
     paddingLeft: 15,
     paddingRight: 15,
+    backgroundColor: '#F3F3F3',
+    paddingBottom: 15,
   },
   opinionAddBtnView: {
     height: 44,
@@ -282,19 +321,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFDB44',
     borderRadius: 4,
-    marginTop: 30,
+    marginTop: 15,
   },
   opinionBtnViewTxt: {
     fontSize: 14,
     color: '#444444',
   },
-  optionList: {
-    marginTop: 10,
+  optionFlatList: {
+    backgroundColor: '#F3F3F3',
   },
-  optionListLine: {
+  optionListLinecenter: {
     paddingLeft: 15,
     paddingRight: 15,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F3F3F3',
   },
   optionListLinebg: {
     height: 1,
@@ -310,24 +349,71 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#444444',
   },
+  optionList: {
+    backgroundColor: '#FFFFFF',
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingBottom: 15,
+  },
+  optionListTitle: {
+    flexDirection: 'row',
+    paddingTop: 12,
+    paddingBottom: 6,
+  },
+  optionListNav: {
+    flexDirection: 'row',
+    paddingBottom: 6,
+  },
+  optionListBtnView: {
+    flexDirection: 'row',
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  optionListTitleTxt: {
+    color: '#444444',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  optionListTitleMoney: {
+    position: 'absolute',
+    right: 0,
+    top: 12,
+    fontSize: 14,
+    color: '#FD3F3F',
+  },
+  optionListNavTxt: {
+    color: '#666666',
+    fontSize: 12,
+  },
+  optionListBtn: {
+    paddingLeft: 12,
+    paddingRight: 12,
+    height: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 4,
+    backgroundColor: '#FFDB44',
+    marginRight: 10,
+  },
+  optionListBtnTxt: {
+    fontSize: 12,
+    color: '#444444',
+    fontWeight: 'normal',
+  },
+  optionListThing: {
+    color: '#444444',
+    fontSize: 12,
+  },
 });
 
 function mapStateToProps(state) {
   return {
     login: state.login.login,
-    option: state.option.option,
-    optionList: state.option.optionList,
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    // fetchOptionAll: (pageNo, pageSize) =>
-    //   dispatch(fetchOptionAll(pageNo, pageSize)),
-    // addOneOptions: (userId, opinion) =>
-    //   dispatch(addOneOptions(userId, opinion)),
-    // clearOption: () => dispatch(clearOption()),
-  };
+  return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OpinionScreen);
