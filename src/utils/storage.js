@@ -3,27 +3,27 @@ import AsyncStorage from '@react-native-community/async-storage';
 // 第三方框架
 // import Storage from 'react-native-storage';
 
-setData = async (key, value) => {
+async function setData(key, value) {
   try {
-    await AsyncStorage.setItem(key, value);
+    await AsyncStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
     // saving error
     return 'err';
   }
-};
+}
 
-getData = async key => {
+async function getData(key) {
   try {
     const value = await AsyncStorage.getItem(key);
     if (value !== null) {
       // value previously stored
       console.log(value);
-      return value;
+      return JSON.parse(value);
     }
   } catch (e) {
     // error reading value
     return 'err';
   }
-};
+}
 
 export {setData, getData};

@@ -4,7 +4,7 @@ import {
   FETCH_USER_CHECKCODE,
   FETCH_USER_LOGIN,
 } from '../constants/login';
-import {saveStorage} from '../utils/storage';
+import {setData} from '../utils/storage';
 
 const CODE = 'user/code';
 const CHECKCODE = 'user/checkCode';
@@ -87,7 +87,7 @@ export function fetchCheckEnroll(data) {
       if (data.error) {
         return Promise.reject(data);
       } else {
-        await saveStorage('userNews', data);
+        await setData('userNews', data);
         return data;
       }
     })
