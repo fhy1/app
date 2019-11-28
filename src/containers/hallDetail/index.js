@@ -11,6 +11,7 @@ import {connect} from 'react-redux';
 import {fetchHallDetail, fetchHallSignUp} from '../../api/hall';
 import {paramToQuery2} from '../../utils/fetch';
 import {WToast} from 'react-native-smart-tip';
+import ImagePicker from 'react-native-image-picker';
 
 class HallDetailScreen extends React.Component {
   static navigationOptions = {
@@ -94,18 +95,72 @@ class HallDetailScreen extends React.Component {
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
     if (status == 0) {
-      this.props.fetchHallSignUp(jobId, login.userId).then(
+      fetchHallSignUp(jobId, login.userId).then(
         () => {
           toastOpts.data = '报名成功';
           WToast.show(toastOpts);
+          this.setState(state => {
+            state.jobDetail.status = 1;
+            return {
+              jobDetail: state.jobDetail,
+            };
+          });
         },
         err => {
           toastOpts.data = err;
           WToast.show(toastOpts);
         },
       );
+    } else if (status == 1) {
+      toastOpts.data = '提交成功，请等待审核 ...';
+      WToast.show(toastOpts);
     }
   };
+
+  //选择图片
+  selectPhotoTapped() {
+    const options = {
+      title: '选择图片',
+      cancelButtonTitle: '取消',
+      takePhotoButtonTitle: '拍照',
+      chooseFromLibraryButtonTitle: '选择照片',
+      // customButtons: [{name: 'fb', title: 'Choose Photo from Facebook'}],
+      cameraType: 'back',
+      mediaType: 'photo',
+      videoQuality: 'high',
+      durationLimit: 10,
+      maxWidth: 300,
+      maxHeight: 300,
+      quality: 0.8,
+      angle: 0,
+      allowsEditing: false,
+      noData: false,
+      storageOptions: {
+        skipBackup: true,
+      },
+    };
+
+    ImagePicker.showImagePicker(options, response => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled photo picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        let source = {uri: response.uri};
+
+        // You can also display the image using data:
+        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+        this.setState({
+          avatarSource: source,
+        });
+      }
+    });
+  }
 
   render() {
     const {imgH, jobDetail, jobStepList} = this.state;
@@ -242,24 +297,30 @@ class HallDetailScreen extends React.Component {
                       ) : null}
                       {item.checkPicture == 1 ? (
                         <View>
-                          <View style={styles.upLoadCarmea}>
-                            <Image
+                          <TouchableOpacity
+                            onPress={this.selectPhotoTapped.bind(this)}>
+                            <View style={styles.upLoadCarmea}>
+                              <Image
+                                style={{
+                                  width: 22,
+                                  height: 21,
+                                }}
+                                source={require('../../assets/camera.png')}
+                              />
+                            </View>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={this.selectPhotoTapped.bind(this)}>
+                            <Text
                               style={{
-                                width: 22,
-                                height: 21,
-                              }}
-                              source={require('../../assets/camera.png')}
-                            />
-                          </View>
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              color: '#444444',
-                              marginLeft: 34,
-                              marginTop: 10,
-                            }}>
-                            添加图片
-                          </Text>
+                                fontSize: 12,
+                                color: '#444444',
+                                marginLeft: 34,
+                                marginTop: 10,
+                              }}>
+                              添加图片
+                            </Text>
+                          </TouchableOpacity>
                         </View>
                       ) : null}
                     </View>
@@ -268,6 +329,7 @@ class HallDetailScreen extends React.Component {
               );
             })}
           </View>
+
           <TouchableOpacity
             onPress={this.hallEnroll.bind(this, jobDetail.status)}>
             <View style={styles.hallDetailBtn}>

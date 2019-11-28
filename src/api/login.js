@@ -55,48 +55,44 @@ export function fetchCheckCode(data) {
     `${CHECKCODE}?phone=${data.phone}&code=${data.code}`,
   );
   console.log('url', url);
-  return dispatch => {
-    return fetch(url)
-      .then(res => {
-        console.log(res.status);
-        return res.json();
-      })
-      .then(data => {
-        console.log('checkcode', data);
-        if (data.error) {
-          return Promise.reject(data);
-        } else {
-          return data;
-        }
-      })
-      .catch(e => {
-        console.log(e.message);
-        return Promise.reject(e.message);
-      });
-  };
+  return fetch(url)
+    .then(res => {
+      console.log(res.status);
+      return res.json();
+    })
+    .then(data => {
+      console.log('checkcode', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
+    })
+    .catch(e => {
+      console.log(e.message);
+      return Promise.reject(e.message);
+    });
 }
 
 export function fetchCheckEnroll(data) {
   const url = paramToQuery(`${ENROLL}?phone=${data.phone}`);
   console.log('url', url);
-  return dispatch => {
-    return fetch(url)
-      .then(res => {
-        console.log(res.status);
-        return res.json();
-      })
-      .then(async data => {
-        console.log('enroll', data);
-        if (data.error) {
-          return Promise.reject(data);
-        } else {
-          await saveStorage('userNews', data);
-          return data;
-        }
-      })
-      .catch(e => {
-        console.log(e.message);
-        return Promise.reject(e.message);
-      });
-  };
+  return fetch(url)
+    .then(res => {
+      console.log(res.status);
+      return res.json();
+    })
+    .then(async data => {
+      console.log('enroll', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        await saveStorage('userNews', data);
+        return data;
+      }
+    })
+    .catch(e => {
+      console.log(e.message);
+      return Promise.reject(e.message);
+    });
 }

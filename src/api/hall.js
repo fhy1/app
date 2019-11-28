@@ -130,27 +130,25 @@ export function fetchHallDetail(jobId, userId) {
 }
 export function fetchHallSignUp(jobId, userId) {
   const url = paramToQuery(`${SIGNUP}?jobId=${jobId}&userId=${userId}`);
-  return dispatch => {
-    return fetch(url)
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        console.log('signup', data);
-        if (data.error) {
-          data.msg = '报名';
+  return fetch(url)
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      console.log('signup', data);
+      if (data.error) {
+        data.msg = '报名';
+        return Promise.reject(data);
+      } else {
+        if (data.status == 0) {
           return Promise.reject(data);
         } else {
-          if (data.status == 0) {
-            return Promise.reject(data);
-          } else {
-            dispatch(signUp(data));
-          }
+          return data;
         }
-      })
-      .catch(e => {
-        console.log(e.msg);
-        return Promise.reject(e.msg);
-      });
-  };
+      }
+    })
+    .catch(e => {
+      console.log(e.msg);
+      return Promise.reject(e.msg);
+    });
 }

@@ -72,7 +72,10 @@ class ReleaseScreen extends React.Component {
 
   onFinish = () => {};
 
-  onGoToApply = () => {};
+  onGoToApply = () => {
+    const {navigation} = this.props;
+    navigation.navigate('Apply');
+  };
 
   _keyExtractor = (item, index) => item.id;
 
