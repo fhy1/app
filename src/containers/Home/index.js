@@ -51,7 +51,7 @@ class HomeScreen extends React.Component {
     const data = await getData('userNews');
     console.log('持久化', data);
     if (data !== 'err') {
-      this.props.getLogin(data2);
+      this.props.getLogin(data);
     }
     // const data2 = {
     //   city: null,
@@ -76,7 +76,7 @@ class HomeScreen extends React.Component {
     // this.props.fetchHomeImg();
     const [homeImgs, signStatus, recommend] = await Promise.all([
       fetchHomeImg(),
-      fetchHomeSignIn(data2.userId),
+      fetchHomeSignIn(data.userId),
       fetchHomeRecommend(1, 10),
     ]);
     this.setState({

@@ -95,11 +95,11 @@ class ReleaseScreen extends React.Component {
               ) : (
                 <TouchableOpacity
                   style={styles.releaseTitleTextTouch}
-                  onPress={this.onHandelPress.bind(this, index)}>
+                  onPress={this.onHandelPress.bind(this, index)}
+                  key={index}>
                   <View
                     style={styles.releaseTitleText}
-                    onResponderGrant={this.onHandelPress}
-                    key={index}>
+                    onResponderGrant={this.onHandelPress}>
                     <Text style={styles.releaseTitleTextNormal}>{item}</Text>
                   </View>
                 </TouchableOpacity>

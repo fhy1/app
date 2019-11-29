@@ -87,7 +87,7 @@ export function fetchCheckEnroll(data) {
       if (data.error) {
         return Promise.reject(data);
       } else {
-        await setData('userNews', data);
+        await setData('userNews', data.data);
         return data;
       }
     })

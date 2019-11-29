@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import ImagePicker from 'react-native-image-picker';
+import {upLoadImg} from '../../api/upload';
 
 class ReleaseStepScreen extends React.Component {
   static navigationOptions = {
@@ -74,7 +75,15 @@ class ReleaseStepScreen extends React.Component {
   }
 
   componentDidMount = () => {
-    // const job = this.props.navigation.state.params.job;
+    const job = this.props.navigation.state.params.job;
+    console.log(job);
+  };
+
+  componentWillUnmount = () => {
+    this.setState({
+      modalVisible: false,
+      optionVisible: false,
+    });
   };
 
   CloseModel = () => {
@@ -104,7 +113,7 @@ class ReleaseStepScreen extends React.Component {
   };
 
   //选择图片
-  selectPhotoTapped() {
+  selectPhotoTapped = () => {
     const options = {
       title: '选择图片',
       cancelButtonTitle: '取消',
@@ -136,17 +145,21 @@ class ReleaseStepScreen extends React.Component {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        let source = {uri: response.uri};
-
+        let source = {
+          uri: response.uri,
+          name: response.fileName,
+          type: response.type,
+        };
+        console.log(source);
         // You can also display the image using data:
         // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-        this.setState({
-          avatarSource: source,
-        });
+        upLoadImg(source);
+        // this.setState({
+        //   avatarSource: source,
+        // });
       }
     });
-  }
+  };
 
   render() {
     const {navigation} = this.props;
@@ -174,6 +187,42 @@ class ReleaseStepScreen extends React.Component {
                   <Text style={styles.setStepNavBtnTxt}>+</Text>
                 </View>
               </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.stepView}>
+            <View style={styles.stepViewTitle}>
+              <Text style={styles.stepViewTitleTxt}>步骤1</Text>
+            </View>
+            <View style={styles.stepViewBody}>
+              <View style={styles.stepViewBodyIns}>
+                <Text style={styles.stepViewBodyTxt1}>步骤说明： </Text>
+                <Text style={styles.stepViewBodyTxt2}>
+                  hahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahaha
+                </Text>
+              </View>
+              <View style={styles.stepViewBodyInsLine} />
+              <View style={styles.stepViewBodyIns}>
+                <Text style={styles.stepViewBodyTxt1}>添加网址： </Text>
+                <Text style={styles.stepViewBodyTxt2}>heihei</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.stepView}>
+            <View style={styles.stepViewTitle}>
+              <Text style={styles.stepViewTitleTxt}>步骤2</Text>
+            </View>
+            <View style={styles.stepViewBody}>
+              <View style={styles.stepViewBodyIns}>
+                <Text style={styles.stepViewBodyTxt1}>步骤说明：</Text>
+                <Text style={styles.stepViewBodyTxt2}></Text>
+              </View>
+              <View style={styles.stepViewBodyInsLine} />
+              <View style={styles.stepViewBodyIns}>
+                <Text style={styles.stepViewBodyTxt1}>图文说明： </Text>
+                <Text style={styles.stepViewBodyImg}></Text>
+              </View>
             </View>
           </View>
         </ScrollView>
@@ -303,7 +352,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginTop: -1,
   },
-
+  //弹框 步骤
   opinionModalView: {
     backgroundColor: '#FFFFFF',
     width: 400,
@@ -356,6 +405,7 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
   },
 
+  //弹框下拉
   taskModal: {
     backgroundColor: 'rgba(0,0,0,0.15)',
     flex: 1,
@@ -378,6 +428,49 @@ const styles = StyleSheet.create({
     height: 37,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+
+  //步骤
+  stepView: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 10,
+  },
+  stepViewTitle: {
+    paddingTop: 10.5,
+    paddingBottom: 10.5,
+    paddingLeft: 15,
+    borderBottomColor: '#DDDDDD',
+    borderBottomWidth: 1,
+  },
+  stepViewTitleTxt: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'bold',
+  },
+  stepViewBody: {
+    paddingLeft: 15,
+    paddingRight: 15,
+  },
+  stepViewBodyIns: {
+    paddingTop: 10.5,
+    paddingBottom: 10.5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  stepViewBodyInsLine: {
+    height: 1,
+    backgroundColor: '#DDDDDD',
+  },
+  stepViewBodyTxt1: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'bold',
+  },
+  stepViewBodyTxt2: {
+    fontSize: 12,
+    color: '#666666',
+    fontWeight: 'normal',
+    flex: 1,
   },
 });
 
