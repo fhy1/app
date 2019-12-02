@@ -69,6 +69,10 @@ class ReleaseTaskScreen extends React.Component {
     } else {
       if (parseFloat(taskJob.jobPrice) > 0.2) {
         if (parseInt(taskJob.jobNum) > 10) {
+          taskJob.jobPrice = parseFloat(
+            parseFloat(taskJob.jobPrice).toFixed(2),
+          );
+          taskJob.jobNum = parseInt(taskJob.jobNum);
           navigation.navigate('ReleaseStep', {
             job: taskJob,
           });

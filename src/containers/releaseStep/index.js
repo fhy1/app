@@ -9,10 +9,15 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {connect} from 'react-redux';
 import ImagePicker from 'react-native-image-picker';
 import {upLoadImg} from '../../api/upload';
+import {paramToQuery2} from '../../utils/fetch';
+import FitImage from 'react-native-fit-image';
+import {WToast} from 'react-native-smart-tip';
+import {addNewJob} from '../../api/release';
 
 class ReleaseStepScreen extends React.Component {
   static navigationOptions = {
@@ -70,7 +75,8 @@ class ReleaseStepScreen extends React.Component {
       stepDetail: {},
       modalVisible: false,
       optionVisible: false,
-      step: [],
+      steps: [],
+      imgUrl: '',
     };
   }
 
@@ -93,6 +99,9 @@ class ReleaseStepScreen extends React.Component {
   };
 
   changeItem = item => {
+    item.checkPicture = '';
+    item.website = '';
+    item.introduce = '';
     this.setState({
       stepDetail: item,
       optionVisible: true,
@@ -102,6 +111,16 @@ class ReleaseStepScreen extends React.Component {
   setStep = () => {
     this.setState({
       modalVisible: true,
+      imgUrl: '',
+    });
+  };
+
+  removeStep = index => {
+    this.setState(state => {
+      state.steps.splice(index, 1);
+      return {
+        stepDetail: state.steps,
+      };
     });
   };
 
@@ -148,17 +167,97 @@ class ReleaseStepScreen extends React.Component {
         let source = {
           uri: response.uri,
           name: response.fileName,
-          type: response.type,
+          type: 'image/png',
         };
         console.log(source);
         // You can also display the image using data:
         // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-        upLoadImg(source);
+        upLoadImg(source).then(img => {
+          console.log('source', img);
+          this.setState({
+            imgUrl: img.data,
+          });
+        });
         // this.setState({
         //   avatarSource: source,
         // });
       }
     });
+  };
+
+  handelOnChange = (item, e) => {
+    this.setState(state => {
+      state.stepDetail[item] = e;
+      return {
+        stepDetail: state.stepDetail,
+      };
+    });
+  };
+
+  ChangeCheck = check => {
+    this.setState(state => {
+      state.stepDetail['checkPicture'] = check;
+      return {
+        stepDetail: state.stepDetail,
+      };
+    });
+  };
+
+  addSubmit = () => {
+    const {stepDetail, imgUrl} = this.state;
+    this.setState(state => {
+      const newsteps =
+        stepDetail.type == 1
+          ? state.steps.concat({
+              introduce: stepDetail.introduce,
+              checkPicture: stepDetail.checkPicture,
+              stepType: stepDetail.type,
+              picture: imgUrl,
+            })
+          : state.steps.concat({
+              introduce: stepDetail.introduce,
+              checkPicture: stepDetail.checkPicture,
+              stepType: stepDetail.type,
+              website: stepDetail.website,
+            });
+      return {
+        steps: newsteps,
+        modalVisible: false,
+        optionVisible: false,
+      };
+    });
+  };
+
+  releaseAddStep = () => {
+    let newJob = this.props.navigation.state.params.job;
+    const {steps} = this.state;
+    console.log(newJob);
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+
+    if (steps.length > 0) {
+      console.log('steps', steps);
+      newJob.stepList = steps;
+      newJob.stepList.forEach((item, index) => {
+        newJob.stepList[index]['sort'] = index + 1;
+      });
+      console.log('newJob', newJob);
+      addNewJob(newJob).then(() => {
+        toastOpts.data = '申请成功请等待审核';
+        WToast.show(toastOpts);
+        setTimeout(() => {
+          navigation.navigate('MyInfo');
+        }, 1000);
+      });
+    } else {
+      toastOpts.data = '请添加步骤';
+      WToast.show(toastOpts);
+    }
   };
 
   render() {
@@ -170,6 +269,8 @@ class ReleaseStepScreen extends React.Component {
       optionVisible,
       stepType,
       stepDetail,
+      imgUrl,
+      steps,
     } = this.state;
     return (
       <View style={styles.releaseStepView}>
@@ -190,9 +291,129 @@ class ReleaseStepScreen extends React.Component {
             </View>
           </View>
 
-          <View style={styles.stepView}>
+          {steps.map((item, index) => {
+            return (
+              <View style={styles.stepView} key={index}>
+                <View style={styles.stepViewTitle}>
+                  <Text style={styles.stepViewTitleTxt}>步骤{index + 1}</Text>
+                  <TouchableOpacity
+                    style={[styles.setStepNavBtnTouch, {right: 28, top: 10}]}
+                    onPress={this.removeStep.bind(this, index)}>
+                    <View
+                      style={[
+                        styles.setStepNavBtn,
+                        {backgroundColor: '#f75139'},
+                      ]}>
+                      <Text style={[styles.setStepNavBtnTxt, {fontSize: 20}]}>
+                        -
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.stepViewBody}>
+                  <View style={styles.stepViewBodyIns}>
+                    <Text style={styles.stepViewBodyTxt1}>步骤说明： </Text>
+                    <Text style={styles.stepViewBodyTxt2}>
+                      {item.introduce}
+                    </Text>
+                  </View>
+                  <View style={styles.stepViewBodyInsLine} />
+                  {item.stepType == 2 ? (
+                    <View style={styles.stepViewBodyIns}>
+                      <Text style={styles.stepViewBodyTxt1}>添加网址： </Text>
+                      <Text style={styles.stepViewBodyTxt2}>
+                        {item.website}
+                      </Text>
+                    </View>
+                  ) : (
+                    <View style={styles.stepViewBodyIns}>
+                      <Text style={styles.stepViewBodyTxt1}>图文说明： </Text>
+                      <FitImage
+                        style={{width: 200, height: 200}}
+                        source={{uri: paramToQuery2(item.picture)}}
+                        resizeMode="contain"
+                      />
+                    </View>
+                  )}
+                  <View style={styles.stepViewBodyInsLine} />
+                  <View style={styles.stepViewBodyIns}>
+                    <Text style={styles.stepViewBodyTxt1}>
+                      是否需要验证图：{' '}
+                    </Text>
+                    <View
+                      style={[
+                        styles.releaseListCheck,
+                        {flex: 1, alignItems: 'center'},
+                      ]}>
+                      {/* <TouchableWithoutFeedback
+                        onPress={this.ChangeCheck.bind(this, 2)}> */}
+                      {item.checkPicture === 1 ? (
+                        <Image
+                          style={[
+                            styles.releaseListCheckImg,
+                            styles.releaseListCheckOne,
+                          ]}
+                          source={require('../../assets/checkbox.png')}
+                        />
+                      ) : (
+                        <Image
+                          style={[
+                            styles.releaseListCheckImg,
+                            styles.releaseListCheckOne,
+                          ]}
+                          source={require('../../assets/checkboxno.png')}
+                        />
+                      )}
+                      {/* </TouchableWithoutFeedback>
+                      <TouchableWithoutFeedback
+                        onPress={this.ChangeCheck.bind(this, 1)}> */}
+                      <View>
+                        <Text style={styles.releaseListCheckTxt}>需要</Text>
+                      </View>
+                      {/* </TouchableWithoutFeedback>
+                      <TouchableWithoutFeedback
+                        onPress={this.ChangeCheck.bind(this, 1)}> */}
+                      {item.checkPicture === 2 ? (
+                        <Image
+                          style={[
+                            styles.releaseListCheckImg,
+                            styles.releaseListCheckTwo,
+                          ]}
+                          source={require('../../assets/checkbox.png')}
+                        />
+                      ) : (
+                        <Image
+                          style={[
+                            styles.releaseListCheckImg,
+                            styles.releaseListCheckTwo,
+                          ]}
+                          source={require('../../assets/checkboxno.png')}
+                        />
+                      )}
+                      {/* </TouchableWithoutFeedback>
+                      <TouchableWithoutFeedback
+                        onPress={this.ChangeCheck.bind(this, 2)}> */}
+                      <Text style={styles.releaseListCheckTxt}>不需要</Text>
+                      {/* </TouchableWithoutFeedback> */}
+                    </View>
+                  </View>
+                </View>
+              </View>
+            );
+          })}
+          {/* <View style={styles.stepView}>
             <View style={styles.stepViewTitle}>
               <Text style={styles.stepViewTitleTxt}>步骤1</Text>
+              <TouchableOpacity
+                style={[styles.setStepNavBtnTouch, {right: 28, top: 10}]}
+                onPress={this.setStep}>
+                <View
+                  style={[styles.setStepNavBtn, {backgroundColor: '#f75139'}]}>
+                  <Text style={[styles.setStepNavBtnTxt, {fontSize: 20}]}>
+                    -
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
             <View style={styles.stepViewBody}>
               <View style={styles.stepViewBodyIns}>
@@ -215,15 +436,77 @@ class ReleaseStepScreen extends React.Component {
             </View>
             <View style={styles.stepViewBody}>
               <View style={styles.stepViewBodyIns}>
-                <Text style={styles.stepViewBodyTxt1}>步骤说明：</Text>
+                <Text style={styles.stepViewBodyTxt1}>步骤说明： </Text>
                 <Text style={styles.stepViewBodyTxt2}></Text>
               </View>
               <View style={styles.stepViewBodyInsLine} />
               <View style={styles.stepViewBodyIns}>
-                <Text style={styles.stepViewBodyTxt1}>图文说明： </Text>
-                <Text style={styles.stepViewBodyImg}></Text>
+                <Text style={styles.stepViewBodyTxt1}>是否需要验证图： </Text>
+                <View
+                  style={[
+                    styles.releaseListCheck,
+                    {flex: 1, alignItems: 'center'},
+                  ]}>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 2)}>
+                    {stepDetail.checkPicture === 1 ? (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckOne,
+                        ]}
+                        source={require('../../assets/checkbox.png')}
+                      />
+                    ) : (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckOne,
+                        ]}
+                        source={require('../../assets/checkboxno.png')}
+                      />
+                    )}
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 1)}>
+                    <View>
+                      <Text style={styles.releaseListCheckTxt}>需要</Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 1)}>
+                    {stepDetail.checkPicture === 2 ? (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckTwo,
+                        ]}
+                        source={require('../../assets/checkbox.png')}
+                      />
+                    ) : (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckTwo,
+                        ]}
+                        source={require('../../assets/checkboxno.png')}
+                      />
+                    )}
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 2)}>
+                    <Text style={styles.releaseListCheckTxt}>不需要</Text>
+                  </TouchableWithoutFeedback>
+                </View>
               </View>
             </View>
+          </View> */}
+          <View style={styles.opinionAddBtn}>
+            <TouchableOpacity onPress={this.releaseAddStep}>
+              <View style={styles.opinionAddBtnView}>
+                <Text style={styles.opinionBtnViewTxt}>申请发布</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </ScrollView>
 
@@ -246,12 +529,21 @@ class ReleaseStepScreen extends React.Component {
                   multiline={true}
                   placeholder="请详细说明您的步骤说明"
                   maxLength={60}
+                  value={stepDetail.introduce}
+                  onChangeText={this.handelOnChange.bind(this, 'introduce')}
                 />
                 {stepDetail.type == 1 ? (
                   <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
                     <Text style={styles.opinionTitle}>
                       {stepDetail.detail}： 点击上传
                     </Text>
+                    {imgUrl ? (
+                      <FitImage
+                        style={{width: 200, height: 200}}
+                        source={{uri: paramToQuery2(imgUrl)}}
+                        resizeMode="contain"
+                      />
+                    ) : null}
                   </TouchableOpacity>
                 ) : (
                   <>
@@ -261,9 +553,66 @@ class ReleaseStepScreen extends React.Component {
                       multiline={true}
                       placeholder={'请输入' + stepDetail.detail}
                       maxLength={60}
+                      value={stepDetail.website}
+                      onChangeText={this.handelOnChange.bind(this, 'website')}
                     />
                   </>
                 )}
+                <Text style={[styles.opinionTitle, {marginBottom: 5}]}>
+                  是否需要验证图
+                </Text>
+                <View style={styles.releaseListCheck}>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 2)}>
+                    {stepDetail.checkPicture === 1 ? (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckOne,
+                        ]}
+                        source={require('../../assets/checkbox.png')}
+                      />
+                    ) : (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckOne,
+                        ]}
+                        source={require('../../assets/checkboxno.png')}
+                      />
+                    )}
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 1)}>
+                    <View>
+                      <Text style={styles.releaseListCheckTxt}>需要</Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 1)}>
+                    {stepDetail.checkPicture === 2 ? (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckTwo,
+                        ]}
+                        source={require('../../assets/checkbox.png')}
+                      />
+                    ) : (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckTwo,
+                        ]}
+                        source={require('../../assets/checkboxno.png')}
+                      />
+                    )}
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 2)}>
+                    <Text style={styles.releaseListCheckTxt}>不需要</Text>
+                  </TouchableWithoutFeedback>
+                </View>
                 <View style={styles.opinionBtnView}>
                   <TouchableOpacity onPress={this.addBack}>
                     <View
@@ -405,6 +754,27 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
   },
 
+  releaseListCheckTxt: {
+    color: '#666666',
+  },
+  releaseListCheckImg: {
+    width: 22,
+    height: 22,
+    marginRight: 11,
+  },
+  releaseListCheckOne: {
+    marginLeft: 12,
+  },
+  releaseListCheckTwo: {
+    marginLeft: 55,
+  },
+  releaseListCheck: {
+    // flex: 1,
+    flexDirection: 'row',
+    height: 30,
+    // justifyContent: 'center',
+  },
+
   //弹框下拉
   taskModal: {
     backgroundColor: 'rgba(0,0,0,0.15)',
@@ -471,6 +841,22 @@ const styles = StyleSheet.create({
     color: '#666666',
     fontWeight: 'normal',
     flex: 1,
+  },
+
+  //申请按钮
+  opinionAddBtn: {
+    paddingLeft: 15,
+    paddingRight: 15,
+    backgroundColor: '#F3F3F3',
+    paddingBottom: 15,
+  },
+  opinionAddBtnView: {
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFDB44',
+    borderRadius: 4,
+    marginTop: 15,
   },
 });
 

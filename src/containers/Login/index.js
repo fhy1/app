@@ -13,6 +13,7 @@ import {WToast} from 'react-native-smart-tip';
 import {fetchUserCode, fetchCheckCode, fetchCheckEnroll} from '../../api/login';
 import {connect} from 'react-redux';
 import {pipe} from 'rxjs';
+import {getLogin} from '../../api/login';
 
 class LoginScreen extends React.Component {
   static navigationOptions = {
@@ -139,8 +140,9 @@ class LoginScreen extends React.Component {
       if (code) {
         fetchCheckCode({phone, code}).then(
           () => {
-            console.log('成功啦');
-            fetchCheckEnroll({phone}).then(() => {
+            // console.log('成功啦');
+            fetchCheckEnroll({phone}).then(data => {
+              this.props.getLogin(data);
               navigation.navigate('Home');
             });
           },
@@ -334,6 +336,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    getLogin: data => dispatch(getLogin(data)),
     // fetchUserCode: phone => dispatch(fetchUserCode(phone)),
     // fetchCheckCode: data => dispatch(fetchCheckCode(data)),
     // fetchCheckEnroll: data => dispatch(fetchCheckEnroll(data)),
