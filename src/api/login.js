@@ -9,6 +9,7 @@ import {setData} from '../utils/storage';
 const CODE = 'user/code';
 const CHECKCODE = 'user/checkCode';
 const ENROLL = 'user/enroll';
+const WXLOGIN = 'user/weChatLogin';
 
 export const getCode = json => {
   return {
@@ -88,6 +89,29 @@ export function fetchCheckEnroll(data) {
         return Promise.reject(data);
       } else {
         await setData('userNews', data.data);
+        return data.data;
+      }
+    })
+    .catch(e => {
+      console.log(e.message);
+      return Promise.reject(e.message);
+    });
+}
+
+export function wxLogin(code) {
+  const url = paramToQuery(`${WXLOGIN}?code=${code}`);
+  console.log('url', url);
+  return fetch(url)
+    .then(res => {
+      console.log(res.status);
+      return res.json();
+    })
+    .then(async data => {
+      console.log('enroll', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        await setData('userNews', data);
         return data.data;
       }
     })

@@ -8,10 +8,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {fetchHallDetail, fetchHallSignUp} from '../../api/hall';
+import {fetchHallDetail, fetchHallSignUp, HallSubmit} from '../../api/hall';
 import {paramToQuery2} from '../../utils/fetch';
 import {WToast} from 'react-native-smart-tip';
 import ImagePicker from 'react-native-image-picker';
+import {upLoadImg} from '../../api/upload';
 
 class HallDetailScreen extends React.Component {
   static navigationOptions = {
@@ -87,6 +88,7 @@ class HallDetailScreen extends React.Component {
   hallEnroll = status => {
     const jobId = this.props.navigation.state.params.jobId;
     const {login} = this.props;
+    const {jobStepList} = this.state;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -112,13 +114,50 @@ class HallDetailScreen extends React.Component {
         },
       );
     } else if (status == 1) {
-      toastOpts.data = '提交成功，请等待审核 ...';
-      WToast.show(toastOpts);
+      let newApply = {
+        jobId: jobId,
+        userId: login.userId,
+        jobStepDtoList: [],
+      };
+      let flag = true;
+      jobStepList.forEach(item => {
+        if (item.checkPicture == 1) {
+          if (item.checkStepPicture) {
+            newApply.jobStepDtoList.push({
+              checkPicture: item.checkStepPicture,
+              sort: item.sort,
+            });
+          } else {
+            flag = false;
+            toastOpts.data = '步骤' + item.sort + '未提交审核图';
+            // toastOpts.data = '提交成功，请等待审核 ...';
+            WToast.show(toastOpts);
+          }
+        }
+      });
+      if (flag) {
+        HallSubmit(newApply).then(
+          () => {
+            toastOpts.data = '提交成功，请等待审核 ...';
+            WToast.show(toastOpts);
+            this.setState(state => {
+              state.jobDetail.status = 3;
+              return {
+                jobDetail: state.jobDetail,
+              };
+            });
+          },
+          () => {
+            toastOpts.data = '提交失败，请检查网络';
+            WToast.show(toastOpts);
+          },
+        );
+      }
     }
   };
 
   //选择图片
-  selectPhotoTapped() {
+  selectPhotoTapped(index) {
     const options = {
       title: '选择图片',
       cancelButtonTitle: '取消',
@@ -150,14 +189,31 @@ class HallDetailScreen extends React.Component {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        let source = {uri: response.uri};
-
-        // You can also display the image using data:
-        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-        this.setState({
-          avatarSource: source,
+        let source = {
+          uri: response.uri,
+          name: response.fileName,
+          type: 'image/png',
+        };
+        upLoadImg(source).then(img => {
+          console.log('source', img);
+          this.setState(state => {
+            state.jobStepList[index]['checkStepPicture'] = img.data;
+            return {
+              jobStepList: state.jobStepList,
+            };
+          });
+          // this.setState({
+          //   imgUrl: img.data,
+          // });
         });
+        // let source = {uri: response.uri};
+
+        // // You can also display the image using data:
+        // // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+        // this.setState({
+        //   avatarSource: source,
+        // });
       }
     });
   }
@@ -241,6 +297,7 @@ class HallDetailScreen extends React.Component {
               <Text style={styles.hallViewTitleTxt}>任务步骤</Text>
             </View>
             {jobStepList.map((item, index) => {
+              console.log(paramToQuery2(item.picture));
               return (
                 <View style={styles.hallDetailStep} key={item.stepId}>
                   <View style={styles.hallStepIndex}>
@@ -274,6 +331,7 @@ class HallDetailScreen extends React.Component {
                             }}
                             source={{uri: paramToQuery2(item.picture)}}
                           />
+
                           <TouchableOpacity
                             onPress={this.handelSavePicture.bind(this)}>
                             <View style={styles.savePicture}>
@@ -291,14 +349,14 @@ class HallDetailScreen extends React.Component {
                       {item.stepType == 2 ? (
                         <View>
                           <Text style={styles.hallStepBodyTxt}>
-                            item.website
+                            {item.website}
                           </Text>
                         </View>
                       ) : null}
                       {item.checkPicture == 1 ? (
                         <View>
                           <TouchableOpacity
-                            onPress={this.selectPhotoTapped.bind(this)}>
+                            onPress={this.selectPhotoTapped.bind(this, index)}>
                             <View style={styles.upLoadCarmea}>
                               <Image
                                 style={{
@@ -310,7 +368,7 @@ class HallDetailScreen extends React.Component {
                             </View>
                           </TouchableOpacity>
                           <TouchableOpacity
-                            onPress={this.selectPhotoTapped.bind(this)}>
+                            onPress={this.selectPhotoTapped.bind(this, index)}>
                             <Text
                               style={{
                                 fontSize: 12,
@@ -321,6 +379,28 @@ class HallDetailScreen extends React.Component {
                               添加图片
                             </Text>
                           </TouchableOpacity>
+                          {item.checkStepPicture ? (
+                            <Image
+                              onLoadStart={this.setSize.bind(
+                                this,
+                                paramToQuery2(item.checkStepPicture),
+                                index + jobStepList.length,
+                              )} //多张可多加该图index参数
+                              onLayout={this.setSizeIos.bind(
+                                this,
+                                paramToQuery2(item.checkStepPicture),
+                                index + jobStepList.length,
+                              )}
+                              style={{
+                                width: 100,
+                                height: imgH[index + jobStepList.length],
+                                marginTop: 10,
+                              }}
+                              source={{
+                                uri: paramToQuery2(item.checkStepPicture),
+                              }}
+                            />
+                          ) : null}
                         </View>
                       ) : null}
                     </View>

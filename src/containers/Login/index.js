@@ -10,10 +10,16 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {WToast} from 'react-native-smart-tip';
-import {fetchUserCode, fetchCheckCode, fetchCheckEnroll} from '../../api/login';
+import {
+  fetchUserCode,
+  fetchCheckCode,
+  fetchCheckEnroll,
+  wxLogin,
+} from '../../api/login';
 import {connect} from 'react-redux';
 import {pipe} from 'rxjs';
 import {getLogin} from '../../api/login';
+import * as WeChat from 'react-native-wechat';
 
 class LoginScreen extends React.Component {
   static navigationOptions = {
@@ -164,7 +170,36 @@ class LoginScreen extends React.Component {
     }
   };
 
-  onHandelPress = () => {};
+  onHandelPress = () => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.LONG, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    WeChat.sendAuthRequest('snsapi_userinfo').then(
+      data => {
+        console.log(data);
+        wxLogin(data.code).then(
+          data => {
+            toastOpts.data = '微信登录成功';
+            WToast.show(toastOpts);
+            this.props.getLogin(data);
+            navigation.navigate('Home');
+          },
+          () => {
+            toastOpts.data = '微信登录失败';
+            WToast.show(toastOpts);
+          },
+        );
+      },
+      () => {
+        toastOpts.data = '微信授权失败';
+        WToast.show(toastOpts);
+      },
+    );
+  };
 
   render() {
     const {topHeight, topWidth, showFlag, clickTime, phone, code} = this.state;

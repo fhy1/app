@@ -50,7 +50,7 @@ class HomeScreen extends React.Component {
     });
     const data = await getData('userNews');
     console.log('持久化', data);
-    if (data !== 'err') {
+    if (data && data !== 'err') {
       this.props.getLogin(data);
     }
     // const data2 = {
@@ -74,14 +74,17 @@ class HomeScreen extends React.Component {
     // };
     // this.props.getLogin(data2);
     // this.props.fetchHomeImg();
-    const [homeImgs, signStatus, recommend] = await Promise.all([
+    const [homeImgs, recommend] = await Promise.all([
       fetchHomeImg(),
-      fetchHomeSignIn(data.userId),
       fetchHomeRecommend(1, 10),
     ]);
+    let signStatus = null;
+    if (data) {
+      signStatus = await fetchHomeSignIn(data.userId);
+    }
     this.setState({
       homeImgs: homeImgs.data,
-      signFlag: signStatus.data == 2 ? true : false,
+      signFlag: signStatus && signStatus.data == 2 ? true : false,
       recommend: recommend.data,
       recommendList: recommend.data.list,
     });
@@ -123,9 +126,14 @@ class HomeScreen extends React.Component {
 
   handelOnJumpToDetail = jobId => {
     const {navigation} = this.props;
-    navigation.navigate('HallDetail', {
-      jobId: jobId,
-    });
+    const {login} = this.props;
+    if (login) {
+      navigation.navigate('HallDetail', {
+        jobId: jobId,
+      });
+    } else {
+      navigation.navigate('Login');
+    }
   };
 
   focusSearch = () => {
@@ -544,10 +552,8 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
   return {
-    img: state.home.img,
     signStatus: state.home.signStatus,
     login: state.login.login,
-    recommendList: state.home.recommendList,
   };
 }
 

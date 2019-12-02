@@ -6,12 +6,15 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 import FitImage from 'react-native-fit-image';
 import {connect} from 'react-redux';
 // import { fetchExtendInvite, fetchExtendUser } from '../../actions/extend';
 import {fetchExtendInvite, fetchExtendUser} from '../../api/extend';
 import QRCode from 'react-native-qrcode-svg';
+import * as WeChat from 'react-native-wechat';
+import {WToast} from 'react-native-smart-tip';
 
 class ExtendScreen extends React.Component {
   static navigationOptions = {
@@ -52,6 +55,61 @@ class ExtendScreen extends React.Component {
     });
     // this.props.fetchExtendInvite();
     // this.props.fetchExtendUser(login.userId);
+  };
+
+  OnShareWxFriend = () => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    console.log(1);
+    WeChat.isWXAppInstalled().then(isInstalled => {
+      if (isInstalled) {
+        WeChat.shareToSession({
+          // title: '微信好友测试链接',
+          // description: '分享自:江清清的技术专栏(www.lcode.org)',
+          // thumbImage:
+          //   'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+          // type: 'news',
+          // webpageUrl: 'http://www.lcode.org',
+          type: 'text',
+          description: '大家一起赚钱拉',
+        }).catch(error => {
+          // ToastShort(error.message);
+          toastOpts.data = error.message;
+          WToast.show(toastOpts);
+        });
+      } else {
+        toastOpts.data = '没有安装微信软件，请您安装微信之后再试';
+        WToast.show(toastOpts);
+        // ToastShort('没有安装微信软件，请您安装微信之后再试');
+      }
+    });
+  };
+
+  OnShareWxFriends = () => {
+    WeChat.isWXAppInstalled().then(isInstalled => {
+      if (isInstalled) {
+        WeChat.shareToTimeline({
+          // title: '微信朋友圈测试链接',
+          // description: '分享自:江清清的技术专栏(www.lcode.org)',
+          // thumbImage: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+          // type: 'news',
+          // webpageUrl: 'http://www.lcode.org'
+          type: 'text',
+          description: '大家一起赚钱拉',
+        }).catch(error => {
+          toastOpts.data = error.message;
+          WToast.show(toastOpts);
+        });
+      } else {
+        toastOpts.data = '没有安装微信软件，请您安装微信之后再试';
+        WToast.show(toastOpts);
+      }
+    });
   };
 
   render() {
@@ -123,50 +181,58 @@ class ExtendScreen extends React.Component {
               </View>
               <View style={styles.extendDashedLine}>{dashView}</View>
               <View style={styles.extendShareBody}>
-                <View style={styles.extendShareBodyView}>
-                  <View style={styles.extendShareBodyImg}>
-                    <FitImage
-                      style={styles.extendShareBodyIcon}
-                      // @ts-ignore
-                      source={require('../../assets/pyq.png')}
-                      resizeMode="contain"
-                    />
+                <TouchableOpacity onPress={this.OnShareWxFriends}>
+                  <View style={styles.extendShareBodyView}>
+                    <View style={styles.extendShareBodyImg}>
+                      <FitImage
+                        style={styles.extendShareBodyIcon}
+                        // @ts-ignore
+                        source={require('../../assets/pyq.png')}
+                        resizeMode="contain"
+                      />
+                    </View>
+                    <Text style={styles.extendShareBodyText}>朋友圈</Text>
                   </View>
-                  <Text style={styles.extendShareBodyText}>朋友圈</Text>
-                </View>
-                <View style={styles.extendShareBodyView}>
-                  <View style={styles.extendShareBodyImg}>
-                    <FitImage
-                      style={styles.extendShareBodyIcon}
-                      // @ts-ignore
-                      source={require('../../assets/wx.png')}
-                      resizeMode="contain"
-                    />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.OnShareWxFriend}>
+                  <View style={styles.extendShareBodyView}>
+                    <View style={styles.extendShareBodyImg}>
+                      <FitImage
+                        style={styles.extendShareBodyIcon}
+                        // @ts-ignore
+                        source={require('../../assets/wx.png')}
+                        resizeMode="contain"
+                      />
+                    </View>
+                    <Text style={styles.extendShareBodyText}>微信好友</Text>
                   </View>
-                  <Text style={styles.extendShareBodyText}>微信好友</Text>
-                </View>
-                <View style={styles.extendShareBodyView}>
-                  <View style={styles.extendShareBodyImg}>
-                    <FitImage
-                      style={styles.extendShareBodyIcon}
-                      // @ts-ignore
-                      source={require('../../assets/kj.png')}
-                      resizeMode="contain"
-                    />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <View style={styles.extendShareBodyView}>
+                    <View style={styles.extendShareBodyImg}>
+                      <FitImage
+                        style={styles.extendShareBodyIcon}
+                        // @ts-ignore
+                        source={require('../../assets/kj.png')}
+                        resizeMode="contain"
+                      />
+                    </View>
+                    <Text style={styles.extendShareBodyText}>qq空间</Text>
                   </View>
-                  <Text style={styles.extendShareBodyText}>qq空间</Text>
-                </View>
-                <View style={styles.extendShareBodyView}>
-                  <View style={styles.extendShareBodyImg}>
-                    <FitImage
-                      style={styles.extendShareBodyIcon}
-                      // @ts-ignore
-                      source={require('../../assets/qq.png')}
-                      resizeMode="contain"
-                    />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <View style={styles.extendShareBodyView}>
+                    <View style={styles.extendShareBodyImg}>
+                      <FitImage
+                        style={styles.extendShareBodyIcon}
+                        // @ts-ignore
+                        source={require('../../assets/qq.png')}
+                        resizeMode="contain"
+                      />
+                    </View>
+                    <Text style={styles.extendShareBodyText}>qq好友</Text>
                   </View>
-                  <Text style={styles.extendShareBodyText}>qq好友</Text>
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
             <View style={styles.extendBtnView}>

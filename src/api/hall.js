@@ -12,6 +12,7 @@ const JOB = 'hall/job';
 const TYPE = 'hall/type';
 const DETAIL = 'hall/jobDetails';
 const SIGNUP = 'hall/signUp';
+const SUBMIT = 'hall/submit';
 
 export const getHallJob = json => {
   return {
@@ -145,6 +146,34 @@ export function fetchHallSignUp(jobId, userId) {
         } else {
           return data;
         }
+      }
+    })
+    .catch(e => {
+      console.log(e.msg);
+      return Promise.reject(e.msg);
+    });
+}
+
+export function HallSubmit(data) {
+  const url = paramToQuery(`${SUBMIT}`);
+  return fetch(url, {
+    method: 'post',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'X-ApiAuth-Token': '',
+    },
+    body: JSON.stringify(data),
+  })
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      console.log('submit', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
       }
     })
     .catch(e => {

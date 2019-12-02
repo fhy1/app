@@ -230,6 +230,7 @@ class ReleaseStepScreen extends React.Component {
 
   releaseAddStep = () => {
     let newJob = this.props.navigation.state.params.job;
+    const {login, navigation} = this.props;
     const {steps} = this.state;
     console.log(newJob);
     let toastOpts = {
@@ -246,6 +247,7 @@ class ReleaseStepScreen extends React.Component {
       newJob.stepList.forEach((item, index) => {
         newJob.stepList[index]['sort'] = index + 1;
       });
+      newJob.userId = login.userId;
       console.log('newJob', newJob);
       addNewJob(newJob).then(() => {
         toastOpts.data = '申请成功请等待审核';
@@ -564,37 +566,11 @@ class ReleaseStepScreen extends React.Component {
                 <View style={styles.releaseListCheck}>
                   <TouchableWithoutFeedback
                     onPress={this.ChangeCheck.bind(this, 2)}>
-                    {stepDetail.checkPicture === 1 ? (
-                      <Image
-                        style={[
-                          styles.releaseListCheckImg,
-                          styles.releaseListCheckOne,
-                        ]}
-                        source={require('../../assets/checkbox.png')}
-                      />
-                    ) : (
-                      <Image
-                        style={[
-                          styles.releaseListCheckImg,
-                          styles.releaseListCheckOne,
-                        ]}
-                        source={require('../../assets/checkboxno.png')}
-                      />
-                    )}
-                  </TouchableWithoutFeedback>
-                  <TouchableWithoutFeedback
-                    onPress={this.ChangeCheck.bind(this, 1)}>
-                    <View>
-                      <Text style={styles.releaseListCheckTxt}>需要</Text>
-                    </View>
-                  </TouchableWithoutFeedback>
-                  <TouchableWithoutFeedback
-                    onPress={this.ChangeCheck.bind(this, 1)}>
                     {stepDetail.checkPicture === 2 ? (
                       <Image
                         style={[
                           styles.releaseListCheckImg,
-                          styles.releaseListCheckTwo,
+                          styles.releaseListCheckOne,
                         ]}
                         source={require('../../assets/checkbox.png')}
                       />
@@ -602,7 +578,7 @@ class ReleaseStepScreen extends React.Component {
                       <Image
                         style={[
                           styles.releaseListCheckImg,
-                          styles.releaseListCheckTwo,
+                          styles.releaseListCheckOne,
                         ]}
                         source={require('../../assets/checkboxno.png')}
                       />
@@ -610,6 +586,32 @@ class ReleaseStepScreen extends React.Component {
                   </TouchableWithoutFeedback>
                   <TouchableWithoutFeedback
                     onPress={this.ChangeCheck.bind(this, 2)}>
+                    <View>
+                      <Text style={styles.releaseListCheckTxt}>需要</Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 1)}>
+                    {stepDetail.checkPicture === 1 ? (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckTwo,
+                        ]}
+                        source={require('../../assets/checkbox.png')}
+                      />
+                    ) : (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckTwo,
+                        ]}
+                        source={require('../../assets/checkboxno.png')}
+                      />
+                    )}
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 1)}>
                     <Text style={styles.releaseListCheckTxt}>不需要</Text>
                   </TouchableWithoutFeedback>
                 </View>
@@ -861,7 +863,9 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  return {};
+  return {
+    login: state.login.login,
+  };
 }
 
 function mapDispatchToProps(dispatch) {
