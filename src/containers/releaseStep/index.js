@@ -249,12 +249,17 @@ class ReleaseStepScreen extends React.Component {
       });
       newJob.userId = login.userId;
       console.log('newJob', newJob);
-      addNewJob(newJob).then(() => {
-        toastOpts.data = '申请成功请等待审核';
-        WToast.show(toastOpts);
-        setTimeout(() => {
-          navigation.navigate('MyInfo');
-        }, 1000);
+      addNewJob(newJob).then(data => {
+        if (data.status == 2) {
+          toastOpts.data = '账户余额不足，请立即充值';
+          WToast.show(toastOpts);
+        } else {
+          toastOpts.data = '申请成功请等待审核';
+          WToast.show(toastOpts);
+          setTimeout(() => {
+            navigation.navigate('MyInfo');
+          }, 1000);
+        }
       });
     } else {
       toastOpts.data = '请添加步骤';
