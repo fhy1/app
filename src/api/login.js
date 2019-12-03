@@ -111,7 +111,7 @@ export function wxLogin(code) {
       if (data.error) {
         return Promise.reject(data);
       } else {
-        await setData('userNews', data);
+        await setData('userNews', data.data);
         return data.data;
       }
     })
