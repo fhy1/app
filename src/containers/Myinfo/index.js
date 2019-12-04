@@ -7,10 +7,13 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  Alert,
 } from 'react-native';
 import FitImage from 'react-native-fit-image';
 import Swiper from 'react-native-swiper';
 import {connect} from 'react-redux';
+import {getWxPay} from '../../api/pay';
+import * as WeChat from 'react-native-wechat';
 
 class MyInfoScreen extends React.Component {
   constructor(props) {
@@ -173,7 +176,34 @@ class MyInfoScreen extends React.Component {
                 </View>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.navigate('Withdraw');
+                    getWxPay(7, 0.1, 2, '').then(data => {
+                      let xxx = data.data;
+                      WeChat.isWXAppInstalled().then(isInstalled => {
+                        if (isInstalled) {
+                          WeChat.pay({
+                            partnerId: xxx.partnerid, // 商家向财付通申请的商家id
+                            prepayId: xxx.prepayid, // 预支付订单
+                            nonceStr: xxx.noncestr, // 随机串，防重发
+                            timeStamp: xxx.timestamp, // 时间戳，防重发.
+                            package: xxx.package, // 商家根据财付通文档填写的数据和签名
+                            sign: xxx.sign, // 商家根据微信开放平台文档对数据做的签名
+                          })
+                            .then(requestJson => {
+                              //支付成功回调
+                              if (requestJson.errCode == '0') {
+                                //回调成功处理
+                                Alert.alert('支付失败');
+                              }
+                            })
+                            .catch(err => {
+                              Alert.alert('支付失败');
+                            });
+                        } else {
+                          Alert.alert('请安装微信');
+                        }
+                      });
+                    });
+                    // navigation.navigate('Withdraw');
                   }}>
                   <View style={styles.navViewMoneybtn}>
                     <Text style={styles.navViewMoneybtnTxt}>提现</Text>

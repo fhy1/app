@@ -43,16 +43,22 @@ class ExtendScreen extends React.Component {
   }
 
   componentDidMount = async () => {
-    let {login} = this.props;
+    let {login, navigation} = this.props;
     console.log(login);
-    const [invite, user] = await Promise.all([
-      fetchExtendInvite(),
-      fetchExtendUser(login.userId),
-    ]);
-    this.setState({
-      invite: invite.data ? invite.data : [],
-      user: user.data ? user.data : {},
-    });
+    if (login) {
+      console.log(1);
+      const [invite, user] = await Promise.all([
+        fetchExtendInvite(),
+        fetchExtendUser(login.userId),
+      ]);
+      this.setState({
+        invite: invite.data ? invite.data : [],
+        user: user.data ? user.data : {},
+      });
+    } else {
+      console.log(2);
+      navigation.navigate('Login');
+    }
     // this.props.fetchExtendInvite();
     // this.props.fetchExtendUser(login.userId);
   };
@@ -155,7 +161,7 @@ class ExtendScreen extends React.Component {
                   justifyContent: 'center',
                 }}>
                 <QRCode
-                  value={login.uid}
+                  value={login ? login.uid : '1'}
                   logoBorderRadius={1}
                   color={'#191919'}
                   backgroundColor={'#ffffff'}
