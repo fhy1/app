@@ -8,28 +8,7 @@ import HomeScreen from '../containers/Home/index';
 import HallScreen from '../containers/hall/index';
 import ExtendScreen from '../containers/extend/index';
 import MyinfoScreen from '../containers/Myinfo/index';
-
-class ShopScreen extends React.Component {
-  render() {
-    return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Text>Shop Screen1</Text>
-      </View>
-    );
-  }
-}
-
-class ShopScreen1 extends React.Component {
-  render() {
-    return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Text>Shop Screen111</Text>
-
-        <Image source={require('../assets/home.png')} />
-      </View>
-    );
-  }
-}
+import BrokeScreen from '../containers/broker/index';
 
 class ShopScreen2 extends React.Component {
   render() {
@@ -116,9 +95,9 @@ const MainTabNavigator = createBottomTabNavigator(
       //   },
       // },
     },
-    Shops2: {
-      screen: ShopScreen2,
-      path: '/shop1',
+    Broke: {
+      screen: BrokeScreen,
+      path: '/broke',
       navigationOptions: {
         tabBarLabel: '经纪人',
         tabBarIcon: ({focused, tintColor}) => {
@@ -138,7 +117,7 @@ const MainTabNavigator = createBottomTabNavigator(
     },
     extend: {
       screen: ExtendScreen,
-      path: '/shop2',
+      path: '/extend',
       navigationOptions: ({navigation}) => ({
         tabBarLabel: '推广',
         tabBarIcon: ({focused, tintColor}) => {

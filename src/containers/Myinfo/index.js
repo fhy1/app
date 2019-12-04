@@ -98,28 +98,46 @@ class MyInfoScreen extends React.Component {
                   borderRadius: imgWidth / 2,
                 },
               ]}></View>
-            <View
-              style={{
-                position: 'absolute',
-                height: imgWidth,
-                justifyContent: 'center',
-                alignItems: 'center',
-                top: 30,
-                left: 30 + imgWidth,
-              }}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('Login');
+            {login ? (
+              <View
+                style={{
+                  position: 'absolute',
+                  height: imgWidth,
+                  justifyContent: 'center',
+                  top: 30,
+                  left: 30 + imgWidth,
                 }}>
                 <Text
-                  style={{
-                    fontSize: 18,
-                    color: '#444444',
-                  }}>
-                  立即登录
+                  style={{color: '#444444', fontSize: 14, marginBottom: 14}}>
+                  ID: 15123456789
                 </Text>
-              </TouchableOpacity>
-            </View>
+                <Text style={{color: '#444444', fontSize: 14}}>普通会员</Text>
+              </View>
+            ) : (
+              <View
+                style={{
+                  position: 'absolute',
+                  height: imgWidth,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  top: 30,
+                  left: 30 + imgWidth,
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('Login');
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: '#444444',
+                    }}>
+                    立即登录
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
             {/* <View>
               <Text>ID： 15123456789</Text>
               <Text>黄金会员</Text>

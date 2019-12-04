@@ -16,6 +16,7 @@ import {connect} from 'react-redux';
 //   fetchHalljobNext,
 // } from '../../actions/hall';
 import {fetchHalljob, fetchHallType, fetchHalljobNext} from '../../api/hall';
+import {paramToQuery2} from '../../utils/fetch';
 
 class HallScreen extends React.Component {
   static navigationOptions = ({navigation}) => {

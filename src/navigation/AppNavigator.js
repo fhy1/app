@@ -23,6 +23,8 @@ import WithdrawScreen from '../containers/withdraw/index';
 import HallDetailScreen from '../containers/hallDetail/index';
 import SearchScreen from '../containers/search/index';
 import ReleaseStepScreen from '../containers/releaseStep/index';
+import WxwithDrawScreen from '../containers/wxwithDraw/index';
+import ZfbwithDrawScreen from '../containers/zfbwithDraw/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -221,6 +223,28 @@ export default createAppContainer(
     },
     ReleaseStep: {
       screen: ReleaseStepScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    WxwithDraw: {
+      screen: WxwithDrawScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    ZfbwithDraw: {
+      screen: ZfbwithDrawScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image
