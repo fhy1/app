@@ -1,10 +1,10 @@
 import {paramToQuery} from '../utils/fetch';
 
-const audit = 'job/release';
+const USERJOB = 'job/userJob';
 
-export function fetchAudit(pageNo, pageSize, auditStatus, userId) {
+export function fetchAudit(pageNo, pageSize, userId, status) {
   const url = paramToQuery(
-    `${audit}?pageNo=${pageNo}&pageSize=${pageSize}&userId=${userId}`,
+    `${USERJOB}?pageNo=${pageNo}&pageSize=${pageSize}&userId=${userId}&status=${status}`,
   );
   console.log(url);
   return fetch(url)
@@ -12,9 +12,42 @@ export function fetchAudit(pageNo, pageSize, auditStatus, userId) {
       return res.json();
     })
     .then(data => {
-      return data;
+      console.log('userJob', data.status);
+      console.log('userJob', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
     })
     .catch(e => {
-      console.log(e.message);
+      console.log('err1', e.message);
+      return Promise.reject(e.message);
+    });
+}
+
+export function editAudit(taskId, status, refuseReason) {
+  const url = paramToQuery(
+    `${USERJOB}?taskId=${taskId}&status=${status}&refuseReason=${refuseReason}`,
+  );
+  console.log(url);
+  return fetch(url, {
+    method: 'PUT',
+  })
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      console.log('userJob', data.status);
+      console.log('userJob', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
+    })
+    .catch(e => {
+      console.log('err1', e.message);
+      return Promise.reject(e.message);
     });
 }

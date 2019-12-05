@@ -10,12 +10,7 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import {connect} from 'react-redux';
-// import {
-//   fetchHalljob,
-//   fetchHallType,
-//   fetchHalljobNext,
-// } from '../../actions/hall';
-import {fetchHalljob, fetchHallType, fetchHalljobNext} from '../../api/hall';
+import {fetchHalljob, fetchHallType} from '../../api/hall';
 import {paramToQuery2} from '../../utils/fetch';
 
 class HallScreen extends React.Component {
@@ -573,14 +568,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    // fetchHalljob: (pageNo, pageSize, labelStatus, typeId) =>
-    //   dispatch(fetchHalljob(pageNo, pageSize, labelStatus, typeId)),
-    // fetchHallType: () => dispatch(fetchHallType()),
-    // fetchHalljobNext: (pageNo, pageSize, labelStatus, typeId) =>
-    //   dispatch(fetchHalljobNext(pageNo, pageSize, labelStatus, typeId)),
-    // clearList: () => dispatch(clearList()),
-  };
+  return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HallScreen);

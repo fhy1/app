@@ -11,6 +11,9 @@ import {
   FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
+import {fetchHalljob} from '../../api/hall';
+import {WToast} from 'react-native-smart-tip';
+import {paramToQuery2} from '../../utils/fetch';
 
 class SearchScreen extends React.Component {
   static navigationOptions = {
@@ -36,20 +39,69 @@ class SearchScreen extends React.Component {
       search: {},
       searchList: [],
       searchFlag: false,
+      searchTxt: '',
     };
   }
 
   componentDidMount = () => {};
 
   handelOnSerchHall = () => {
+    const {searchTxt} = this.state;
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    if (searchTxt) {
+      fetchHalljob(1, 15, 0, '', searchTxt).then(
+        search => {
+          console.log(search.data.list);
+          this.setState({
+            search: search.data,
+            searchFlag: true,
+            searchList: search.data.list,
+          });
+        },
+        () => {
+          toastOpts.data = '搜索失败';
+          WToast.show(toastOpts);
+        },
+      );
+    } else {
+      toastOpts.data = '搜索内容不能为空';
+      WToast.show(toastOpts);
+    }
+    // .then(search => {
+    // this.setState({
+    //   search: search.data,
+    //   searchList: search.data.list,
+    //   searchFlag: true,
+    // });
+    // });
+  };
+
+  handelOnJumpToDetail = jobId => {
+    const {navigation, login} = this.props;
+    if (login) {
+      navigation.navigate('HallDetail', {
+        jobId: jobId,
+      });
+    } else {
+      navigation.navigate('Login');
+    }
+  };
+
+  onChangeSearchTxt = e => {
     this.setState({
-      searchFlag: true,
+      searchTxt: e,
     });
   };
 
   render() {
     const {navigation} = this.props;
-    const {search, searchList, searchFlag} = this.state;
+    const {search, searchList, searchFlag, searchTxt} = this.state;
     return (
       <View style={styles.searchView}>
         <View style={styles.titleSearch}>
@@ -60,7 +112,8 @@ class SearchScreen extends React.Component {
             />
             <TextInput
               style={styles.navSearchTextInput}
-              onFocus={this.focusSearch}
+              value={searchTxt}
+              onChangeText={this.onChangeSearchTxt}
               placeholder="搜索你喜欢的任务!"
             />
           </View>
@@ -294,7 +347,9 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  return {};
+  return {
+    login: state.login.login,
+  };
 }
 
 function mapDispatchToProps(dispatch) {

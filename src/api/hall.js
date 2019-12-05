@@ -51,9 +51,15 @@ export const signUp = json => {
   };
 };
 
-export function fetchHalljob(pageNo, pageSize, labelStatus, typeId) {
+export function fetchHalljob(
+  pageNo,
+  pageSize,
+  labelStatus,
+  typeId,
+  keyWord = '',
+) {
   const url = paramToQuery(
-    `${JOB}?pageNo=${pageNo}&pageSize=${pageSize}&label=${labelStatus}&typeId=${typeId}`,
+    `${JOB}?pageNo=${pageNo}&pageSize=${pageSize}&label=${labelStatus}&typeId=${typeId}&keyWord=${keyWord}`,
   );
   console.log(url);
   return fetch(url)

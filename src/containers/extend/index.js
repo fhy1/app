@@ -15,6 +15,7 @@ import {fetchExtendInvite, fetchExtendUser} from '../../api/extend';
 import QRCode from 'react-native-qrcode-svg';
 import * as WeChat from 'react-native-wechat';
 import {WToast} from 'react-native-smart-tip';
+// import * as QQAPI from 'react-native-qq';
 
 class ExtendScreen extends React.Component {
   static navigationOptions = {
@@ -118,6 +119,23 @@ class ExtendScreen extends React.Component {
         WToast.show(toastOpts);
       }
     });
+  };
+
+  OnShareQqFriend = () => {
+    // let qqshareInfo = {
+    //   type: 'news',
+    //   imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+    //   title: '大家一起赚钱拉',
+    //   description: '大家一起赚钱拉',
+    //   webpageUrl: 'http://www.lcode.org',
+    // };
+    // QQAPI.isQQInstalledAction().then(res => {
+    //   QQAPI.shareToQQ(qqshareInfo)
+    //     .then(res => {})
+    //     .catch(err => {
+    //       console.log('分享失败');
+    //     });
+    // });
   };
 
   render() {
@@ -228,7 +246,7 @@ class ExtendScreen extends React.Component {
                     <Text style={styles.extendShareBodyText}>qq空间</Text>
                   </View>
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={this.OnShareQqFriend}>
                   <View style={styles.extendShareBodyView}>
                     <View style={styles.extendShareBodyImg}>
                       <FitImage

@@ -3,14 +3,14 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
-  Image,
-  Dimensions,
   TouchableOpacity,
   FlatList,
+  Modal,
+  TextInput,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {fetchAudit} from '../../api/apply';
+import {fetchAudit, editAudit} from '../../api/apply';
+import {WToast} from 'react-native-smart-tip';
 
 class ApplyScreen extends React.Component {
   static navigationOptions = {
@@ -34,47 +34,135 @@ class ApplyScreen extends React.Component {
     super(props);
     this.state = {
       labels: [
-        {title: '待审核', id: 2},
-        {title: '审核通过', id: 3},
-        {title: '审核拒绝', id: 4},
+        {title: '待审核', id: 3},
+        {title: '审核通过', id: 4},
+        {title: '审核拒绝', id: 5},
       ],
-      labelStatus: 2,
+      labelStatus: 3,
       apply: {},
       applyList: [],
       pageNo: 1,
       pageSize: 15,
+      modalVisible: false,
+      ques: '',
+      taskId: '',
+      clickIndex: 0,
     };
   }
   componentDidMount = async () => {
     try {
       const {login} = this.props;
       const {pageNo, pageSize, labelStatus} = this.state;
-      const data = await fetchAudit(pageNo, pageSize, login.userId);
+      const data = await fetchAudit(
+        pageNo,
+        pageSize,
+        login.userId,
+        labelStatus,
+      );
       this.setState({
         applyList: data.data.list,
       });
     } catch (error) {}
   };
 
-  onHandelPress = async index => {
+  componentWillUnmount = () => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
+  onHandelPress = index => {
+    const {login} = this.props;
     this.setState({
       labelStatus: index,
       pageNo: 1,
       pageSize: 15,
     });
-    const {login} = this.props;
-    const {pageNo, pageSize} = this.state;
-    const data = await fetchRelease(pageNo, pageSize, index, login.userId).then(
-      data => {
-        this.setState({
-          applyList: data.data.list,
+    fetchAudit(1, 15, login.userId, index).then(data => {
+      this.setState({
+        applyList: data.data.list,
+      });
+    });
+  };
+
+  onNoPass = (taskId, index) => {
+    this.setState({
+      modalVisible: true,
+      taskId: taskId,
+      clickIndex: index,
+    });
+    // editAudit();
+  };
+
+  onFinish = (taskId, index) => {
+    editAudit(taskId, 4, '').then(
+      () => {
+        this.setState(state => {
+          state.applyList.splice(index, 1);
+          return {
+            applyList: state.applyList,
+            modalVisible: false,
+          };
         });
+        toastOpts.data = '审核成功';
+        WToast.show(toastOpts);
+      },
+      () => {
+        toastOpts.data = '审核失败';
+        WToast.show(toastOpts);
       },
     );
   };
-  onFinish = () => {};
+
+  addBack = () => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
+  addSubmit = () => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    const {taskId, ques, clickIndex} = this.state;
+    editAudit(taskId, 5, ques).then(
+      () => {
+        this.setState(state => {
+          state.applyList.splice(clickIndex, 1);
+          return {
+            applyList: state.applyList,
+            modalVisible: false,
+          };
+        });
+        toastOpts.data = '审核成功';
+        WToast.show(toastOpts);
+      },
+      () => {
+        toastOpts.data = '审核失败';
+        WToast.show(toastOpts);
+      },
+    );
+  };
+
+  onChangeQues = e => {
+    this.setState({
+      ques: e,
+    });
+  };
+
   render() {
-    const {labels, labelStatus, apply, applyList} = this.state;
+    const {
+      labels,
+      labelStatus,
+      apply,
+      applyList,
+      modalVisible,
+      ques,
+    } = this.state;
     return (
       <View style={styles.applyView}>
         <View style={styles.applyTitleView}>
@@ -129,37 +217,95 @@ class ApplyScreen extends React.Component {
           onEndReachedThreshold={1}
           onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
-            <View style={styles.applyList} key={item.id}>
+            <View style={styles.applyList}>
               <View style={styles.applyListTitle}>
-                <Text style={styles.applyListTitleTxt}>毛毛爱吃火腿</Text>
+                <Text style={styles.applyListTitleTxt}>{item.jobTitle}</Text>
+                {labelStatus == 4 ? (
+                  <View style={styles.applySign}>
+                    <Text style={styles.applySignTxt}>通过</Text>
+                  </View>
+                ) : null}
+                {labelStatus == 5 ? (
+                  <View style={styles.applySign2}>
+                    <Text style={styles.applySignTxt2}>未通过</Text>
+                  </View>
+                ) : null}
               </View>
               <View style={styles.applyListImg}></View>
               <View style={styles.applyListNav}>
-                <Text style={styles.applyListNavTxt}>2019-11-10</Text>
+                <Text style={styles.applyListNavTxt}>{item.commitTime}</Text>
               </View>
-              <View style={styles.applyListLine}></View>
-              <View style={styles.applyListButton}>
-                <TouchableOpacity
-                  style={styles.applyListButtonClick}
-                  onPress={this.onFinish}>
-                  <View>
-                    <Text style={styles.applyListButtonTxt}>通过</Text>
+              {labelStatus == 3 ? (
+                <>
+                  <View style={styles.applyListLine}></View>
+                  <View style={styles.applyListButton}>
+                    <TouchableOpacity
+                      style={styles.applyListButtonClick}
+                      onPress={this.onFinish}>
+                      <View>
+                        <Text style={styles.applyListButtonTxt}>通过</Text>
+                      </View>
+                    </TouchableOpacity>
+                    <View style={styles.applyListButtonLine}></View>
+
+                    <TouchableOpacity
+                      style={styles.applyListButtonClick}
+                      onPress={this.onNoPass.bind(this, item.taskId, index)}>
+                      <View>
+                        <Text style={styles.applyListButtonTxt}>不通过</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : null}
+              {labelStatus == 5 ? (
+                <>
+                  <View style={styles.applyListLine}></View>
+                  <View style={styles.applyListButton}>
+                    <Text style={styles.applyNoPassTxt}>未通过原因: </Text>
+                  </View>
+                </>
+              ) : null}
+            </View>
+          )}
+          keyExtractor={item => JSON.stringify(item.taskId)}
+        />
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={this.CloseModel}>
+          <View style={styles.taskModal}>
+            <View style={styles.opinionModalView}>
+              <View style={styles.opinionTopTitle}>
+                <Text style={styles.opinionTopTitleTxt}>拒绝原因</Text>
+              </View>
+              <TextInput
+                style={styles.opinionInp}
+                multiline={true}
+                value={ques}
+                placeholder="请输入您的拒绝原因"
+                onChangeText={this.onChangeQues}
+                maxLength={60}
+              />
+              <View style={styles.opinionBtnView}>
+                <TouchableOpacity onPress={this.addBack}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#DDDDDD'}]}>
+                    <Text style={styles.opinionTxt}>取消</Text>
                   </View>
                 </TouchableOpacity>
-                <View style={styles.applyListButtonLine}></View>
-
-                <TouchableOpacity
-                  style={styles.applyListButtonClick}
-                  onPress={this.onGoToApply}>
-                  <View>
-                    <Text style={styles.applyListButtonTxt}>不通过</Text>
+                <TouchableOpacity onPress={this.addSubmit}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#FFDB44'}]}>
+                    <Text style={styles.opinionTxt}>提交</Text>
                   </View>
                 </TouchableOpacity>
               </View>
             </View>
-          )}
-          keyExtractor={(item, index) => JSON.stringify(index)}
-        />
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -230,6 +376,40 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+  applySign: {
+    position: 'absolute',
+    top: 20,
+    right: -15,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    backgroundColor: '#FFDB44',
+    width: 80,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  applySignTxt: {
+    color: '#444444',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  applySign2: {
+    position: 'absolute',
+    top: 20,
+    right: -15,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    backgroundColor: '#FD2A2A',
+    width: 80,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  applySignTxt2: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
   applyListImg: {
     flexDirection: 'row',
   },
@@ -269,6 +449,71 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
     color: '#444444',
+  },
+
+  applyNoPassTxt: {
+    paddingTop: 10.5,
+    paddingBottom: 10.5,
+    color: '#444444',
+    fontSize: 12,
+  },
+
+  //弹框
+  taskModal: {
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    flex: 1,
+    alignItems: 'center',
+  },
+  opinionModalView: {
+    backgroundColor: '#FFFFFF',
+    width: 400,
+    marginTop: 96,
+    padding: 13,
+    borderRadius: 4,
+  },
+  opinionTopTitle: {
+    alignItems: 'center',
+  },
+  opinionTopTitleTxt: {
+    fontSize: 16,
+    color: '#444444',
+    fontWeight: 'bold',
+  },
+  opinionTitle: {
+    marginTop: 16.5,
+    marginBottom: 16.5,
+    fontSize: 14,
+    color: '#444444',
+    lineHeight: 30,
+    fontWeight: 'normal',
+  },
+  opinionInp: {
+    height: 80,
+    backgroundColor: '#F3F3F3',
+    textAlignVertical: 'top',
+  },
+  opinionInp2: {
+    height: 40,
+    backgroundColor: '#F3F3F3',
+    textAlignVertical: 'top',
+  },
+  opinionBtnView: {
+    marginTop: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  opinionBtn: {
+    width: 120,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  opinionTxt: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'normal',
   },
 });
 

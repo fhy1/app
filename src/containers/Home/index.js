@@ -9,6 +9,7 @@ import {
   TextInput,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import {getData} from '../../utils/storage';
@@ -190,11 +191,13 @@ class HomeScreen extends React.Component {
               homeImgs.map(item => {
                 let url = paramToQuery2(item.img);
                 return (
-                  <Image
-                    key={item.imgId}
-                    source={{uri: url}}
-                    style={styles.swiperImage}
-                  />
+                  <TouchableWithoutFeedback key={item.imgId}>
+                    <Image
+                      key={item.imgId}
+                      source={{uri: url}}
+                      style={styles.swiperImage}
+                    />
+                  </TouchableWithoutFeedback>
                 );
               })
             ) : (

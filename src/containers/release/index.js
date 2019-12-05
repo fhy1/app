@@ -1,18 +1,12 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-  Button,
-  FlatList,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import {connect} from 'react-redux';
-import {bold} from 'ansi-colors';
-import {fetchJobRelease, fetchReleaseEnd} from '../../api/release';
+import {
+  fetchJobRelease,
+  fetchReleaseEnd,
+  editReleaseEnd,
+} from '../../api/release';
+import {WToast} from 'react-native-smart-tip';
 
 class ReleaseScreen extends React.Component {
   static navigationOptions = ({navigation}) => {
@@ -68,6 +62,7 @@ class ReleaseScreen extends React.Component {
   componentDidMount = () => {
     const {login} = this.props;
     const {labelStatus, pageNo, pageSize} = this.state;
+
     this.props.navigation.setParams({goToclick: this.goToclick});
     fetchJobRelease(login.userId, labelStatus, pageNo, pageSize).then(
       release => {
@@ -93,8 +88,16 @@ class ReleaseScreen extends React.Component {
       pageSize: 15,
     });
     if (id == 5) {
+      fetchReleaseEnd(login.userId, 1, 15).then(release => {
+        console.log(release);
+        this.setState({
+          release: release.data,
+          releaseList: release.data.list,
+        });
+      });
     } else {
       fetchJobRelease(login.userId, id, 1, 15).then(release => {
+        console.log(release);
         this.setState({
           release: release.data,
           releaseList: release.data.list,
@@ -103,7 +106,58 @@ class ReleaseScreen extends React.Component {
     }
   };
 
-  onFinish = () => {};
+  onSuspend = (jobStatus, jobId, index) => {
+    const status = jobStatus == 1 ? 3 : 1;
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    editReleaseEnd(jobId, status).then(
+      () => {
+        this.setState(state => {
+          state.releaseList[index].jobStatus = status;
+          toastOpts.data = jobStatus == 1 ? '暂停成功' : '开启成功';
+          WToast.show(toastOpts);
+          return {
+            releaseList: state.releaseList,
+          };
+        });
+      },
+      () => {
+        toastOpts.data = jobStatus == 1 ? '暂停失败' : '开启失败';
+        WToast.show(toastOpts);
+      },
+    );
+  };
+
+  onFinish = (jobId, index) => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    editReleaseEnd(jobId, 2).then(
+      () => {
+        this.setState(state => {
+          state.releaseList.splice(index, 1);
+          toastOpts.data = '结束成功';
+          WToast.show(toastOpts);
+          return {
+            releaseList: state.releaseList,
+          };
+        });
+      },
+      () => {
+        toastOpts.data = '结束失败';
+        WToast.show(toastOpts);
+      },
+    );
+  };
 
   onGoToApply = () => {
     const {navigation} = this.props;
@@ -111,9 +165,9 @@ class ReleaseScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {job} = this.state;
+    const {release} = this.state;
     const {login} = this.props;
-    if (job.pageNum < job.pages) {
+    if (release.pageNum < release.pages) {
       console.log(111);
       const {pageNo} = this.state;
       this.setState(
@@ -122,8 +176,14 @@ class ReleaseScreen extends React.Component {
         },
         () => {
           const {pageNo, pageSize, labelStatus, releaseList} = this.state;
-
           if (labelStatus == 5) {
+            fetchReleaseEnd(login.userId, 1, 15).then(release => {
+              console.log(release);
+              this.setState({
+                release: release.data,
+                releaseList: release.data.list,
+              });
+            });
           } else {
             fetchJobRelease(login.userId, labelStatus, pageNo, pageSize).then(
               release => {
@@ -138,8 +198,6 @@ class ReleaseScreen extends React.Component {
       );
     }
   };
-
-  _keyExtractor = (item, index) => item.id;
 
   render() {
     const {labels, labelStatus, release, releaseList} = this.state;
@@ -231,17 +289,22 @@ class ReleaseScreen extends React.Component {
                   <View style={styles.releaseListButton}>
                     <TouchableOpacity
                       style={styles.releaseListButtonClick}
-                      onPress={this.onSuspend}>
+                      onPress={this.onSuspend.bind(
+                        this,
+                        item.jobStatus,
+                        item.jobId,
+                        index,
+                      )}>
                       <View>
                         <Text style={styles.releaseListButtonTxt}>
-                          暂停任务
+                          {item.jobStatus == 1 ? '暂停任务' : '开始任务'}
                         </Text>
                       </View>
                     </TouchableOpacity>
                     <View style={styles.releaseListButtonLine}></View>
                     <TouchableOpacity
                       style={styles.releaseListButtonClick}
-                      onPress={this.onFinish}>
+                      onPress={this.onFinish.bind(this, item.jobId, index)}>
                       <View>
                         <Text style={styles.releaseListButtonTxt}>
                           结束任务

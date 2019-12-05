@@ -2,7 +2,8 @@ import {paramToQuery} from '../utils/fetch';
 
 const JOB = 'job';
 const RELEASE = 'job/release';
-const END = '/job/end';
+const END = 'job/end';
+const SUSPENDEND = 'job/suspend-end';
 
 export function addNewJob(data) {
   const url = paramToQuery(`${JOB}`);
@@ -64,6 +65,30 @@ export function fetchReleaseEnd(userId, pageNo, pageSize) {
   );
   console.log('url', url);
   return fetch(url)
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      console.log('end', data.status);
+      console.log('end', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
+    })
+    .catch(e => {
+      console.log('err1', e.message);
+      return Promise.reject(e.message);
+    });
+}
+
+export function editReleaseEnd(jobId, type) {
+  const url = paramToQuery(`${SUSPENDEND}?jobId=${jobId}&type=${type}`);
+  console.log('url', url);
+  return fetch(url, {
+    method: 'PUT',
+  })
     .then(res => {
       return res.json();
     })
