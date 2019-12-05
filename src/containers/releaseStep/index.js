@@ -354,7 +354,7 @@ class ReleaseStepScreen extends React.Component {
                       ]}>
                       {/* <TouchableWithoutFeedback
                         onPress={this.ChangeCheck.bind(this, 2)}> */}
-                      {item.checkPicture === 1 ? (
+                      {item.checkPicture === 2 ? (
                         <Image
                           style={[
                             styles.releaseListCheckImg,
@@ -380,7 +380,7 @@ class ReleaseStepScreen extends React.Component {
                       {/* </TouchableWithoutFeedback>
                       <TouchableWithoutFeedback
                         onPress={this.ChangeCheck.bind(this, 1)}> */}
-                      {item.checkPicture === 2 ? (
+                      {item.checkPicture === 1 ? (
                         <Image
                           style={[
                             styles.releaseListCheckImg,
@@ -408,106 +408,6 @@ class ReleaseStepScreen extends React.Component {
               </View>
             );
           })}
-          {/* <View style={styles.stepView}>
-            <View style={styles.stepViewTitle}>
-              <Text style={styles.stepViewTitleTxt}>步骤1</Text>
-              <TouchableOpacity
-                style={[styles.setStepNavBtnTouch, {right: 28, top: 10}]}
-                onPress={this.setStep}>
-                <View
-                  style={[styles.setStepNavBtn, {backgroundColor: '#f75139'}]}>
-                  <Text style={[styles.setStepNavBtnTxt, {fontSize: 20}]}>
-                    -
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.stepViewBody}>
-              <View style={styles.stepViewBodyIns}>
-                <Text style={styles.stepViewBodyTxt1}>步骤说明： </Text>
-                <Text style={styles.stepViewBodyTxt2}>
-                  hahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahaha
-                </Text>
-              </View>
-              <View style={styles.stepViewBodyInsLine} />
-              <View style={styles.stepViewBodyIns}>
-                <Text style={styles.stepViewBodyTxt1}>添加网址： </Text>
-                <Text style={styles.stepViewBodyTxt2}>heihei</Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.stepView}>
-            <View style={styles.stepViewTitle}>
-              <Text style={styles.stepViewTitleTxt}>步骤2</Text>
-            </View>
-            <View style={styles.stepViewBody}>
-              <View style={styles.stepViewBodyIns}>
-                <Text style={styles.stepViewBodyTxt1}>步骤说明： </Text>
-                <Text style={styles.stepViewBodyTxt2}></Text>
-              </View>
-              <View style={styles.stepViewBodyInsLine} />
-              <View style={styles.stepViewBodyIns}>
-                <Text style={styles.stepViewBodyTxt1}>是否需要验证图： </Text>
-                <View
-                  style={[
-                    styles.releaseListCheck,
-                    {flex: 1, alignItems: 'center'},
-                  ]}>
-                  <TouchableWithoutFeedback
-                    onPress={this.ChangeCheck.bind(this, 2)}>
-                    {stepDetail.checkPicture === 1 ? (
-                      <Image
-                        style={[
-                          styles.releaseListCheckImg,
-                          styles.releaseListCheckOne,
-                        ]}
-                        source={require('../../assets/checkbox.png')}
-                      />
-                    ) : (
-                      <Image
-                        style={[
-                          styles.releaseListCheckImg,
-                          styles.releaseListCheckOne,
-                        ]}
-                        source={require('../../assets/checkboxno.png')}
-                      />
-                    )}
-                  </TouchableWithoutFeedback>
-                  <TouchableWithoutFeedback
-                    onPress={this.ChangeCheck.bind(this, 1)}>
-                    <View>
-                      <Text style={styles.releaseListCheckTxt}>需要</Text>
-                    </View>
-                  </TouchableWithoutFeedback>
-                  <TouchableWithoutFeedback
-                    onPress={this.ChangeCheck.bind(this, 1)}>
-                    {stepDetail.checkPicture === 2 ? (
-                      <Image
-                        style={[
-                          styles.releaseListCheckImg,
-                          styles.releaseListCheckTwo,
-                        ]}
-                        source={require('../../assets/checkbox.png')}
-                      />
-                    ) : (
-                      <Image
-                        style={[
-                          styles.releaseListCheckImg,
-                          styles.releaseListCheckTwo,
-                        ]}
-                        source={require('../../assets/checkboxno.png')}
-                      />
-                    )}
-                  </TouchableWithoutFeedback>
-                  <TouchableWithoutFeedback
-                    onPress={this.ChangeCheck.bind(this, 2)}>
-                    <Text style={styles.releaseListCheckTxt}>不需要</Text>
-                  </TouchableWithoutFeedback>
-                </View>
-              </View>
-            </View>
-          </View> */}
           <View style={styles.opinionAddBtn}>
             <TouchableOpacity onPress={this.releaseAddStep}>
               <View style={styles.opinionAddBtnView}>

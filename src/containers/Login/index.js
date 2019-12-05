@@ -134,40 +134,39 @@ class LoginScreen extends React.Component {
     const {phone, code} = this.state;
     const isPhone = this.validateTel(phone);
     const {navigation} = this.props;
-    navigation.navigate('Home');
-    // let toastOpts = {
-    //   data: '',
-    //   textColor: '#ffffff',
-    //   backgroundColor: '#444444',
-    //   duration: WToast.duration.SHORT, //1.SHORT 2.LONG
-    //   position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
-    // };
-    // if (isPhone) {
-    //   if (code) {
-    //     fetchCheckCode({phone, code}).then(
-    //       () => {
-    //         // console.log('成功啦');
-    //         fetchCheckEnroll({phone}).then(data => {
-    //           this.props.getLogin(data);
-    //           navigation.navigate('Home');
-    //         });
-    //       },
-    //       () => {
-    //         toastOpts.data = '手机号或验证码不正确';
-    //         WToast.show(toastOpts);
-    //         this.setState({
-    //           code: '',
-    //         });
-    //       },
-    //     );
-    //   } else {
-    //     toastOpts.data = '请输入验证码';
-    //     WToast.show(toastOpts);
-    //   }
-    // } else {
-    //   toastOpts.data = '请输入正确的手机号';
-    //   WToast.show(toastOpts);
-    // }
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    if (isPhone) {
+      if (code) {
+        fetchCheckCode({phone, code}).then(
+          () => {
+            // console.log('成功啦');
+            fetchCheckEnroll({phone}).then(data => {
+              this.props.getLogin(data);
+              navigation.navigate('Home');
+            });
+          },
+          () => {
+            toastOpts.data = '手机号或验证码不正确';
+            WToast.show(toastOpts);
+            this.setState({
+              code: '',
+            });
+          },
+        );
+      } else {
+        toastOpts.data = '请输入验证码';
+        WToast.show(toastOpts);
+      }
+    } else {
+      toastOpts.data = '请输入正确的手机号';
+      WToast.show(toastOpts);
+    }
   };
 
   onHandelPress = () => {

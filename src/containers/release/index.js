@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {bold} from 'ansi-colors';
+import {fetchJobRelease, fetchReleaseEnd} from '../../api/release';
 
 class ReleaseScreen extends React.Component {
   static navigationOptions = ({navigation}) => {
@@ -50,13 +51,33 @@ class ReleaseScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      labels: ['进行中', '已结束'],
-      labelStatus: 0,
+      labels: [
+        {title: '进行中', id: 3},
+        {title: '待审核', id: 2},
+        {title: '已结束', id: 5},
+        {title: '审核拒绝', id: 4},
+      ],
+      labelStatus: 3,
+      pageNo: 1,
+      pageSize: 15,
+      release: {},
+      releaseList: [],
     };
   }
 
   componentDidMount = () => {
+    const {login} = this.props;
+    const {labelStatus, pageNo, pageSize} = this.state;
     this.props.navigation.setParams({goToclick: this.goToclick});
+    fetchJobRelease(login.userId, labelStatus, pageNo, pageSize).then(
+      release => {
+        this.setState({
+          release: release.data,
+          releaseList: release.data.list,
+        });
+      },
+      () => {},
+    );
   };
 
   goToclick = () => {
@@ -64,10 +85,22 @@ class ReleaseScreen extends React.Component {
     navigation.navigate('ReleaseTask');
   };
 
-  onHandelPress = index => {
+  onHandelPress = id => {
+    const {login} = this.props;
     this.setState({
-      labelStatus: index,
+      labelStatus: id,
+      pageNo: 1,
+      pageSize: 15,
     });
+    if (id == 5) {
+    } else {
+      fetchJobRelease(login.userId, id, 1, 15).then(release => {
+        this.setState({
+          release: release.data,
+          releaseList: release.data.list,
+        });
+      });
+    }
   };
 
   onFinish = () => {};
@@ -77,30 +110,62 @@ class ReleaseScreen extends React.Component {
     navigation.navigate('Apply');
   };
 
+  fetchListNext = () => {
+    const {job} = this.state;
+    const {login} = this.props;
+    if (job.pageNum < job.pages) {
+      console.log(111);
+      const {pageNo} = this.state;
+      this.setState(
+        {
+          pageNo: pageNo + 1,
+        },
+        () => {
+          const {pageNo, pageSize, labelStatus, releaseList} = this.state;
+
+          if (labelStatus == 5) {
+          } else {
+            fetchJobRelease(login.userId, labelStatus, pageNo, pageSize).then(
+              release => {
+                this.setState({
+                  release: release.data,
+                  releaseList: releaseList.concat(release.data.list),
+                });
+              },
+            );
+          }
+        },
+      );
+    }
+  };
+
   _keyExtractor = (item, index) => item.id;
 
   render() {
-    const {labels, labelStatus} = this.state;
+    const {labels, labelStatus, release, releaseList} = this.state;
+    console.log(releaseList);
     return (
       <View style={styles.releaseView}>
         <View style={styles.releaseTitleView}>
           <View style={styles.releaseTitle}>
-            {labels.map((item, index) => {
-              return index == labelStatus ? (
+            {labels.map(item => {
+              return item.id == labelStatus ? (
                 <View
                   style={[styles.releaseTitleText, styles.releaseTitleClick]}
-                  key={index}>
-                  <Text style={styles.releaseTitleTextClick}>{item}</Text>
+                  key={item.id}>
+                  <Text style={styles.releaseTitleTextClick}>{item.title}</Text>
                 </View>
               ) : (
                 <TouchableOpacity
                   style={styles.releaseTitleTextTouch}
-                  onPress={this.onHandelPress.bind(this, index)}
-                  key={index}>
+                  onPress={this.onHandelPress.bind(this, item.id)}
+                  key={item.id}>
                   <View
                     style={styles.releaseTitleText}
                     onResponderGrant={this.onHandelPress}>
-                    <Text style={styles.releaseTitleTextNormal}>{item}</Text>
+                    <Text style={styles.releaseTitleTextNormal}>
+                      {item.title}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -109,61 +174,95 @@ class ReleaseScreen extends React.Component {
         </View>
         <FlatList
           style={styles.releaseFlatList}
-          data={[
-            {title: '超级简单的任务', id: '1'},
-            {title: '超级简单的任务', id: '2'},
-          ]}
+          data={releaseList}
           ItemSeparatorComponent={() => (
             <View style={styles.releaseFlatListLine} />
           )}
+          ListEmptyComponent={() => (
+            <View style={styles.releaseFlatListEmpty}>
+              <Text style={styles.releaseFlatListEmptyTxt}>暂无数据</Text>
+            </View>
+          )}
+          refreshing={false}
+          ListFooterComponent={() =>
+            releaseList.length > 0 ? (
+              <View style={styles.releaseFlatListEmpty}>
+                <Text style={styles.releaseFlatListEmptyTxt}>
+                  {release.pageNum == release.pages
+                    ? '没有更多了，亲'
+                    : '正在加载中，请稍等~'}
+                </Text>
+              </View>
+            ) : null
+          }
+          onEndReachedThreshold={0}
+          onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
             <View style={styles.releaseList} key={item.id}>
               <View style={styles.releaseListTitle}>
-                <Text style={styles.releaseListTitleTxt}>点赞关注即可</Text>
-                <Text style={styles.releaseListTitleMoney}>赏2.25元</Text>
+                <Text style={styles.releaseListTitleTxt}>{item.jobTitle}</Text>
+                <Text style={styles.releaseListTitleMoney}>
+                  赏{item.releasePrice}元
+                </Text>
               </View>
               <View style={styles.releaseListNav}>
                 <Text style={styles.releaseListNavTxt}>
-                  发布时间： 2019-11-10
+                  发布时间： {item.submissionTime || ''}
                 </Text>
                 <Text
                   style={[
                     styles.releaseListNavTxt,
                     styles.releaseListNavRight,
                   ]}>
-                  剩余100份
+                  剩余{item.surplusNum}份
                 </Text>
               </View>
               <View style={styles.releaseListBtnView}>
                 <View style={styles.releaseListBtn}>
-                  <Text style={styles.releaseListBtnTxt}>公众号</Text>
+                  <Text style={styles.releaseListBtnTxt}>{item.jobSource}</Text>
                 </View>
                 <View style={styles.releaseListBtn}>
-                  <Text style={styles.releaseListBtnTxt}>点赞关注</Text>
+                  <Text style={styles.releaseListBtnTxt}>{item.typeName}</Text>
                 </View>
               </View>
-              <View style={styles.releaseListLine}></View>
-              <View style={styles.releaseListButton}>
-                <TouchableOpacity
-                  style={styles.releaseListButtonClick}
-                  onPress={this.onFinish}>
-                  <View>
-                    <Text style={styles.releaseListButtonTxt}>结束任务</Text>
-                  </View>
-                </TouchableOpacity>
-                <View style={styles.releaseListButtonLine}></View>
+              {labelStatus == 3 ? (
+                <>
+                  <View style={styles.releaseListLine}></View>
+                  <View style={styles.releaseListButton}>
+                    <TouchableOpacity
+                      style={styles.releaseListButtonClick}
+                      onPress={this.onSuspend}>
+                      <View>
+                        <Text style={styles.releaseListButtonTxt}>
+                          暂停任务
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    <View style={styles.releaseListButtonLine}></View>
+                    <TouchableOpacity
+                      style={styles.releaseListButtonClick}
+                      onPress={this.onFinish}>
+                      <View>
+                        <Text style={styles.releaseListButtonTxt}>
+                          结束任务
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    <View style={styles.releaseListButtonLine}></View>
 
-                <TouchableOpacity
-                  style={styles.releaseListButtonClick}
-                  onPress={this.onGoToApply}>
-                  <View>
-                    <Text style={styles.releaseListButtonTxt}>去审核</Text>
+                    <TouchableOpacity
+                      style={styles.releaseListButtonClick}
+                      onPress={this.onGoToApply}>
+                      <View>
+                        <Text style={styles.releaseListButtonTxt}>去审核</Text>
+                      </View>
+                    </TouchableOpacity>
                   </View>
-                </TouchableOpacity>
-              </View>
+                </>
+              ) : null}
             </View>
           )}
-          keyExtractor={item => item.id}
+          keyExtractor={item => JSON.stringify(item.jobId)}
         />
       </View>
     );
@@ -294,10 +393,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'normal',
   },
+
+  releaseFlatListEmpty: {
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  releaseFlatListEmptyTxt: {
+    fontWeight: 'bold',
+    fontSize: 12,
+    color: '#444444',
+  },
 });
 
 function mapStateToProps(state) {
-  return {};
+  return {
+    login: state.login.login,
+  };
 }
 
 function mapDispatchToProps(dispatch) {

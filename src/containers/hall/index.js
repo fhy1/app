@@ -194,8 +194,6 @@ class HallScreen extends React.Component {
 
   fetchListNext = () => {
     const {job} = this.state;
-    console.log(111);
-    console.log(job);
     if (job.pageNum < job.pages) {
       console.log(111);
       const {pageNo} = this.state;
@@ -217,10 +215,14 @@ class HallScreen extends React.Component {
   };
 
   handelOnJumpToDetail = jobId => {
-    const {navigation} = this.props;
-    navigation.navigate('HallDetail', {
-      jobId: jobId,
-    });
+    const {navigation, login} = this.props;
+    if (login) {
+      navigation.navigate('HallDetail', {
+        jobId: jobId,
+      });
+    } else {
+      navigation.navigate('Login');
+    }
   };
 
   render() {
@@ -234,6 +236,7 @@ class HallScreen extends React.Component {
       jobList,
       job,
     } = this.state;
+    console.log(job);
     return (
       <View style={styles.hallView}>
         <View style={styles.hallTitleView}>
@@ -272,11 +275,6 @@ class HallScreen extends React.Component {
             </View>
           )}
           refreshing={false}
-          getItemLayout={(data, index) => ({
-            length: 68,
-            offset: 68 * index + 1,
-            index,
-          })}
           ListFooterComponent={() =>
             jobList.length > 0 ? (
               <View style={styles.hallFlatListEmpty}>
@@ -570,9 +568,7 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
   return {
-    hallType: state.hall.type,
-    jobList: state.hall.jobList,
-    job: state.hall.job,
+    login: state.login.login,
   };
 }
 

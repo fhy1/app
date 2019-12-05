@@ -49,12 +49,7 @@ class ApplyScreen extends React.Component {
     try {
       const {login} = this.props;
       const {pageNo, pageSize, labelStatus} = this.state;
-      const data = await fetchRelease(
-        pageNo,
-        pageSize,
-        labelStatus,
-        login.userId,
-      );
+      const data = await fetchAudit(pageNo, pageSize, login.userId);
       this.setState({
         applyList: data.data.list,
       });

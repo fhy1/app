@@ -56,8 +56,10 @@ class ExtendScreen extends React.Component {
         user: user.data ? user.data : {},
       });
     } else {
-      console.log(2);
-      navigation.navigate('Login');
+      const invite = await fetchExtendInvite();
+      this.setState({
+        invite: invite.data ? invite.data : [],
+      });
     }
     // this.props.fetchExtendInvite();
     // this.props.fetchExtendUser(login.userId);

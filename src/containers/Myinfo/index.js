@@ -216,7 +216,11 @@ class MyInfoScreen extends React.Component {
             <View style={styles.myinfoMoreView}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Task');
+                  if (login) {
+                    navigation.navigate('Task');
+                  } else {
+                    navigation.navigate('Login');
+                  }
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
@@ -243,7 +247,11 @@ class MyInfoScreen extends React.Component {
 
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Release');
+                  if (login) {
+                    navigation.navigate('Release');
+                  } else {
+                    navigation.navigate('Login');
+                  }
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
@@ -269,7 +277,11 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Apply');
+                  if (login) {
+                    navigation.navigate('Apply');
+                  } else {
+                    navigation.navigate('Login');
+                  }
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
@@ -295,7 +307,11 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Report');
+                  if (login) {
+                    navigation.navigate('Report');
+                  } else {
+                    navigation.navigate('Login');
+                  }
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
@@ -321,7 +337,11 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Tutorial');
+                  if (login) {
+                    navigation.navigate('Tutorial');
+                  } else {
+                    navigation.navigate('Login');
+                  }
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
@@ -347,7 +367,11 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Opinion');
+                  if (login) {
+                    navigation.navigate('Opinion');
+                  } else {
+                    navigation.navigate('Login');
+                  }
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
@@ -373,7 +397,11 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Blacklist');
+                  if (login) {
+                    navigation.navigate('Blacklist');
+                  } else {
+                    navigation.navigate('Login');
+                  }
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
@@ -425,7 +453,11 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity> */}
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Invite');
+                  if (login) {
+                    navigation.navigate('Invite');
+                  } else {
+                    navigation.navigate('Login');
+                  }
                 }}>
                 <View style={[styles.myinfoMoreItem, {borderBottomWidth: 0}]}>
                   <View style={styles.myinfoMoreIcon}>

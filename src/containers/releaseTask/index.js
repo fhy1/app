@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {WToast} from 'react-native-smart-tip';
+import {fetchHallType} from '../../api/hall';
 
 class ReleaseTaskScreen extends React.Component {
   static navigationOptions = {
@@ -37,17 +38,35 @@ class ReleaseTaskScreen extends React.Component {
     this.state = {
       taskJob: {
         jobSource: '',
+        jobTitle: '',
         introduce: '',
         submissionTime: 24,
         jobRate: 1,
         jobPrice: '',
         jobNum: '',
+        typeId: '',
       },
       modalVisible: false,
+      modalVisible2: false,
+      hallType: [],
+      typeName: '',
     };
   }
 
-  componentDidMount = () => {};
+  componentDidMount = () => {
+    fetchHallType().then(res => {
+      this.setState({
+        hallType: res.data,
+      });
+    });
+  };
+
+  componentWillUnmount = () => {
+    this.setState({
+      modalVisible: false,
+      modalVisible2: false,
+    });
+  };
 
   jumpToNext = () => {
     const {taskJob} = this.state;
@@ -63,8 +82,17 @@ class ReleaseTaskScreen extends React.Component {
     if (taskJob.jobSource === '') {
       toastOpts.data = '请输入项目名称';
       WToast.show(toastOpts);
+    } else if (taskJob.jobTitle === '') {
+      toastOpts.data = '请输入任务标题';
+      WToast.show(toastOpts);
     } else if (taskJob.introduce === '') {
       toastOpts.data = '请输入描述';
+      WToast.show(toastOpts);
+    } else if (taskJob.label === '') {
+      toastOpts.data = '请选择任务标签';
+      WToast.show(toastOpts);
+    } else if (taskJob.typeId === '') {
+      toastOpts.data = '请选择任务类型';
       WToast.show(toastOpts);
     } else {
       if (parseFloat(taskJob.jobPrice) > 0.2) {
@@ -102,9 +130,16 @@ class ReleaseTaskScreen extends React.Component {
     });
   };
 
+  ShowModel2 = () => {
+    this.setState({
+      modalVisible2: true,
+    });
+  };
+
   CloseModel = () => {
     this.setState({
       modalVisible: false,
+      modalVisible2: false,
     });
   };
 
@@ -118,6 +153,17 @@ class ReleaseTaskScreen extends React.Component {
     });
   };
 
+  changeType = (typeId, typeName) => {
+    this.setState(state => {
+      state.taskJob.typeId = typeId;
+      return {
+        taskJob: state.taskJob,
+        typeName: typeName,
+        modalVisible2: false,
+      };
+    });
+  };
+
   ChangeCheck = check => {
     this.setState(state => {
       state.taskJob.jobRate = check;
@@ -127,19 +173,44 @@ class ReleaseTaskScreen extends React.Component {
     });
   };
 
+  ChangeLabelCheck = check => {
+    this.setState(state => {
+      state.taskJob.label = check;
+      return {
+        taskJob: state.taskJob,
+      };
+    });
+  };
+
   render() {
-    const {taskJob, modalVisible} = this.state;
+    const {
+      taskJob,
+      modalVisible,
+      modalVisible2,
+      hallType,
+      typeName,
+    } = this.state;
     const {width} = Dimensions.get('window');
+    console.log(hallType);
     return (
       <View style={styles.releaseTaskView}>
         <ScrollView>
           <View style={styles.releaseList}>
-            <Text style={styles.releaseListTxt}>任务名称</Text>
+            <Text style={styles.releaseListTxt}>项目名称</Text>
             <TextInput
               style={styles.releaseListInput}
               placeholder="需填写真实项目名称"
               onChangeText={this.handelOnChange.bind(this, 'jobSource')}
               value={taskJob.jobSource}
+            />
+          </View>
+          <View style={styles.releaseList}>
+            <Text style={styles.releaseListTxt}>任务标题</Text>
+            <TextInput
+              style={styles.releaseListInput}
+              placeholder="需填写真实项目名称"
+              onChangeText={this.handelOnChange.bind(this, 'jobTitle')}
+              value={taskJob.jobTitle}
             />
           </View>
           <View style={styles.releaseList}>
@@ -169,7 +240,7 @@ class ReleaseTaskScreen extends React.Component {
               将在 <Text style={styles.releaseListInpNum}>24</Text> 小时内审核
             </Text>
           </View> */}
-          <View style={[styles.releaseList, {marginBottom: 10}]}>
+          <View style={styles.releaseList}>
             <Text style={styles.releaseListTxt}>重复任务</Text>
             <View style={styles.releaseListCheck}>
               <TouchableWithoutFeedback
@@ -224,6 +295,97 @@ class ReleaseTaskScreen extends React.Component {
               </TouchableWithoutFeedback>
             </View>
           </View>
+          <View style={styles.releaseList}>
+            <Text style={styles.releaseListTxt}>任务标签</Text>
+            <View style={styles.releaseListCheck}>
+              <TouchableWithoutFeedback
+                onPress={this.ChangeLabelCheck.bind(this, 1)}>
+                {taskJob.label === 1 ? (
+                  <Image
+                    style={[
+                      styles.releaseListCheckImg,
+                      styles.releaseListCheckOne,
+                    ]}
+                    source={require('../../assets/checkbox.png')}
+                  />
+                ) : (
+                  <Image
+                    style={[
+                      styles.releaseListCheckImg,
+                      styles.releaseListCheckOne,
+                    ]}
+                    source={require('../../assets/checkboxno.png')}
+                  />
+                )}
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback
+                onPress={this.ChangeLabelCheck.bind(this, 1)}>
+                <View>
+                  <Text style={styles.releaseListCheckTxt}>新人</Text>
+                </View>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback
+                onPress={this.ChangeLabelCheck.bind(this, 2)}>
+                {taskJob.label === 2 ? (
+                  <Image
+                    style={[
+                      styles.releaseListCheckImg,
+                      styles.releaseListCheckTwo,
+                    ]}
+                    source={require('../../assets/checkbox.png')}
+                  />
+                ) : (
+                  <Image
+                    style={[
+                      styles.releaseListCheckImg,
+                      styles.releaseListCheckTwo,
+                    ]}
+                    source={require('../../assets/checkboxno.png')}
+                  />
+                )}
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback
+                onPress={this.ChangeLabelCheck.bind(this, 2)}>
+                <Text style={styles.releaseListCheckTxt}>简单</Text>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback
+                onPress={this.ChangeLabelCheck.bind(this, 3)}>
+                {taskJob.label === 3 ? (
+                  <Image
+                    style={[
+                      styles.releaseListCheckImg,
+                      styles.releaseListCheckTwo,
+                    ]}
+                    source={require('../../assets/checkbox.png')}
+                  />
+                ) : (
+                  <Image
+                    style={[
+                      styles.releaseListCheckImg,
+                      styles.releaseListCheckTwo,
+                    ]}
+                    source={require('../../assets/checkboxno.png')}
+                  />
+                )}
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback
+                onPress={this.ChangeLabelCheck.bind(this, 3)}>
+                <Text style={styles.releaseListCheckTxt}>高价</Text>
+              </TouchableWithoutFeedback>
+            </View>
+          </View>
+          <TouchableOpacity onPress={this.ShowModel2}>
+            <View style={[styles.releaseList, {marginBottom: 10}]}>
+              <Text style={styles.releaseListTxt}>任务类型</Text>
+              <Text style={styles.releaseListInpTxt}>
+                {typeName ? (
+                  typeName
+                ) : (
+                  <Text style={styles.chooseType}>请选择任务类型</Text>
+                )}
+              </Text>
+            </View>
+          </TouchableOpacity>
 
           <View style={styles.releaseList}>
             <Text style={styles.releaseListTxt}>悬赏单价</Text>
@@ -295,6 +457,36 @@ class ReleaseTaskScreen extends React.Component {
             </View>
           </View>
         </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible2}
+          onRequestClose={this.CloseModel}>
+          <View style={styles.taskModal}>
+            <View style={styles.taskModalBottom}>
+              {hallType.map(item => {
+                return (
+                  <TouchableOpacity
+                    key={item.typeId}
+                    onPress={this.changeType.bind(
+                      this,
+                      item.typeId,
+                      item.typeName,
+                    )}>
+                    <View style={[styles.taskModalBottomList, {width: width}]}>
+                      <Text>{item.typeName}</Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+              <TouchableOpacity onPress={this.CloseModel}>
+                <View style={[styles.taskModalBottomBack, {width: width}]}>
+                  <Text>取消</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -327,6 +519,10 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     fontSize: 12,
     height: 46,
+  },
+  chooseType: {
+    color: '#666666',
+    fontSize: 12,
   },
   releaseListInpTxt: {
     flex: 1,

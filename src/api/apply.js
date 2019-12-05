@@ -2,9 +2,9 @@ import {paramToQuery} from '../utils/fetch';
 
 const audit = 'job/release';
 
-export function fetchRelease(pageNo, pageSize, auditStatus, userId) {
+export function fetchAudit(pageNo, pageSize, auditStatus, userId) {
   const url = paramToQuery(
-    `${audit}?pageNo=${pageNo}&pageSize=${pageSize}&auditStatus=${auditStatus}&userId=${userId}`,
+    `${audit}?pageNo=${pageNo}&pageSize=${pageSize}&userId=${userId}`,
   );
   console.log(url);
   return fetch(url)

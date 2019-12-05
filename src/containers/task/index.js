@@ -139,11 +139,6 @@ class TaskScreen extends React.Component {
             </View>
           )}
           refreshing={false}
-          getItemLayout={(data, index) => ({
-            length: 68,
-            offset: 68 * index + 1,
-            index,
-          })}
           ListFooterComponent={() =>
             taskList.length > 0 ? (
               <View style={styles.taskFlatListEmpty}>
