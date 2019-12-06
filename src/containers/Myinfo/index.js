@@ -13,6 +13,7 @@ import FitImage from 'react-native-fit-image';
 import Swiper from 'react-native-swiper';
 import {connect} from 'react-redux';
 import {getWxPay} from '../../api/pay';
+import {fetchMoneyAll} from '../../api/myinfo';
 import * as WeChat from 'react-native-wechat';
 
 class MyInfoScreen extends React.Component {
@@ -21,6 +22,11 @@ class MyInfoScreen extends React.Component {
     this.state = {
       topHeight: 0,
       topWidth: 0,
+      money: {
+        balance: 0,
+        repaidBalance: 0,
+        bonus: 0,
+      },
     };
   }
 
@@ -31,10 +37,21 @@ class MyInfoScreen extends React.Component {
       topHeight: (915 * width) / 1513,
       topWidth: isNaN(width) ? 0 : width,
     });
+    const {login} = this.props;
+    if (login) {
+      fetchMoneyAll(login.userId).then(
+        money => {
+          this.setState({
+            money: money.data,
+          });
+        },
+        () => {},
+      );
+    }
   }
 
   render() {
-    const {topHeight, topWidth} = this.state;
+    const {topHeight, topWidth, money} = this.state;
     const {navigation, login} = this.props;
     console.log('login', login);
     const imgWidth = parseInt((topWidth / 350) * 80);
@@ -140,77 +157,147 @@ class MyInfoScreen extends React.Component {
                 </TouchableOpacity>
               </View>
             )}
-
-            {/* <View>
-              <Text>ID： 15123456789</Text>
-              <Text>黄金会员</Text>
-            </View> */}
           </View>
           <View style={styles.topView}>
             <View style={styles.navView}>
-              <View style={styles.navViewMoney}>
-                <View>
-                  <Text style={styles.navViewMoneyTopTxt}>我的赏金</Text>
-                </View>
-                <View style={styles.navViewMoneyMiddle}>
-                  <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
-                  <Text style={styles.navViewMoneyMiddleTxt2}>10</Text>
-                </View>
-                <TouchableOpacity
+              <View style={{flexDirection: 'row', height: 80}}>
+                <View style={styles.navViewMoney}>
+                  <View>
+                    <Text style={styles.navViewMoneyTopTxt}>我的赏金</Text>
+                  </View>
+                  <View style={styles.navViewMoneyMiddle}>
+                    <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
+                    <Text style={styles.navViewMoneyMiddleTxt2}>
+                      {money.balance}
+                    </Text>
+                  </View>
+                  {/* <TouchableOpacity
                   onPress={() => {
                     navigation.navigate('Withdraw');
                   }}>
                   <View style={styles.navViewMoneybtn}>
                     <Text style={styles.navViewMoneybtnTxt}>提现</Text>
                   </View>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.navViewLine}></View>
-              <View style={styles.navViewMoney}>
-                <View>
-                  <Text style={styles.navViewMoneyTopTxt}>我的奖励</Text>
+                </TouchableOpacity> */}
                 </View>
-                <View style={styles.navViewMoneyMiddle}>
-                  <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
-                  <Text style={styles.navViewMoneyMiddleTxt2}>10</Text>
+                <View style={styles.navViewLine}>
+                  <View style={styles.navViewLineIn}></View>
                 </View>
-                <TouchableOpacity
+                <View style={styles.navViewMoney}>
+                  <View>
+                    <Text style={styles.navViewMoneyTopTxt}>我的奖励</Text>
+                  </View>
+                  <View style={styles.navViewMoneyMiddle}>
+                    <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
+                    <Text style={styles.navViewMoneyMiddleTxt2}>
+                      {money.bonus}
+                    </Text>
+                  </View>
+                  {/* <TouchableOpacity
                   onPress={() => {
-                    getWxPay(7, 0.1, 2, '').then(data => {
-                      let xxx = data.data;
-                      WeChat.isWXAppInstalled().then(isInstalled => {
-                        if (isInstalled) {
-                          WeChat.pay({
-                            partnerId: xxx.partnerid, // 商家向财付通申请的商家id
-                            prepayId: xxx.prepayid, // 预支付订单
-                            nonceStr: xxx.noncestr, // 随机串，防重发
-                            timeStamp: xxx.timestamp, // 时间戳，防重发.
-                            package: xxx.package, // 商家根据财付通文档填写的数据和签名
-                            sign: xxx.sign, // 商家根据微信开放平台文档对数据做的签名
-                          })
-                            .then(requestJson => {
-                              //支付成功回调
-                              if (requestJson.errCode == '0') {
-                                //回调成功处理
-                                Alert.alert('支付失败');
-                              }
-                            })
-                            .catch(err => {
-                              Alert.alert('支付失败');
-                            });
-                        } else {
-                          Alert.alert('请安装微信');
-                        }
-                      });
-                    });
+                    // getWxPay(7, 0.1, 2, '').then(data => {
+                    //   let xxx = data.data;
+                    //   WeChat.isWXAppInstalled().then(isInstalled => {
+                    //     if (isInstalled) {
+                    //       WeChat.pay({
+                    //         partnerId: xxx.partnerid, // 商家向财付通申请的商家id
+                    //         prepayId: xxx.prepayid, // 预支付订单
+                    //         nonceStr: xxx.noncestr, // 随机串，防重发
+                    //         timeStamp: xxx.timestamp, // 时间戳，防重发.
+                    //         package: xxx.package, // 商家根据财付通文档填写的数据和签名
+                    //         sign: xxx.sign, // 商家根据微信开放平台文档对数据做的签名
+                    //       })
+                    //         .then(requestJson => {
+                    //           //支付成功回调
+                    //           if (requestJson.errCode == '0') {
+                    //             //回调成功处理
+                    //             Alert.alert('支付失败');
+                    //           }
+                    //         })
+                    //         .catch(err => {
+                    //           Alert.alert('支付失败');
+                    //         });
+                    //     } else {
+                    //       Alert.alert('请安装微信');
+                    //     }
+                    //   });
+                    // });
                     // navigation.navigate('Withdraw');
                   }}>
                   <View style={styles.navViewMoneybtn}>
                     <Text style={styles.navViewMoneybtnTxt}>提现</Text>
                   </View>
+                </TouchableOpacity> */}
+                </View>
+                <View style={styles.navViewLine}>
+                  <View style={styles.navViewLineIn}></View>
+                </View>
+                <View style={styles.navViewMoney}>
+                  <View>
+                    <Text style={styles.navViewMoneyTopTxt}>我的余额</Text>
+                  </View>
+                  <View style={styles.navViewMoneyMiddle}>
+                    <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
+                    <Text style={styles.navViewMoneyMiddleTxt2}>
+                      {money.repaidBalance}
+                    </Text>
+                  </View>
+                  {/* <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('Withdraw');
+                  }}>
+                  <View style={styles.navViewMoneybtn}>
+                    <Text style={styles.navViewMoneybtnTxt}>提现</Text>
+                  </View>
+                </TouchableOpacity> */}
+                </View>
+              </View>
+              <View style={{height: 0.5, paddingLeft: 15, paddingRight: 15}}>
+                <View style={styles.navViewLineIn}></View>
+              </View>
+              <View style={{flexDirection: 'row', height: 40}}>
+                <TouchableOpacity
+                  style={{flex: 1}}
+                  onPress={() => {
+                    navigation.navigate('Withdraw');
+                  }}>
+                  <View
+                    style={{
+                      height: 40,
+                      flex: 1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Text style={styles.navViewMoneyTopTxt}>会员中心</Text>
+                  </View>
+                </TouchableOpacity>
+                <View style={styles.navViewLine}>
+                  <View style={styles.navViewLineIn}></View>
+                </View>
+                <TouchableOpacity
+                  style={{flex: 1}}
+                  onPress={() => {
+                    navigation.navigate('Recharge');
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      flex: 1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Text style={styles.navViewMoneyTopTxt}>充值提现</Text>
+                    <Image
+                      style={{width: 13, height: 26, marginLeft: 10}}
+                      // @ts-ignore
+                      source={require('../../assets/go.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
                 </TouchableOpacity>
               </View>
             </View>
+            {/* <View style={{ height: 40 }}></View> */}
           </View>
           <View style={styles.myinfoMore}>
             <View style={styles.myinfoMoreView}>
@@ -497,7 +584,7 @@ const styles = StyleSheet.create({
   topView: {
     paddingLeft: 15,
     paddingRight: 15,
-    marginTop: -70,
+    marginTop: -90,
   },
   myInfoHead: {
     position: 'absolute',
@@ -506,11 +593,10 @@ const styles = StyleSheet.create({
     left: 15,
   },
   navView: {
-    height: 100,
     backgroundColor: '#FFFFFF',
     paddingTop: 5,
     paddingBottom: 5,
-    flexDirection: 'row',
+    // flexDirection: 'row',
     marginBottom: 15,
     borderRadius: 4,
     overflow: 'hidden',
@@ -522,6 +608,11 @@ const styles = StyleSheet.create({
   },
   navViewLine: {
     width: 1,
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  navViewLineIn: {
+    flex: 1,
     backgroundColor: '#DDDDDD',
   },
   navViewMoneyTopTxt: {
@@ -543,18 +634,18 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     alignItems: 'flex-end',
   },
-  navViewMoneybtn: {
-    width: 70,
-    height: 24,
-    backgroundColor: '#FFDB44',
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navViewMoneybtnTxt: {
-    color: '#FFFFFF',
-    fontSize: 12,
-  },
+  // navViewMoneybtn: {
+  //   width: 70,
+  //   height: 24,
+  //   backgroundColor: '#FFDB44',
+  //   borderRadius: 4,
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // },
+  // navViewMoneybtnTxt: {
+  //   color: '#FFFFFF',
+  //   fontSize: 12,
+  // },
   swiperImage: {
     width: '100%',
     height: '100%',

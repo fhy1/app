@@ -212,7 +212,7 @@ class OpinionScreen extends React.Component {
         />
         {modal ? (
           <View style={[styles.opinionModal, {width: width, height: height}]}>
-            <View style={styles.opinionModalView}>
+            <View style={[styles.opinionModalView, {width: width * 0.8}]}>
               <View style={styles.opinionTopTitle}>
                 <Text style={styles.opinionTopTitleTxt}>意见反馈</Text>
               </View>
@@ -304,7 +304,6 @@ const styles = StyleSheet.create({
   },
   opinionModalView: {
     backgroundColor: '#FFFFFF',
-    width: 400,
     marginTop: 96,
     padding: 13,
     borderRadius: 4,

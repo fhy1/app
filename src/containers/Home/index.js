@@ -15,12 +15,6 @@ import Swiper from 'react-native-swiper';
 import {getData} from '../../utils/storage';
 import {getLogin} from '../../api/login';
 import {connect} from 'react-redux';
-// import {
-//   fetchHomeImg,
-//   fetchHomeSignIn,
-//   SignInHome,
-//   fetchHomeRecommend,
-// } from '../../actions/home';
 import {
   fetchHomeImg,
   fetchHomeSignIn,
@@ -190,14 +184,13 @@ class HomeScreen extends React.Component {
             {homeImgs && homeImgs.length > 0 ? (
               homeImgs.map(item => {
                 let url = paramToQuery2(item.img);
+                console.log(url);
                 return (
-                  <TouchableWithoutFeedback key={item.imgId}>
-                    <Image
-                      key={item.imgId}
-                      source={{uri: url}}
-                      style={styles.swiperImage}
-                    />
-                  </TouchableWithoutFeedback>
+                  <Image
+                    key={item.imgId}
+                    source={{uri: url}}
+                    style={styles.swiperImage}
+                  />
                 );
               })
             ) : (
@@ -205,16 +198,16 @@ class HomeScreen extends React.Component {
                 source={require('../../assets/banner.png')}
                 style={styles.swiperImage}
               />
-            )
-            /* <Image
+            )}
+            {/* <Image
               source={require('../../assets/banner.png')}
+              source={require('http://212.64.70.14:9099/resource/2019-12-05/jpg/1575554349492_jj.jpg')}
               style={styles.swiperImage}
             />
             <Image
               source={require('../../assets/banner.png')}
               style={styles.swiperImage}
-            /> */
-            }
+            /> */}
           </Swiper>
           {/* <Image
             source={require('../../assets/banner.png')}

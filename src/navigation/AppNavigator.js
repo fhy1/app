@@ -25,6 +25,7 @@ import SearchScreen from '../containers/search/index';
 import ReleaseStepScreen from '../containers/releaseStep/index';
 import WxwithDrawScreen from '../containers/wxwithDraw/index';
 import ZfbwithDrawScreen from '../containers/zfbwithDraw/index';
+import RechargeScreen from '../containers/recharge/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -245,6 +246,17 @@ export default createAppContainer(
     },
     ZfbwithDraw: {
       screen: ZfbwithDrawScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Recharge: {
+      screen: RechargeScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image
