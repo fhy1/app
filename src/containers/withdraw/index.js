@@ -11,6 +11,7 @@ import {
 import {connect} from 'react-redux';
 import {HeaderBackButton} from 'react-navigation-stack';
 import FitImage from 'react-native-fit-image';
+import {WToast} from 'react-native-smart-tip';
 
 class WithdrawScreen extends React.Component {
   static navigationOptions = {
@@ -32,23 +33,44 @@ class WithdrawScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {type: ''};
   }
 
-  componentDidMount = () => {};
+  componentDidMount = () => {
+    const type = this.props.navigation.state.params.type;
+    this.setState({
+      type: type,
+    });
+  };
 
   withdrawWx = () => {
-    const {navigation} = this.props;
-    navigation.navigate('WxwithDraw');
+    const {navigation, money} = this.props;
+    const {type} = this.state;
+    navigation.navigate('WxwithDraw', {
+      type: type,
+    });
+  };
+
+  withdrawZfb = () => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    toastOpts.data = '暂不支持提现至支付宝';
+    WToast.show(toastOpts);
   };
 
   render() {
-    const {navigation} = this.props;
+    const {type} = this.state;
+    const {money} = this.props;
     return (
       <View style={styles.withdrawView}>
         <View style={styles.withdrawTop}>
           <Image style={styles.hbb} source={require('../../assets/hbb.png')} />
-          <Text style={styles.withdrawMoney}>￥ 30.05</Text>
+          <Text style={styles.withdrawMoney}>￥ {money[type]}</Text>
           <Text style={styles.withdrawMoneyTxt}>（可提现金额）</Text>
         </View>
         <View style={styles.withdrawBody}>
@@ -56,7 +78,7 @@ class WithdrawScreen extends React.Component {
             <Text style={styles.withdrawListTiTle}>提现至： </Text>
           </View>
           <View style={styles.withdrawLine}></View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={this.withdrawZfb}>
             <View style={styles.withdrawList}>
               <Image
                 style={styles.withdrawLogo}
@@ -161,7 +183,9 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  return {};
+  return {
+    money: state.myinfo.money,
+  };
 }
 
 function mapDispatchToProps(dispatch) {

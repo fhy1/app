@@ -1,23 +1,19 @@
 import {paramToQuery} from '../utils/fetch';
-import {MYINFO_MONEY} from '../constants/myinfo';
-const MONEY = 'money/all';
-export const saveMoney = json => {
-  console.log(111);
-  return {
-    type: MYINFO_MONEY,
-    json,
-  };
-};
-export function fetchMoneyAll(userId) {
-  const url = paramToQuery(`${MONEY}?userId=${userId}`);
+
+const MONEYDETAIL = 'money/details';
+
+export function getMoneyDetail(userId, pageNo, pageSize) {
+  const url = paramToQuery(
+    `${MONEYDETAIL}?userId=${userId}&pageNo=${pageNo}&pageSize=${pageSize}`,
+  );
   console.log('url', url);
   return fetch(url)
     .then(res => {
       return res.json();
     })
     .then(data => {
-      console.log('money', data.status);
-      console.log('money', data);
+      console.log('details', data.status);
+      console.log('details', data);
       if (data.error) {
         return Promise.reject(data);
       } else {

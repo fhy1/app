@@ -162,7 +162,7 @@ class SearchScreen extends React.Component {
                     <Image
                       style={styles.searchListIconImg}
                       // @ts-ignore
-                      source={{uri: paramToQuery2(item.headimgurl)}}
+                      source={{uri: item.headimgurl}}
                     />
                   ) : (
                     <Image
@@ -181,12 +181,16 @@ class SearchScreen extends React.Component {
                   <View style={styles.searchListBodyView}>
                     <View style={styles.searchListBodybtn1}>
                       <View style={styles.searchListBodybtn}>
-                        <Text>{item.jobSource}</Text>
+                        <Text style={styles.searchListBodybtnTxt}>
+                          {item.jobSource}
+                        </Text>
                       </View>
                     </View>
                     <View style={styles.searchListBodybtn2}>
                       <View style={styles.searchListBodybtn}>
-                        <Text>{item.typeName}</Text>
+                        <Text style={styles.searchListBodybtnTxt}>
+                          {item.typeName}
+                        </Text>
                       </View>
                     </View>
                   </View>
@@ -266,6 +270,9 @@ const styles = StyleSheet.create({
     height: 68,
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 4,
   },
   searchListIcon: {
     width: 36,
@@ -287,7 +294,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   searchListBodyText: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#444444',
     fontWeight: 'bold',
   },
@@ -310,6 +317,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFDB44',
   },
+  searchListBodybtnTxt: {
+    color: '#444444',
+    fontSize: 12,
+  },
   searchListRight: {
     width: 80,
     height: '100%',
@@ -329,6 +340,8 @@ const styles = StyleSheet.create({
   },
   searchFlatList: {
     backgroundColor: '#F3F3F3',
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   searchFlatListLine: {
     height: 10,

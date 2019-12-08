@@ -543,8 +543,6 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
   return {
-    // invite: state.extend.invite,
-    // user: state.extend.user,
     login: state.login.login,
   };
 }

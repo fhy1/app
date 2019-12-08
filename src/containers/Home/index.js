@@ -74,11 +74,11 @@ class HomeScreen extends React.Component {
       fetchHomeRecommend(1, 10),
     ]);
     let signStatus = null;
-    if (data) {
+    if (data && data.userId) {
       signStatus = await fetchHomeSignIn(data.userId);
     }
     this.setState({
-      homeImgs: homeImgs.data,
+      homeImgs: homeImgs.data ? homeImgs.data : [],
       signFlag: signStatus && signStatus.data == 2 ? true : false,
       recommend: recommend.data,
       recommendList: recommend.data.list,
@@ -97,19 +97,23 @@ class HomeScreen extends React.Component {
     this.setState({
       signFlag: false,
     });
-    SignInHome(login.userId).then(
-      () => {
-        toastOpts.data = '签到成功';
-        WToast.show(toastOpts);
-      },
-      () => {
-        toastOpts.data = '签到失败';
-        WToast.show(toastOpts);
-        this.setState({
-          signFlag: true,
-        });
-      },
-    );
+    if (login && login.userId) {
+      SignInHome(login.userId).then(
+        () => {
+          toastOpts.data = '签到成功';
+          WToast.show(toastOpts);
+        },
+        () => {
+          toastOpts.data = '签到失败';
+          WToast.show(toastOpts);
+          this.setState({
+            signFlag: true,
+          });
+        },
+      );
+    } else {
+      navigation.navigate('Login');
+    }
   };
 
   handelOnJumpToHall = index => {
@@ -122,7 +126,7 @@ class HomeScreen extends React.Component {
   handelOnJumpToDetail = jobId => {
     const {navigation} = this.props;
     const {login} = this.props;
-    if (login) {
+    if (login && login.userId) {
       navigation.navigate('HallDetail', {
         jobId: jobId,
       });
@@ -138,6 +142,21 @@ class HomeScreen extends React.Component {
 
   render() {
     const {swiperHeight, width, signFlag, recommendList, homeImgs} = this.state;
+
+    let list = homeImgs.map(item => {
+      let url = paramToQuery2(item.img);
+      console.log(url);
+      return (
+        <Image
+          key={item.imgId}
+          source={{uri: url}}
+          style={styles.swiperImage}
+        />
+      );
+    });
+
+    console.log('list', list);
+
     return (
       <View style={styles.homeView}>
         <ScrollView>
@@ -181,31 +200,15 @@ class HomeScreen extends React.Component {
                 }}
               />
             }>
-            {homeImgs && homeImgs.length > 0 ? (
-              homeImgs.map(item => {
-                let url = paramToQuery2(item.img);
-                console.log(url);
-                return (
-                  <Image
-                    key={item.imgId}
-                    source={{uri: url}}
-                    style={styles.swiperImage}
-                  />
-                );
-              })
-            ) : (
-              <Image
-                source={require('../../assets/banner.png')}
-                style={styles.swiperImage}
-              />
-            )}
+            {list}
             {/* <Image
               source={require('../../assets/banner.png')}
-              source={require('http://212.64.70.14:9099/resource/2019-12-05/jpg/1575554349492_jj.jpg')}
+              // source={{uri: 'http://212.64.70.14:9099/resource/2019-12-05/jpg/1575554349492_jj.jpg'}}
               style={styles.swiperImage}
             />
             <Image
               source={require('../../assets/banner.png')}
+              // source={{uri: 'http://212.64.70.14:9099/resource/2019-12-05/png/1575554390617_分组.png'}}
               style={styles.swiperImage}
             /> */}
           </Swiper>
@@ -325,7 +328,7 @@ class HomeScreen extends React.Component {
                               <Image
                                 style={styles.homeListIconImg}
                                 // @ts-ignore
-                                source={{uri: paramToQuery2(item.headimgurl)}}
+                                source={{uri: item.headimgurl}}
                               />
                             ) : (
                               <Image
@@ -344,12 +347,16 @@ class HomeScreen extends React.Component {
                             <View style={styles.homeListBodyView}>
                               <View style={styles.homeListBodybtn1}>
                                 <View style={styles.homeListBodybtn}>
-                                  <Text>{item.jobSource}</Text>
+                                  <Text style={styles.homeListBodybtnTxt}>
+                                    {item.jobSource}
+                                  </Text>
                                 </View>
                               </View>
                               <View style={styles.homeListBodybtn2}>
                                 <View style={styles.homeListBodybtn}>
-                                  <Text>{item.typeName}</Text>
+                                  <Text style={styles.homeListBodybtnTxt}>
+                                    {item.typeName}
+                                  </Text>
                                 </View>
                               </View>
                             </View>
@@ -381,6 +388,13 @@ class HomeScreen extends React.Component {
             </View>
           </View>
         </ScrollView>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={this.CloseModel}>
+          <View style={styles.taskModal}>kw</View>
+        </Modal>
       </View>
     );
   }
@@ -504,7 +518,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   homeListBodyText: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#444444',
     fontWeight: 'bold',
   },
@@ -526,6 +540,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFDB44',
+  },
+  homeListBodybtnTxt: {
+    fontSize: 12,
+    color: '#444444',
   },
   homeListRight: {
     width: 80,

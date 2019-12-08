@@ -19,6 +19,7 @@ import {
 import {connect} from 'react-redux';
 import {getLogin} from '../../api/login';
 import * as WeChat from 'react-native-wechat';
+import {fetchMoneyAll, saveMoney} from '../../api/myinfo';
 
 class LoginScreen extends React.Component {
   static navigationOptions = {
@@ -148,6 +149,12 @@ class LoginScreen extends React.Component {
             // console.log('成功啦');
             fetchCheckEnroll({phone}).then(data => {
               this.props.getLogin(data);
+              fetchMoneyAll(data.userId).then(
+                money => {
+                  this.props.saveMoney(money.data);
+                },
+                () => {},
+              );
               navigation.navigate('Home');
             });
           },
@@ -188,6 +195,12 @@ class LoginScreen extends React.Component {
             WToast.show(toastOpts);
             this.props.getLogin(data);
             navigation.navigate('Home');
+            fetchMoneyAll(data.userId).then(
+              money => {
+                this.props.saveMoney(money.data);
+              },
+              () => {},
+            );
           },
           () => {
             toastOpts.data = '微信登录失败';
@@ -373,7 +386,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     getLogin: data => dispatch(getLogin(data)),
-    // fetchUserCode: phone => dispatch(fetchUserCode(phone)),
+    saveMoney: data => dispatch(saveMoney(data)),
     // fetchCheckCode: data => dispatch(fetchCheckCode(data)),
     // fetchCheckEnroll: data => dispatch(fetchCheckEnroll(data)),
   };

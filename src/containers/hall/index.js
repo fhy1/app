@@ -292,7 +292,7 @@ class HallScreen extends React.Component {
                     <Image
                       style={styles.hallListIconImg}
                       // @ts-ignore
-                      source={{uri: paramToQuery2(item.headimgurl)}}
+                      source={{uri: item.headimgurl}}
                     />
                   ) : (
                     <Image
@@ -309,12 +309,16 @@ class HallScreen extends React.Component {
                   <View style={styles.hallListBodyView}>
                     <View style={styles.hallListBodybtn1}>
                       <View style={styles.hallListBodybtn}>
-                        <Text>{item.jobSource}</Text>
+                        <Text style={styles.hallListBodybtnTxt}>
+                          {item.jobSource}
+                        </Text>
                       </View>
                     </View>
                     <View style={styles.hallListBodybtn2}>
                       <View style={styles.hallListBodybtn}>
-                        <Text>{item.typeName}</Text>
+                        <Text style={styles.hallListBodybtnTxt}>
+                          {item.typeName}
+                        </Text>
                       </View>
                     </View>
                   </View>
@@ -472,20 +476,20 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   hallListBodyText: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#444444',
     fontWeight: 'bold',
   },
   hallListBodybtn1: {
     width: 60,
-    height: 22,
+    height: 20,
     borderRadius: 4,
     overflow: 'hidden',
     marginRight: 10,
   },
   hallListBodybtn2: {
     width: 72,
-    height: 22,
+    height: 20,
     borderRadius: 4,
     overflow: 'hidden',
   },
@@ -494,6 +498,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFDB44',
+  },
+  hallListBodybtnTxt: {
+    fontSize: 12,
+    color: '#444444',
   },
   hallListRight: {
     width: 80,

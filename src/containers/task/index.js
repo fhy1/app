@@ -76,7 +76,7 @@ class TaskScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {task, login} = this.props;
+    const {task, login} = this.state;
     if (task.pageNum < task.pages) {
       const {pageNo} = this.state;
       this.setState(
@@ -168,17 +168,21 @@ class TaskScreen extends React.Component {
                 </View>
                 <View style={styles.taskListBody}>
                   <View>
-                    <Text style={styles.taskListBodyText}>超级简单的任务</Text>
+                    <Text style={styles.taskListBodyText}>{item.jobTitle}</Text>
                   </View>
                   <View style={styles.taskListBodyView}>
                     <View style={styles.taskListBodybtn1}>
                       <View style={styles.taskListBodybtn}>
-                        <Text>云闪付</Text>
+                        <Text style={styles.taskListBodybtnTxt}>
+                          {item.jobSource}
+                        </Text>
                       </View>
                     </View>
                     <View style={styles.taskListBodybtn2}>
                       <View style={styles.taskListBodybtn}>
-                        <Text>认证转发</Text>
+                        <Text style={styles.taskListBodybtnTxt}>
+                          {item.typeName}
+                        </Text>
                       </View>
                     </View>
                   </View>
@@ -186,10 +190,14 @@ class TaskScreen extends React.Component {
                 <View style={styles.taskListRight}>
                   <View style={styles.taskListRightBody}>
                     <View>
-                      <Text style={styles.taskListRightTop}>赏2.25元</Text>
+                      <Text style={styles.taskListRightTop}>
+                        赏{item.releasePrice}元
+                      </Text>
                     </View>
                     <View>
-                      <Text style={styles.taskListRightBottom}>剩余15份</Text>
+                      <Text style={styles.taskListRightBottom}>
+                        剩余{item.surplusNum}份
+                      </Text>
                     </View>
                   </View>
                 </View>
@@ -268,20 +276,20 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   taskListBodyText: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#444444',
     fontWeight: 'bold',
   },
   taskListBodybtn1: {
     width: 60,
-    height: 22,
+    height: 20,
     borderRadius: 4,
     overflow: 'hidden',
     marginRight: 10,
   },
   taskListBodybtn2: {
     width: 72,
-    height: 22,
+    height: 20,
     borderRadius: 4,
     overflow: 'hidden',
   },
@@ -290,6 +298,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFDB44',
+  },
+  taskListBodybtnTxt: {
+    fontSize: 12,
+    color: '#444444',
   },
   taskListRight: {
     width: 80,
@@ -331,8 +343,6 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
   return {
-    taskList: state.task.taskList,
-    task: state.task.task,
     login: state.login.login,
   };
 }

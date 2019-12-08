@@ -29,6 +29,7 @@ export const getLogin = json => {
     json,
   };
 };
+
 export function fetchUserCode(phone) {
   const url = paramToQuery(`${CODE}?phone=${phone}`);
   console.log('url', url);

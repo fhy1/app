@@ -43,7 +43,7 @@ class blacklistScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {black} = this.props;
+    const {black} = this.state;
     if (black.pageNum < black.pages) {
       const {pageNo} = this.state;
       this.setState(
@@ -216,8 +216,6 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
   return {
     login: state.login.login,
-    black: state.blacklist.black,
-    blacklist: state.blacklist.blacklist,
   };
 }
 

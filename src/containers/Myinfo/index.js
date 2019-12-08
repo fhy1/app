@@ -7,14 +7,13 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
-  Alert,
 } from 'react-native';
 import FitImage from 'react-native-fit-image';
 import Swiper from 'react-native-swiper';
 import {connect} from 'react-redux';
-import {getWxPay} from '../../api/pay';
-import {fetchMoneyAll} from '../../api/myinfo';
-import * as WeChat from 'react-native-wechat';
+import {fetchMoneyAll, saveMoney} from '../../api/myinfo';
+import {getLogin} from '../../api/login';
+import {setData} from '../../utils/storage';
 
 class MyInfoScreen extends React.Component {
   constructor(props) {
@@ -38,21 +37,30 @@ class MyInfoScreen extends React.Component {
       topWidth: isNaN(width) ? 0 : width,
     });
     const {login} = this.props;
-    if (login) {
+    if (login && login.userId) {
       fetchMoneyAll(login.userId).then(
         money => {
-          this.setState({
-            money: money.data,
-          });
+          this.props.saveMoney(money.data);
         },
         () => {},
       );
     }
   }
 
+  logout = async () => {
+    await setData('userNews', {});
+    this.props.getLogin({});
+    this.props.saveMoney({
+      balance: 0,
+      repaidBalance: 0,
+      bonus: 0,
+    });
+  };
+
   render() {
-    const {topHeight, topWidth, money} = this.state;
-    const {navigation, login} = this.props;
+    const {topHeight, topWidth} = this.state;
+    const {navigation, login, money} = this.props;
+    console.log(money);
     console.log('login', login);
     const imgWidth = parseInt((topWidth / 350) * 80);
     return (
@@ -118,7 +126,7 @@ class MyInfoScreen extends React.Component {
                   borderRadius: imgWidth / 2,
                 },
               ]}></View>
-            {login ? (
+            {login && login.userId ? (
               <View
                 style={{
                   position: 'absolute',
@@ -259,7 +267,7 @@ class MyInfoScreen extends React.Component {
                 <TouchableOpacity
                   style={{flex: 1}}
                   onPress={() => {
-                    navigation.navigate('Withdraw');
+                    navigation.navigate('Member');
                   }}>
                   <View
                     style={{
@@ -303,7 +311,7 @@ class MyInfoScreen extends React.Component {
             <View style={styles.myinfoMoreView}>
               <TouchableOpacity
                 onPress={() => {
-                  if (login) {
+                  if (login && login.userId) {
                     navigation.navigate('Task');
                   } else {
                     navigation.navigate('Login');
@@ -334,7 +342,7 @@ class MyInfoScreen extends React.Component {
 
               <TouchableOpacity
                 onPress={() => {
-                  if (login) {
+                  if (login && login.userId) {
                     navigation.navigate('Release');
                   } else {
                     navigation.navigate('Login');
@@ -364,7 +372,7 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  if (login) {
+                  if (login && login.userId) {
                     navigation.navigate('Apply');
                   } else {
                     navigation.navigate('Login');
@@ -394,7 +402,7 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  if (login) {
+                  if (login && login.userId) {
                     navigation.navigate('Report');
                   } else {
                     navigation.navigate('Login');
@@ -424,7 +432,7 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  if (login) {
+                  if (login && login.userId) {
                     navigation.navigate('Tutorial');
                   } else {
                     navigation.navigate('Login');
@@ -454,7 +462,7 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  if (login) {
+                  if (login && login.userId) {
                     navigation.navigate('Opinion');
                   } else {
                     navigation.navigate('Login');
@@ -484,7 +492,7 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  if (login) {
+                  if (login && login.userId) {
                     navigation.navigate('Blacklist');
                   } else {
                     navigation.navigate('Login');
@@ -540,7 +548,7 @@ class MyInfoScreen extends React.Component {
               </TouchableOpacity> */}
               <TouchableOpacity
                 onPress={() => {
-                  if (login) {
+                  if (login && login.userId) {
                     navigation.navigate('Invite');
                   } else {
                     navigation.navigate('Login');
@@ -569,6 +577,13 @@ class MyInfoScreen extends React.Component {
                 </View>
               </TouchableOpacity>
             </View>
+          </View>
+          <View style={styles.opinionAddBtn}>
+            <TouchableOpacity onPress={this.logout}>
+              <View style={styles.opinionAddBtnView}>
+                <Text style={styles.opinionBtnViewTxt}>注销</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </View>
@@ -684,15 +699,33 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#444444',
   },
+  opinionAddBtn: {
+    paddingLeft: 15,
+    paddingRight: 15,
+    backgroundColor: '#F3F3F3',
+    paddingBottom: 15,
+  },
+  opinionAddBtnView: {
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFDB44',
+    borderRadius: 4,
+    marginTop: 15,
+  },
 });
 function mapStateToProps(state) {
   return {
     login: state.login.login,
+    money: state.myinfo.money,
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return {};
+  return {
+    saveMoney: data => dispatch(saveMoney(data)),
+    getLogin: data => dispatch(getLogin(data)),
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyInfoScreen);

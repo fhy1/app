@@ -231,7 +231,7 @@ class HallDetailScreen extends React.Component {
                 <Image
                   style={styles.hallDetailIconImg}
                   // @ts-ignore
-                  source={{uri: paramToQuery2(jobDetail.headimgurl)}}
+                  source={{uri: jobDetail.headimgurl}}
                 />
               ) : (
                 <Image
@@ -250,12 +250,16 @@ class HallDetailScreen extends React.Component {
               <View style={styles.hallDetailBodyView}>
                 <View style={styles.hallDetailBodybtn1}>
                   <View style={styles.hallDetailBodybtn}>
-                    <Text>{jobDetail.jobSource}</Text>
+                    <Text style={styles.hallDetailBodybtnTxt}>
+                      {jobDetail.jobSource}
+                    </Text>
                   </View>
                 </View>
                 <View style={styles.hallDetailBodybtn2}>
                   <View style={styles.hallDetailBodybtn}>
-                    <Text>{jobDetail.typeName}</Text>
+                    <Text style={styles.hallDetailBodybtnTxt}>
+                      {jobDetail.typeName}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -461,20 +465,20 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   hallDetailBodyText: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#444444',
     fontWeight: 'normal',
   },
   hallDetailBodybtn1: {
     width: 60,
-    height: 22,
+    height: 20,
     borderRadius: 4,
     overflow: 'hidden',
     marginRight: 10,
   },
   hallDetailBodybtn2: {
     width: 72,
-    height: 22,
+    height: 20,
     borderRadius: 4,
     overflow: 'hidden',
   },
@@ -483,6 +487,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFDB44',
+  },
+  hallDetailBodybtnTxt: {
+    color: '#444444',
+    fontSize: 12,
   },
   hallDetailRight: {
     width: 80,
@@ -596,6 +604,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFDB44',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 10,
   },
   hallDetailBtnTxt: {
     color: '#444444',
@@ -606,8 +615,6 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
   return {
     login: state.login.login,
-    jobDetail: state.hall.jobDetail,
-    jobStepList: state.hall.jobStepList,
   };
 }
 

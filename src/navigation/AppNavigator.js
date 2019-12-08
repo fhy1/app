@@ -26,6 +26,8 @@ import ReleaseStepScreen from '../containers/releaseStep/index';
 import WxwithDrawScreen from '../containers/wxwithDraw/index';
 import ZfbwithDrawScreen from '../containers/zfbwithDraw/index';
 import RechargeScreen from '../containers/recharge/index';
+import PayDetailScreen from '../containers/payDetail/index';
+import MemberScreen from '../containers/member/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -257,6 +259,28 @@ export default createAppContainer(
     },
     Recharge: {
       screen: RechargeScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    PayDetail: {
+      screen: PayDetailScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Member: {
+      screen: MemberScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image

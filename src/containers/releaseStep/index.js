@@ -424,7 +424,7 @@ class ReleaseStepScreen extends React.Component {
           onRequestClose={this.CloseModel}>
           <View style={styles.taskModal}>
             {optionVisible ? (
-              <View style={styles.opinionModalView}>
+              <View style={[styles.opinionModalView, {width: width * 0.8}]}>
                 <View style={styles.opinionTopTitle}>
                   <Text style={styles.opinionTopTitleTxt}>
                     {stepDetail.title}
@@ -611,7 +611,6 @@ const styles = StyleSheet.create({
   //弹框 步骤
   opinionModalView: {
     backgroundColor: '#FFFFFF',
-    width: 400,
     marginTop: 96,
     padding: 13,
     borderRadius: 4,

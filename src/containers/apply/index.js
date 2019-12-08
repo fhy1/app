@@ -7,6 +7,7 @@ import {
   FlatList,
   Modal,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {fetchAudit, editAudit} from '../../api/apply';
@@ -163,6 +164,7 @@ class ApplyScreen extends React.Component {
       modalVisible,
       ques,
     } = this.state;
+    const {width} = Dimensions.get('window');
     return (
       <View style={styles.applyView}>
         <View style={styles.applyTitleView}>
@@ -277,7 +279,7 @@ class ApplyScreen extends React.Component {
           visible={modalVisible}
           onRequestClose={this.CloseModel}>
           <View style={styles.taskModal}>
-            <View style={styles.opinionModalView}>
+            <View style={[styles.opinionModalView, {width: width * 0.8}]}>
               <View style={styles.opinionTopTitle}>
                 <Text style={styles.opinionTopTitleTxt}>拒绝原因</Text>
               </View>
@@ -466,7 +468,6 @@ const styles = StyleSheet.create({
   },
   opinionModalView: {
     backgroundColor: '#FFFFFF',
-    width: 400,
     marginTop: 96,
     padding: 13,
     borderRadius: 4,
