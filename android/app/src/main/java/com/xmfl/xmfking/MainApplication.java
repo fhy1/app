@@ -10,7 +10,7 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.imagepicker.ImagePickerPackage;
-import com.theweflex.react.WeChatPackage;
+import com.theweflex.react.WeChatPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -26,6 +26,7 @@ public class MainApplication extends Application implements ReactApplication {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
           new ImagePickerPackage();
+          new QQPackage();
           packages.add(new WeChatPackage());
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());

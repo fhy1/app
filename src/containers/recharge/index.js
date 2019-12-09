@@ -23,7 +23,7 @@ class RechargeScreen extends React.Component {
       borderBottomWidth: 0,
       shadowOpacity: 0,
     },
-    headerTintColor: '#fff',
+    headerTintColor: '#444444',
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',

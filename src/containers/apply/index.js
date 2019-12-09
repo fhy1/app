@@ -8,6 +8,7 @@ import {
   Modal,
   TextInput,
   Dimensions,
+  Image,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {fetchAudit, editAudit} from '../../api/apply';
@@ -21,7 +22,7 @@ class ApplyScreen extends React.Component {
       borderBottomWidth: 0,
       shadowOpacity: 0,
     },
-    headerTintColor: '#fff',
+    headerTintColor: '#444444',
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
@@ -233,7 +234,17 @@ class ApplyScreen extends React.Component {
                   </View>
                 ) : null}
               </View>
-              <View style={styles.applyListImg}></View>
+              <View style={styles.applyListImg}>
+                {item.imgList.map((item2, index2) => {
+                  return (
+                    <Image
+                      key={index2}
+                      source={{uri: item2}}
+                      style={{width: 100, height: 100, resizeMode: 'cover'}}
+                    />
+                  );
+                })}
+              </View>
               <View style={styles.applyListNav}>
                 <Text style={styles.applyListNavTxt}>{item.commitTime}</Text>
               </View>
@@ -264,7 +275,9 @@ class ApplyScreen extends React.Component {
                 <>
                   <View style={styles.applyListLine}></View>
                   <View style={styles.applyListButton}>
-                    <Text style={styles.applyNoPassTxt}>未通过原因: </Text>
+                    <Text style={styles.applyNoPassTxt}>
+                      未通过原因: {item.refuseReason}
+                    </Text>
                   </View>
                 </>
               ) : null}

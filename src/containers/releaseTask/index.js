@@ -23,7 +23,7 @@ class ReleaseTaskScreen extends React.Component {
       borderBottomWidth: 0,
       shadowOpacity: 0,
     },
-    headerTintColor: '#fff',
+    headerTintColor: '#444444',
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
@@ -95,7 +95,7 @@ class ReleaseTaskScreen extends React.Component {
       toastOpts.data = '请选择任务类型';
       WToast.show(toastOpts);
     } else {
-      if (parseFloat(taskJob.jobPrice) > 0.2) {
+      if (parseFloat(taskJob.jobPrice) >= 1) {
         if (parseInt(taskJob.jobNum) > 10) {
           taskJob.jobPrice = parseFloat(
             parseFloat(taskJob.jobPrice).toFixed(2),
@@ -392,7 +392,7 @@ class ReleaseTaskScreen extends React.Component {
             <TextInput
               style={styles.releaseListInput}
               keyboardType="numeric"
-              placeholder="最少0.2元/人"
+              placeholder="最少1元/人"
               onChangeText={this.handelOnChange.bind(this, 'jobPrice')}
               value={taskJob.jobPrice}
             />

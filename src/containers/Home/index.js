@@ -388,13 +388,13 @@ class HomeScreen extends React.Component {
             </View>
           </View>
         </ScrollView>
-        <Modal
+        {/* <Modal
           animationType="slide"
           transparent={true}
           visible={modalVisible}
           onRequestClose={this.CloseModel}>
           <View style={styles.taskModal}>kw</View>
-        </Modal>
+        </Modal> */}
       </View>
     );
   }

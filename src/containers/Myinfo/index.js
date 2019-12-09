@@ -137,7 +137,7 @@ class MyInfoScreen extends React.Component {
                 }}>
                 <Text
                   style={{color: '#444444', fontSize: 14, marginBottom: 14}}>
-                  ID: 15123456789
+                  ID: {login.uid}
                 </Text>
                 <Text style={{color: '#444444', fontSize: 14}}>普通会员</Text>
               </View>
@@ -176,7 +176,7 @@ class MyInfoScreen extends React.Component {
                   <View style={styles.navViewMoneyMiddle}>
                     <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
                     <Text style={styles.navViewMoneyMiddleTxt2}>
-                      {money.balance}
+                      {money.balance} 元
                     </Text>
                   </View>
                   {/* <TouchableOpacity
@@ -198,7 +198,7 @@ class MyInfoScreen extends React.Component {
                   <View style={styles.navViewMoneyMiddle}>
                     <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
                     <Text style={styles.navViewMoneyMiddleTxt2}>
-                      {money.bonus}
+                      {money.bonus} 元
                     </Text>
                   </View>
                   {/* <TouchableOpacity
@@ -247,7 +247,7 @@ class MyInfoScreen extends React.Component {
                   <View style={styles.navViewMoneyMiddle}>
                     <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
                     <Text style={styles.navViewMoneyMiddleTxt2}>
-                      {money.repaidBalance}
+                      {money.repaidBalance} 元
                     </Text>
                   </View>
                   {/* <TouchableOpacity

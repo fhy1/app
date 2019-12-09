@@ -22,7 +22,7 @@ class HallScreen extends React.Component {
         borderBottomWidth: 0,
         shadowOpacity: 0,
       },
-      headerTintColor: '#fff',
+      headerTintColor: '#444444',
       headerTitleStyle: {
         flex: 1,
         textAlign: 'center',
@@ -46,7 +46,7 @@ class HallScreen extends React.Component {
             <Text
               style={{
                 fontSize: 18,
-                color: '#FFFFFF',
+                color: '#444444',
                 marginRight: 6,
               }}>
               {navigation.getParam('typeName') || '全部任务'}
@@ -211,7 +211,7 @@ class HallScreen extends React.Component {
 
   handelOnJumpToDetail = jobId => {
     const {navigation, login} = this.props;
-    if (login) {
+    if (login && login.userId) {
       navigation.navigate('HallDetail', {
         jobId: jobId,
       });

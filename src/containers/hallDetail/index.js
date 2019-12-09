@@ -13,6 +13,7 @@ import {paramToQuery2} from '../../utils/fetch';
 import {WToast} from 'react-native-smart-tip';
 import ImagePicker from 'react-native-image-picker';
 import {upLoadImg} from '../../api/upload';
+import {DownloadImage} from '../../utils/downloadImage';
 
 class HallDetailScreen extends React.Component {
   static navigationOptions = {
@@ -22,7 +23,7 @@ class HallDetailScreen extends React.Component {
       borderBottomWidth: 0,
       shadowOpacity: 0,
     },
-    headerTintColor: '#fff',
+    headerTintColor: '#444444',
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
@@ -83,7 +84,29 @@ class HallDetailScreen extends React.Component {
     }
   };
 
-  handelSavePicture = () => {};
+  handelSavePicture = uri => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    DownloadImage(uri)
+      .then(res => {
+        if (res.statusCode == 200) {
+          toastOpts.data = '图片保存成功';
+          WToast.show(toastOpts);
+        } else {
+          toastOpts.data = '图片保存失败';
+          WToast.show(toastOpts);
+        }
+      })
+      .catch(error => {
+        Toast.show('图片保存失败');
+        console.log(error);
+      });
+  };
 
   hallEnroll = status => {
     const jobId = this.props.navigation.state.params.jobId;
@@ -337,7 +360,10 @@ class HallDetailScreen extends React.Component {
                           />
 
                           <TouchableOpacity
-                            onPress={this.handelSavePicture.bind(this)}>
+                            onPress={this.handelSavePicture.bind(
+                              this,
+                              paramToQuery2(item.picture),
+                            )}>
                             <View style={styles.savePicture}>
                               <Text
                                 style={{

@@ -21,7 +21,7 @@ class MemberScreen extends React.Component {
       borderBottomWidth: 0,
       shadowOpacity: 0,
     },
-    headerTintColor: '#fff',
+    headerTintColor: '#444444',
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
@@ -99,7 +99,7 @@ class MemberScreen extends React.Component {
             partnerId: money.partnerid, // 商家向财付通申请的商家id
             prepayId: money.prepayid, // 预支付订单
             nonceStr: money.noncestr, // 随机串，防重发
-            timeStamp: money.timestamp, // 时间戳，防重发.
+            timeStamp: JSON.stringify(money.timestamp), // 时间戳，防重发.
             package: money.package, // 商家根据财付通文档填写的数据和签名
             sign: money.sign, // 商家根据微信开放平台文档对数据做的签名
           })
