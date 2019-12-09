@@ -15,7 +15,7 @@ import {fetchExtendInvite, fetchExtendUser} from '../../api/extend';
 import QRCode from 'react-native-qrcode-svg';
 import * as WeChat from 'react-native-wechat';
 import {WToast} from 'react-native-smart-tip';
-// import * as QQAPI from 'react-native-qq';
+import * as QQAPI from 'react-native-qq';
 
 class ExtendScreen extends React.Component {
   static navigationOptions = {
@@ -78,14 +78,14 @@ class ExtendScreen extends React.Component {
     WeChat.isWXAppInstalled().then(isInstalled => {
       if (isInstalled) {
         WeChat.shareToSession({
-          // title: '微信好友测试链接',
-          // description: '分享自:江清清的技术专栏(www.lcode.org)',
-          // thumbImage:
-          //   'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
-          // type: 'news',
-          // webpageUrl: 'http://www.lcode.org',
-          type: 'text',
-          description: '大家一起赚钱拉',
+          title: '小蜜罐',
+          description: '分享自:江清清的技术专栏(www.lcode.org)',
+          thumbImage:
+            'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+          type: 'news',
+          webpageUrl: 'http://www.lcode.org',
+          // type: 'text',
+          // description: '大家一起赚钱拉',
         }).catch(error => {
           // ToastShort(error.message);
           toastOpts.data = error.message;
@@ -103,13 +103,14 @@ class ExtendScreen extends React.Component {
     WeChat.isWXAppInstalled().then(isInstalled => {
       if (isInstalled) {
         WeChat.shareToTimeline({
-          // title: '微信朋友圈测试链接',
-          // description: '分享自:江清清的技术专栏(www.lcode.org)',
-          // thumbImage: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
-          // type: 'news',
-          // webpageUrl: 'http://www.lcode.org'
-          type: 'text',
-          description: '大家一起赚钱拉',
+          title: '小蜜罐',
+          description: '分享自:江清清的技术专栏(www.lcode.org)',
+          thumbImage:
+            'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+          type: 'news',
+          webpageUrl: 'http://www.lcode.org',
+          // type: 'text',
+          // description: '大家一起赚钱拉',
         }).catch(error => {
           toastOpts.data = error.message;
           WToast.show(toastOpts);
@@ -122,19 +123,36 @@ class ExtendScreen extends React.Component {
   };
 
   OnShareQqFriend = () => {
-    // let qqshareInfo = {
-    //   type: 'news',
-    //   imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
-    //   title: '大家一起赚钱拉',
-    //   description: '大家一起赚钱拉',
-    //   webpageUrl: 'http://www.lcode.org',
-    // };
+    let qqshareInfo = {
+      type: 'news',
+      imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+      title: '小蜜罐',
+      description: '大家一起赚钱拉',
+      webpageUrl: 'http://www.lcode.org',
+    };
     // QQAPI.isQQInstalledAction().then(res => {
-    //   QQAPI.shareToQQ(qqshareInfo)
-    //     .then(res => {})
-    //     .catch(err => {
-    //       console.log('分享失败');
-    //     });
+    QQAPI.shareToQQ(qqshareInfo)
+      .then(res => {})
+      .catch(err => {
+        console.log('分享失败');
+      });
+    // });
+  };
+
+  OnShareQqFriends = () => {
+    let qqshareInfo = {
+      type: 'news',
+      imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+      title: '小蜜罐',
+      description: '大家一起赚钱拉',
+      webpageUrl: 'http://www.lcode.org',
+    };
+    // QQAPI.isQQInstalledAction().then(res => {
+    QQAPI.shareToQzone(qqshareInfo)
+      .then(res => {})
+      .catch(err => {
+        console.log('分享失败');
+      });
     // });
   };
 
@@ -233,7 +251,7 @@ class ExtendScreen extends React.Component {
                     <Text style={styles.extendShareBodyText}>微信好友</Text>
                   </View>
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={this.OnShareQqFriends}>
                   <View style={styles.extendShareBodyView}>
                     <View style={styles.extendShareBodyImg}>
                       <FitImage

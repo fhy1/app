@@ -27,7 +27,7 @@ class ReleaseTaskScreen extends React.Component {
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
-      fontWeight: 'bold',
+      fontWeight: 'normal',
     },
     /// 注意：如果右边没有视图，那么添加一个空白视图即可
     headerRight: <View />,
@@ -95,8 +95,8 @@ class ReleaseTaskScreen extends React.Component {
       toastOpts.data = '请选择任务类型';
       WToast.show(toastOpts);
     } else {
-      if (parseFloat(taskJob.jobPrice) >= 1) {
-        if (parseInt(taskJob.jobNum) > 10) {
+      if (parseFloat(taskJob.jobPrice) >= 0.3) {
+        if (parseInt(taskJob.jobNum) >= 11) {
           taskJob.jobPrice = parseFloat(
             parseFloat(taskJob.jobPrice).toFixed(2),
           );
@@ -222,7 +222,17 @@ class ReleaseTaskScreen extends React.Component {
               value={taskJob.introduce}
             />
           </View>
-          <TouchableOpacity onPress={this.ShowModel}>
+          <View style={styles.releaseList}>
+            <Text style={styles.releaseListTxt}>提交时间</Text>
+            <TextInput
+              keyboardType="numeric"
+              style={styles.releaseListInput}
+              placeholder="限制提交时间 （小时）"
+              onChangeText={this.handelOnChange.bind(this, 'submissionTime')}
+              value={taskJob.submissionTime}
+            />
+          </View>
+          {/* <TouchableOpacity onPress={this.ShowModel}>
             <View style={styles.releaseList}>
               <Text style={styles.releaseListTxt}>提交时间</Text>
               <Text style={styles.releaseListInpTxt}>
@@ -233,7 +243,7 @@ class ReleaseTaskScreen extends React.Component {
                 小时内提交
               </Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           {/* <View style={styles.releaseList}>
             <Text style={styles.releaseListTxt}>审核时间</Text>
             <Text style={styles.releaseListInpTxt}>
@@ -392,7 +402,7 @@ class ReleaseTaskScreen extends React.Component {
             <TextInput
               style={styles.releaseListInput}
               keyboardType="numeric"
-              placeholder="最少1元/人"
+              placeholder="最少0.3元/人"
               onChangeText={this.handelOnChange.bind(this, 'jobPrice')}
               value={taskJob.jobPrice}
             />
@@ -402,7 +412,7 @@ class ReleaseTaskScreen extends React.Component {
             <TextInput
               style={styles.releaseListInput}
               keyboardType="numeric"
-              placeholder="最少10人"
+              placeholder="最少11人"
               onChangeText={this.handelOnChange.bind(this, 'jobNum')}
               value={taskJob.jobNum}
             />

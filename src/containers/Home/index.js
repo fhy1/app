@@ -140,78 +140,351 @@ class HomeScreen extends React.Component {
     navigation.navigate('Search');
   };
 
+  goImgDetail = () => {
+    console.log(111);
+  };
+
+  img(flag, url) {
+    if (flag) {
+      return (
+        <Image
+          source={require('../../assets/banner.png')}
+          style={{width: width, height: swiperHeight}}
+        />
+      );
+    }
+  }
+
   render() {
     const {swiperHeight, width, signFlag, recommendList, homeImgs} = this.state;
 
-    let list = homeImgs.map(item => {
-      let url = paramToQuery2(item.img);
-      console.log(url);
-      return (
-        <Image
-          key={item.imgId}
-          source={{uri: url}}
-          style={styles.swiperImage}
-        />
+    let homeimg = null;
+    if (homeImgs.length == 0) {
+      <Swiper
+        style={{width: width, height: swiperHeight}} //样式
+        height={swiperHeight} //组件高度
+        loop={true} //如果设置为false，那么滑动到最后一张时，再次滑动将不会滑到第一张图片。
+        autoplay={true} //自动轮播
+        autoplayTimeout={4} //每隔4秒切换
+        horizontal={true} //水平方向，为false可设置为竖直方向
+        paginationStyle={{bottom: 20}} //小圆点的位置：距离底部10px
+        showsButtons={false} //为false时不显示控制按钮
+        showsPagination={true} //为false不显示下方圆点
+        dot={<View style={styles.noDot} />}
+        activeDot={<View style={styles.dot} />}>
+        <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <Image
+            // source={require('../../assets/banner.png')}
+            source={{
+              uri: '',
+            }}
+            style={styles.swiperImage}
+          />
+        </TouchableWithoutFeedback>
+      </Swiper>;
+    } else if (homeImgs.length == 1) {
+      homeimg = (
+        <Swiper
+          style={{width: width, height: swiperHeight}} //样式
+          height={swiperHeight} //组件高度
+          loop={true} //如果设置为false，那么滑动到最后一张时，再次滑动将不会滑到第一张图片。
+          autoplay={true} //自动轮播
+          autoplayTimeout={4} //每隔4秒切换
+          horizontal={true} //水平方向，为false可设置为竖直方向
+          paginationStyle={{bottom: 20}} //小圆点的位置：距离底部10px
+          showsButtons={false} //为false时不显示控制按钮
+          showsPagination={true} //为false不显示下方圆点
+          dot={<View style={styles.noDot} />}
+          activeDot={<View style={styles.dot} />}>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[0].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+        </Swiper>
       );
-    });
+    } else if (homeImgs.length == 2) {
+      homeimg = (
+        <Swiper
+          style={{width: width, height: swiperHeight}} //样式
+          height={swiperHeight} //组件高度
+          loop={true} //如果设置为false，那么滑动到最后一张时，再次滑动将不会滑到第一张图片。
+          autoplay={true} //自动轮播
+          autoplayTimeout={4} //每隔4秒切换
+          horizontal={true} //水平方向，为false可设置为竖直方向
+          paginationStyle={{bottom: 20}} //小圆点的位置：距离底部10px
+          showsButtons={false} //为false时不显示控制按钮
+          showsPagination={true} //为false不显示下方圆点
+          dot={<View style={styles.noDot} />}
+          activeDot={<View style={styles.dot} />}>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[0].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[1].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+        </Swiper>
+      );
+    } else if (homeImgs.length == 3) {
+      homeimg = (
+        <Swiper
+          style={{width: width, height: swiperHeight}} //样式
+          height={swiperHeight} //组件高度
+          loop={true} //如果设置为false，那么滑动到最后一张时，再次滑动将不会滑到第一张图片。
+          autoplay={true} //自动轮播
+          autoplayTimeout={4} //每隔4秒切换
+          horizontal={true} //水平方向，为false可设置为竖直方向
+          paginationStyle={{bottom: 20}} //小圆点的位置：距离底部10px
+          showsButtons={false} //为false时不显示控制按钮
+          showsPagination={true} //为false不显示下方圆点
+          dot={<View style={styles.noDot} />}
+          activeDot={<View style={styles.dot} />}>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[0].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[1].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[2].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+        </Swiper>
+      );
+    } else if (homeImgs.length == 4) {
+      homeimg = (
+        <Swiper
+          style={{width: width, height: swiperHeight}} //样式
+          height={swiperHeight} //组件高度
+          loop={true} //如果设置为false，那么滑动到最后一张时，再次滑动将不会滑到第一张图片。
+          autoplay={true} //自动轮播
+          autoplayTimeout={4} //每隔4秒切换
+          horizontal={true} //水平方向，为false可设置为竖直方向
+          paginationStyle={{bottom: 20}} //小圆点的位置：距离底部10px
+          showsButtons={false} //为false时不显示控制按钮
+          showsPagination={true} //为false不显示下方圆点
+          dot={<View style={styles.noDot} />}
+          activeDot={<View style={styles.dot} />}>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[0].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[1].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[2].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[3].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+        </Swiper>
+      );
+    } else if (homeImgs.length == 5) {
+      homeimg = (
+        <Swiper
+          style={{width: width, height: swiperHeight}} //样式
+          height={swiperHeight} //组件高度
+          loop={true} //如果设置为false，那么滑动到最后一张时，再次滑动将不会滑到第一张图片。
+          autoplay={true} //自动轮播
+          autoplayTimeout={4} //每隔4秒切换
+          horizontal={true} //水平方向，为false可设置为竖直方向
+          paginationStyle={{bottom: 20}} //小圆点的位置：距离底部10px
+          showsButtons={false} //为false时不显示控制按钮
+          showsPagination={true} //为false不显示下方圆点
+          dot={<View style={styles.noDot} />}
+          activeDot={<View style={styles.dot} />}>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[0].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[1].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[2].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[3].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[4].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+        </Swiper>
+      );
+    } else if (homeImgs.length == 6) {
+      homeimg = (
+        <Swiper
+          style={{width: width, height: swiperHeight}} //样式
+          height={swiperHeight} //组件高度
+          loop={true} //如果设置为false，那么滑动到最后一张时，再次滑动将不会滑到第一张图片。
+          autoplay={true} //自动轮播
+          autoplayTimeout={4} //每隔4秒切换
+          horizontal={true} //水平方向，为false可设置为竖直方向
+          paginationStyle={{bottom: 20}} //小圆点的位置：距离底部10px
+          showsButtons={false} //为false时不显示控制按钮
+          showsPagination={true} //为false不显示下方圆点
+          dot={<View style={styles.noDot} />}
+          activeDot={<View style={styles.dot} />}>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[0].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[1].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[2].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[3].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[4].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[5].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+            <Image
+              // source={require('../../assets/banner.png')}
+              source={{
+                uri: paramToQuery2(homeImgs[6].img),
+              }}
+              style={styles.swiperImage}
+            />
+          </TouchableWithoutFeedback>
+        </Swiper>
+      );
+    }
 
-    console.log('list', list);
+    console.log('homeImgs', homeImgs);
 
     return (
       <View style={styles.homeView}>
         <ScrollView>
-          <Swiper
-            style={{width: width, height: swiperHeight}} //样式
-            height={swiperHeight} //组件高度
-            loop={true} //如果设置为false，那么滑动到最后一张时，再次滑动将不会滑到第一张图片。
-            autoplay={true} //自动轮播
-            autoplayTimeout={4} //每隔4秒切换
-            horizontal={true} //水平方向，为false可设置为竖直方向
-            paginationStyle={{bottom: 20}} //小圆点的位置：距离底部10px
-            showsButtons={false} //为false时不显示控制按钮
-            showsPagination={true} //为false不显示下方圆点
-            dot={
-              <View
-                style={{
-                  //未选中的圆点样式
-                  backgroundColor: 'rgba(0,0,0,.2)',
-                  width: 8,
-                  height: 8,
-                  borderRadius: 4,
-                  marginLeft: 10,
-                  marginRight: 9,
-                  marginTop: 9,
-                  marginBottom: 9,
-                }}
-              />
-            }
-            activeDot={
-              <View
-                style={{
-                  //选中的圆点样式
-                  backgroundColor: '#000000',
-                  width: 8,
-                  height: 8,
-                  borderRadius: 4,
-                  marginLeft: 10,
-                  marginRight: 9,
-                  marginTop: 9,
-                  marginBottom: 9,
-                }}
-              />
-            }>
-            {list}
-            {/* <Image
-              source={require('../../assets/banner.png')}
-              // source={{uri: 'http://212.64.70.14:9099/resource/2019-12-05/jpg/1575554349492_jj.jpg'}}
-              style={styles.swiperImage}
-            />
-            <Image
-              source={require('../../assets/banner.png')}
-              // source={{uri: 'http://212.64.70.14:9099/resource/2019-12-05/png/1575554390617_分组.png'}}
-              style={styles.swiperImage}
-            /> */}
-          </Swiper>
+          {homeimg}
+
           {/* <Image
             source={require('../../assets/banner.png')}
             style={{width: width, height: swiperHeight}}
@@ -523,7 +796,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   homeListBodybtn1: {
-    width: 60,
+    minWidth: 60,
     height: 22,
     borderRadius: 4,
     overflow: 'hidden',
@@ -536,6 +809,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   homeListBodybtn: {
+    paddingLeft: 5,
+    paddingRight: 5,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -561,6 +836,28 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     color: '#666666',
+  },
+  dot: {
+    //选中的圆点样式
+    backgroundColor: '#000000',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginLeft: 10,
+    marginRight: 9,
+    marginTop: 9,
+    marginBottom: 9,
+  },
+  noDot: {
+    //未选中的圆点样式
+    backgroundColor: 'rgba(0,0,0,.2)',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginLeft: 10,
+    marginRight: 9,
+    marginTop: 9,
+    marginBottom: 9,
   },
 });
 

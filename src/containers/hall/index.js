@@ -26,7 +26,7 @@ class HallScreen extends React.Component {
       headerTitleStyle: {
         flex: 1,
         textAlign: 'center',
-        fontWeight: 'bold',
+        fontWeight: 'normal',
       },
       headerTitle: () => (
         <TouchableOpacity
@@ -83,7 +83,7 @@ class HallScreen extends React.Component {
               justifyContent: 'center',
               marginRight: 15,
             }}>
-            <Text style={{color: '#FFDB44', fontSize: 14}}>发布</Text>
+            <Text style={{color: '#666666', fontSize: 14}}>发布</Text>
           </View>
         </TouchableOpacity>
       ),
@@ -209,11 +209,12 @@ class HallScreen extends React.Component {
     }
   };
 
-  handelOnJumpToDetail = jobId => {
+  handelOnJumpToDetail = (jobId, userId) => {
     const {navigation, login} = this.props;
     if (login && login.userId) {
       navigation.navigate('HallDetail', {
         jobId: jobId,
+        jobUserId: userId,
       });
     } else {
       navigation.navigate('Login');
@@ -285,7 +286,11 @@ class HallScreen extends React.Component {
           onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
             <TouchableOpacity
-              onPress={this.handelOnJumpToDetail.bind(this, item.jobId)}>
+              onPress={this.handelOnJumpToDetail.bind(
+                this,
+                item.jobId,
+                item.userId,
+              )}>
               <View style={styles.hallList}>
                 <View style={styles.hallListIcon}>
                   {item.headimgurl ? (
@@ -401,7 +406,6 @@ class HallScreen extends React.Component {
                 </TouchableHighlight>
               );
             })}
-            <Text>ccc</Text>
           </View>
         ) : null}
         {/* <Text>Home4Screen {hall.data.data.pageSize}</Text> */}
@@ -481,7 +485,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   hallListBodybtn1: {
-    width: 60,
+    minWidth: 60,
     height: 20,
     borderRadius: 4,
     overflow: 'hidden',
@@ -494,6 +498,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   hallListBodybtn: {
+    paddingLeft: 8,
+    paddingRight: 8,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

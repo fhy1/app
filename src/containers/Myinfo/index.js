@@ -285,7 +285,11 @@ class MyInfoScreen extends React.Component {
                 <TouchableOpacity
                   style={{flex: 1}}
                   onPress={() => {
-                    navigation.navigate('Recharge');
+                    if (login && login.userId) {
+                      navigation.navigate('Recharge');
+                    } else {
+                      navigation.navigate('Login');
+                    }
                   }}>
                   <View
                     style={{

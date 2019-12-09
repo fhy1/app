@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'normal',
     color: '#333333',
-    marginTop: 10,
+    marginTop: 15,
     marginBottom: 20,
   },
   loginNavView: {

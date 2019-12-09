@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {fetchHallDetail, fetchHallSignUp, HallSubmit} from '../../api/hall';
+import {addFollow} from '../../api/follow';
 import {paramToQuery2} from '../../utils/fetch';
 import {WToast} from 'react-native-smart-tip';
 import ImagePicker from 'react-native-image-picker';
@@ -27,7 +28,7 @@ class HallDetailScreen extends React.Component {
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
-      fontWeight: 'bold',
+      fontWeight: 'normal',
     },
     /// 注意：如果右边没有视图，那么添加一个空白视图即可
     headerRight: <View />,
@@ -39,6 +40,7 @@ class HallDetailScreen extends React.Component {
       imgH: [],
       jobDetail: {},
       jobStepList: [],
+      isFollow: false,
     };
   }
 
@@ -103,7 +105,8 @@ class HallDetailScreen extends React.Component {
         }
       })
       .catch(error => {
-        Toast.show('图片保存失败');
+        toastOpts.data = '图片保存失败';
+        WToast.show(toastOpts);
         console.log(error);
       });
   };
@@ -241,8 +244,36 @@ class HallDetailScreen extends React.Component {
     });
   }
 
+  clickToPerson = () => {
+    const {login} = this.props;
+    const jobUserId = this.props.navigation.state.params.jobUserId;
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    console.log(jobUserId);
+    if (!isFollow) {
+      addFollow(login.userId, jobUserId).then(
+        () => {
+          toastOpts.data = '关注成功';
+          WToast.show(toastOpts);
+          this.setState({
+            isFollow: true,
+          });
+        },
+        () => {
+          toastOpts.data = '关注失败，请检查网络';
+          WToast.show(toastOpts);
+        },
+      );
+    }
+  };
+
   render() {
-    const {imgH, jobDetail, jobStepList} = this.state;
+    const {imgH, jobDetail, jobStepList, isFollow} = this.state;
     console.log('jobDetail:', jobDetail);
     console.log('jobStepList:', jobStepList);
     return (
@@ -265,10 +296,27 @@ class HallDetailScreen extends React.Component {
               )}
             </View>
             <View style={styles.hallDetailBody}>
-              <View>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={styles.hallDetailBodyText}>
                   悬赏ID: {jobDetail.uid}
                 </Text>
+                <TouchableOpacity onPress={this.clickToPerson}>
+                  <View
+                    style={{
+                      width: 60,
+                      height: 18,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      borderColor: '#FFDB44',
+                      borderWidth: 1,
+                      borderRadius: 7,
+                      marginLeft: 5,
+                    }}>
+                    <Text style={{fontSize: 12, color: '#666666'}}>
+                      {isFollow ? '已关注' : '+ 关注'}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               </View>
               <View style={styles.hallDetailBodyView}>
                 <View style={styles.hallDetailBodybtn1}>
@@ -496,7 +544,7 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
   },
   hallDetailBodybtn1: {
-    width: 60,
+    minWidth: 60,
     height: 20,
     borderRadius: 4,
     overflow: 'hidden',
@@ -509,6 +557,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   hallDetailBodybtn: {
+    paddingLeft: 8,
+    paddingRight: 8,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

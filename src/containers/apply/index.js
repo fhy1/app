@@ -26,7 +26,7 @@ class ApplyScreen extends React.Component {
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
-      fontWeight: 'bold',
+      fontWeight: 'normal',
     },
     /// 注意：如果右边没有视图，那么添加一个空白视图即可
     headerRight: <View />,

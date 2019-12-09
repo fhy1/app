@@ -27,7 +27,7 @@ class SearchScreen extends React.Component {
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
-      fontWeight: 'bold',
+      fontWeight: 'normal',
     },
     /// 注意：如果右边没有视图，那么添加一个空白视图即可
     headerRight: <View />,
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   searchListBodybtn1: {
-    width: 60,
+    minWidth: 60,
     height: 22,
     borderRadius: 4,
     overflow: 'hidden',
@@ -312,6 +312,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   searchListBodybtn: {
+    paddingLeft: 8,
+    paddingRight: 8,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

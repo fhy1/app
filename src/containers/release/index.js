@@ -21,7 +21,7 @@ class ReleaseScreen extends React.Component {
       headerTitleStyle: {
         flex: 1,
         textAlign: 'center',
-        fontWeight: 'bold',
+        fontWeight: 'normal',
       },
       headerRight: () => (
         <TouchableOpacity onPress={navigation.getParam('goToclick')}>
@@ -35,7 +35,7 @@ class ReleaseScreen extends React.Component {
               justifyContent: 'center',
               marginRight: 15,
             }}>
-            <Text style={{color: '#FFDB44', fontSize: 14}}>发布</Text>
+            <Text style={{color: '#666666', fontSize: 14}}>发布</Text>
           </View>
         </TouchableOpacity>
       ),
