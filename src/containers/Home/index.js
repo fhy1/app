@@ -123,12 +123,12 @@ class HomeScreen extends React.Component {
     });
   };
 
-  handelOnJumpToDetail = jobId => {
-    const {navigation} = this.props;
-    const {login} = this.props;
+  handelOnJumpToDetail = (jobId, userId) => {
+    const {navigation, login} = this.props;
     if (login && login.userId) {
       navigation.navigate('HallDetail', {
         jobId: jobId,
+        jobUserId: userId,
       });
     } else {
       navigation.navigate('Login');
@@ -589,7 +589,11 @@ class HomeScreen extends React.Component {
                     return (
                       <TouchableOpacity
                         key={item.jobId}
-                        onPress={() => this.handelOnJumpToDetail(item.jobId)}>
+                        onPress={this.handelOnJumpToDetail.bind(
+                          this,
+                          item.jobId,
+                          item.userId,
+                        )}>
                         <View
                           style={
                             index != recommendList.length - 1

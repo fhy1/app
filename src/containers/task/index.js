@@ -6,9 +6,18 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  Modal,
+  TextInput,
+  Dimensions,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {fetchTaskCode} from '../../api/task';
+import ImagePicker from 'react-native-image-picker';
+import {upLoadImg} from '../../api/upload';
+import FitImage from 'react-native-fit-image';
+import {paramToQuery2} from '../../utils/fetch';
+import {report} from '../../api/report';
+import {WToast} from 'react-native-smart-tip';
 
 class TaskScreen extends React.Component {
   static navigationOptions = {
@@ -42,6 +51,10 @@ class TaskScreen extends React.Component {
       pageSize: 15,
       taskList: [],
       task: {},
+      modalVisible: false,
+      imgUrl: '',
+      reportDetail: '',
+      taskId: '',
     };
   }
 
@@ -59,6 +72,10 @@ class TaskScreen extends React.Component {
       task: task.data,
       taskList: task.data.list,
     });
+  };
+
+  componentWillUnmount = () => {
+    this.setState({modalVisible: false});
   };
 
   onHandelPress = index => {
@@ -98,8 +115,130 @@ class TaskScreen extends React.Component {
     }
   };
 
+  CloseModel = () => {
+    this.setState({
+      modalVisible: false,
+      reportDetail: '',
+      imgUrl: '',
+    });
+  };
+
+  addSubmit = () => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    let toastOpts2 = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    const {reportDetail, imgUrl, taskId} = this.state;
+    const {login} = this.props;
+    if (!reportDetail) {
+      toastOpts.data = '请输入图片描述';
+      WToast.show(toastOpts);
+    } else {
+      report(login.userId, taskId, reportDetail, imgUrl).then(
+        e => {
+          console.log(e);
+          this.setState({
+            modalVisible: false,
+          });
+          toastOpts2.data = '提交成功请等待回复';
+          WToast.show(toastOpts2);
+        },
+        () => {
+          toastOpts.data = '提交失败';
+          WToast.show(toastOpts);
+        },
+      );
+    }
+  };
+
+  //选择图片
+  selectPhotoTapped = () => {
+    const options = {
+      title: '选择图片',
+      cancelButtonTitle: '取消',
+      takePhotoButtonTitle: '拍照',
+      chooseFromLibraryButtonTitle: '选择照片',
+      // customButtons: [{name: 'fb', title: 'Choose Photo from Facebook'}],
+      cameraType: 'back',
+      mediaType: 'photo',
+      videoQuality: 'high',
+      durationLimit: 10,
+      maxWidth: 300,
+      maxHeight: 300,
+      quality: 0.8,
+      angle: 0,
+      allowsEditing: false,
+      noData: false,
+      storageOptions: {
+        skipBackup: true,
+      },
+    };
+
+    ImagePicker.showImagePicker(options, response => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled photo picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        let source = {
+          uri: response.uri,
+          name: response.fileName,
+          type: 'image/png',
+        };
+        console.log(source);
+        // You can also display the image using data:
+        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+        upLoadImg(source).then(img => {
+          console.log('source', img);
+          this.setState({
+            imgUrl: img.data,
+          });
+        });
+        // this.setState({
+        //   avatarSource: source,
+        // });
+      }
+    });
+  };
+
+  clickReport = jobId => {
+    this.setState({
+      modalVisible: true,
+      reportDetail: '',
+      imgUrl: '',
+      taskId: jobId,
+    });
+  };
+
+  handelOnChange = e => {
+    this.setState({reportDetail: e});
+  };
+
   render() {
-    const {labels, labelStatus, taskList, task} = this.state;
+    const {
+      labels,
+      labelStatus,
+      taskList,
+      task,
+      modalVisible,
+      imgUrl,
+      reportDetail,
+    } = this.state;
+    const {width} = Dimensions.get('window');
     console.log('task', task);
     return (
       <View style={styles.taskView}>
@@ -167,8 +306,28 @@ class TaskScreen extends React.Component {
                     source={require('../../assets/head.png')}></Image>
                 </View>
                 <View style={styles.taskListBody}>
-                  <View>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Text style={styles.taskListBodyText}>{item.jobTitle}</Text>
+                    {labelStatus == 5 ? (
+                      <TouchableOpacity
+                        onPress={this.clickReport.bind(this, item.jobId)}>
+                        <View
+                          style={{
+                            width: 60,
+                            height: 18,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderColor: '#FFDB44',
+                            borderWidth: 1,
+                            borderRadius: 7,
+                            marginLeft: 5,
+                          }}>
+                          <Text style={{fontSize: 12, color: '#666666'}}>
+                            点击举报
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    ) : null}
                   </View>
                   <View style={styles.taskListBodyView}>
                     <View style={styles.taskListBodybtn1}>
@@ -206,6 +365,52 @@ class TaskScreen extends React.Component {
           )}
           keyExtractor={item => JSON.stringify(item.jobId)}
         />
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={this.CloseModel}>
+          <View style={styles.taskModal}>
+            <View style={[styles.opinionModalView, {width: width * 0.8}]}>
+              <View style={styles.opinionTopTitle}>
+                <Text style={styles.opinionTopTitleTxt}>举报任务</Text>
+              </View>
+              <Text style={styles.opinionTitle}>举报原因</Text>
+              <TextInput
+                style={styles.opinionInp}
+                multiline={true}
+                placeholder="请详细说明举报原因（必填）"
+                maxLength={60}
+                value={reportDetail}
+                onChangeText={this.handelOnChange}
+              />
+              <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
+                <Text style={styles.opinionTitle}>上传举报图片（选填）</Text>
+                {imgUrl ? (
+                  <FitImage
+                    style={{width: 200, height: 200}}
+                    source={{uri: paramToQuery2(imgUrl)}}
+                    resizeMode="contain"
+                  />
+                ) : null}
+              </TouchableOpacity>
+              <View style={styles.opinionBtnView}>
+                <TouchableOpacity onPress={this.CloseModel}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#DDDDDD'}]}>
+                    <Text style={styles.opinionTxt}>取消</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.addSubmit}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#FFDB44'}]}>
+                    <Text style={styles.opinionTxt}>提交</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -340,6 +545,63 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
     color: '#444444',
+  },
+
+  //弹框
+  taskModal: {
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    flex: 1,
+    alignItems: 'center',
+  },
+  opinionModalView: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 96,
+    padding: 13,
+    borderRadius: 4,
+  },
+  opinionTopTitle: {
+    alignItems: 'center',
+  },
+  opinionTopTitleTxt: {
+    fontSize: 16,
+    color: '#444444',
+    fontWeight: 'bold',
+  },
+  opinionTitle: {
+    marginTop: 16.5,
+    marginBottom: 16.5,
+    fontSize: 14,
+    color: '#444444',
+    lineHeight: 30,
+    fontWeight: 'normal',
+  },
+  opinionInp: {
+    height: 80,
+    backgroundColor: '#F3F3F3',
+    textAlignVertical: 'top',
+  },
+  opinionInp2: {
+    height: 40,
+    backgroundColor: '#F3F3F3',
+    textAlignVertical: 'top',
+  },
+  opinionBtnView: {
+    marginTop: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  opinionBtn: {
+    width: 120,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  opinionTxt: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'normal',
   },
 });
 

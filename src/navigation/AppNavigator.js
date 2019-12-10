@@ -29,6 +29,8 @@ import RechargeScreen from '../containers/recharge/index';
 import PayDetailScreen from '../containers/payDetail/index';
 import MemberScreen from '../containers/member/index';
 import RegisterScreen from '../containers/register/index';
+import ChartScreen from '../containers/chart/index';
+import FollowScreen from '../containers/follow/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -293,6 +295,28 @@ export default createAppContainer(
     },
     Register: {
       screen: RegisterScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Chart: {
+      screen: ChartScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Follow: {
+      screen: FollowScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image

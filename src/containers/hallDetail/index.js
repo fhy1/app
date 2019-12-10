@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {fetchHallDetail, fetchHallSignUp, HallSubmit} from '../../api/hall';
-import {addFollow} from '../../api/follow';
+import {addFollow, isFollow, delFollow} from '../../api/follow';
 import {paramToQuery2} from '../../utils/fetch';
 import {WToast} from 'react-native-smart-tip';
 import ImagePicker from 'react-native-image-picker';
@@ -41,11 +41,13 @@ class HallDetailScreen extends React.Component {
       jobDetail: {},
       jobStepList: [],
       isFollow: false,
+      isClick: false,
     };
   }
 
   componentDidMount = () => {
     const jobId = this.props.navigation.state.params.jobId;
+    const jobUserId = this.props.navigation.state.params.jobUserId;
     const {login} = this.props;
     console.log(login);
     fetchHallDetail(jobId, login.userId).then(jobDetail => {
@@ -53,6 +55,12 @@ class HallDetailScreen extends React.Component {
       this.setState({
         jobDetail: jobDetail.data,
         jobStepList: jobDetail.data.jobStepList,
+      });
+    });
+    isFollow(login.userId, jobUserId).then(data => {
+      console.log('1111', data);
+      this.setState({
+        isFollow: data.data == 2 ? false : true,
       });
     });
   };
@@ -114,7 +122,7 @@ class HallDetailScreen extends React.Component {
   hallEnroll = status => {
     const jobId = this.props.navigation.state.params.jobId;
     const {login} = this.props;
-    const {jobStepList} = this.state;
+    const {jobStepList, isClick} = this.state;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -122,63 +130,80 @@ class HallDetailScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
-    if (status == 0) {
-      fetchHallSignUp(jobId, login.userId).then(
-        () => {
-          toastOpts.data = '报名成功';
-          WToast.show(toastOpts);
-          this.setState(state => {
-            state.jobDetail.status = 1;
-            return {
-              jobDetail: state.jobDetail,
-            };
-          });
+    if (!isClick) {
+      this.setState(
+        {
+          isClick: true,
         },
-        err => {
-          toastOpts.data = err;
-          WToast.show(toastOpts);
+        () => {
+          if (status == 0) {
+            fetchHallSignUp(jobId, login.userId).then(
+              () => {
+                toastOpts.data = '报名成功';
+                WToast.show(toastOpts);
+                this.setState(state => {
+                  state.jobDetail.status = 1;
+                  return {
+                    isClick: false,
+                    jobDetail: state.jobDetail,
+                  };
+                });
+              },
+              err => {
+                toastOpts.data = err;
+                WToast.show(toastOpts);
+                this.setState({
+                  isClick: false,
+                });
+              },
+            );
+          } else if (status == 1) {
+            let newApply = {
+              jobId: jobId,
+              userId: login.userId,
+              jobStepDtoList: [],
+            };
+            let flag = true;
+            jobStepList.forEach(item => {
+              if (item.checkPicture == 1) {
+                if (item.checkStepPicture) {
+                  newApply.jobStepDtoList.push({
+                    checkPicture: item.checkStepPicture,
+                    sort: item.sort,
+                  });
+                } else {
+                  flag = false;
+                  toastOpts.data = '步骤' + item.sort + '未提交审核图';
+                  // toastOpts.data = '提交成功，请等待审核 ...';
+                  WToast.show(toastOpts);
+                }
+              }
+            });
+            if (flag) {
+              HallSubmit(newApply).then(
+                () => {
+                  toastOpts.data = '提交成功，请等待审核 ...';
+                  WToast.show(toastOpts);
+                  this.setState(state => {
+                    state.jobDetail.status = 3;
+                    return {
+                      isClick: false,
+                      jobDetail: state.jobDetail,
+                    };
+                  });
+                },
+                () => {
+                  toastOpts.data = '提交失败，请检查网络';
+                  WToast.show(toastOpts);
+                  this.setState({
+                    isClick: false,
+                  });
+                },
+              );
+            }
+          }
         },
       );
-    } else if (status == 1) {
-      let newApply = {
-        jobId: jobId,
-        userId: login.userId,
-        jobStepDtoList: [],
-      };
-      let flag = true;
-      jobStepList.forEach(item => {
-        if (item.checkPicture == 1) {
-          if (item.checkStepPicture) {
-            newApply.jobStepDtoList.push({
-              checkPicture: item.checkStepPicture,
-              sort: item.sort,
-            });
-          } else {
-            flag = false;
-            toastOpts.data = '步骤' + item.sort + '未提交审核图';
-            // toastOpts.data = '提交成功，请等待审核 ...';
-            WToast.show(toastOpts);
-          }
-        }
-      });
-      if (flag) {
-        HallSubmit(newApply).then(
-          () => {
-            toastOpts.data = '提交成功，请等待审核 ...';
-            WToast.show(toastOpts);
-            this.setState(state => {
-              state.jobDetail.status = 3;
-              return {
-                jobDetail: state.jobDetail,
-              };
-            });
-          },
-          () => {
-            toastOpts.data = '提交失败，请检查网络';
-            WToast.show(toastOpts);
-          },
-        );
-      }
     }
   };
 
@@ -254,6 +279,7 @@ class HallDetailScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
+    const {isFollow} = this.state;
     console.log(jobUserId);
     if (!isFollow) {
       addFollow(login.userId, jobUserId).then(
@@ -269,7 +295,24 @@ class HallDetailScreen extends React.Component {
           WToast.show(toastOpts);
         },
       );
+    } else {
+      delFollow(login.userId, jobUserId).then(
+        () => {
+          this.setState({
+            isFollow: false,
+          });
+        },
+        () => {
+          toastOpts.data = '取关失败，请检查网络';
+          WToast.show(toastOpts);
+        },
+      );
     }
+  };
+
+  goToChart = () => {
+    const {navigation} = this.props;
+    navigation.navigate('Chart');
   };
 
   render() {
@@ -313,7 +356,7 @@ class HallDetailScreen extends React.Component {
                       marginLeft: 5,
                     }}>
                     <Text style={{fontSize: 12, color: '#666666'}}>
-                      {isFollow ? '已关注' : '+ 关注'}
+                      {isFollow ? '取消关注' : '+ 关注'}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -503,6 +546,11 @@ class HallDetailScreen extends React.Component {
             </View>
           </TouchableOpacity>
         </ScrollView>
+        <TouchableOpacity style={styles.chartOut} onPress={this.goToChart}>
+          <View style={styles.chart}>
+            <Text style={styles.chartTxt}>私信</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -685,6 +733,23 @@ const styles = StyleSheet.create({
   hallDetailBtnTxt: {
     color: '#444444',
     fontSize: 16,
+  },
+  chartOut: {
+    position: 'absolute',
+    right: 50,
+    bottom: 100,
+  },
+  // 聊天按钮
+  chart: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  chartTxt: {
+    color: '#FFFFFF',
   },
 });
 
