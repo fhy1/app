@@ -33,7 +33,7 @@ class LoginScreen extends React.Component {
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
-      fontWeight: 'bold',
+      fontWeight: 'normal',
     },
     /// 注意：如果右边没有视图，那么添加一个空白视图即可
     headerRight: <View />,
@@ -176,6 +176,11 @@ class LoginScreen extends React.Component {
     }
   };
 
+  onClickRegister = () => {
+    const {navigation} = this.props;
+    navigation.navigate('Register');
+  };
+
   onHandelPress = () => {
     const {navigation} = this.props;
     let toastOpts = {
@@ -256,24 +261,30 @@ class LoginScreen extends React.Component {
                 onChangeText={this.onChangePhone}
               />
             </View>
-            <View style={styles.loginNavViewInput}>
+            <View style={[styles.loginNavViewInput, {marginBottom: 15}]}>
               <TextInput
-                placeholder="请输入验证码"
+                secureTextEntry={false}
+                placeholder="请输入密码"
                 style={styles.loginNavViewTextInput}
                 value={code}
                 onChangeText={this.onChangeCode}
+                secureTextEntry={false}
               />
-              <View style={styles.loginNavViewInputBtn}>
-                {showFlag ? (
-                  <Text style={styles.loginNavViewInputTxt}>
-                    {clickTime + '秒'}
-                  </Text>
-                ) : (
-                  <TouchableOpacity onPress={this.onClickPress}>
-                    <Text style={styles.loginNavViewInputTxt}>获取验证码</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginBottom: 15,
+                justifyContent: 'space-between',
+                paddingLeft: 5,
+                paddingRight: 5,
+              }}>
+              <TouchableOpacity onPress={this.onClickLogin}>
+                <Text style={{color: '#666666'}}>忘记密码</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.onClickRegister}>
+                <Text style={{color: '#666666'}}>注册</Text>
+              </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={this.onClickLogin}>
               <View style={styles.loginNavViewBtn}>

@@ -133,9 +133,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        manifestPlaceholders = [
-            QQ_APPID: "1106399454"
-        ]
+        // manifestPlaceholders = [
+        //     QQ_APPID: "1106399454"
+        // ]
     }
     splits {
         abi {
@@ -152,12 +152,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        // release {
-        //     storeFile file(MYAPP_RELEASE_STORE_FILE)
-        //     storePassword MYAPP_RELEASE_STORE_PASSWORD
-        //     keyAlias MYAPP_RELEASE_KEY_ALIAS
-        //     keyPassword MYAPP_RELEASE_KEY_PASSWORD
-        // }
+        release {
+            storeFile file(MYAPP_RELEASE_STORE_FILE)
+            storePassword MYAPP_RELEASE_STORE_PASSWORD
+            keyAlias MYAPP_RELEASE_KEY_ALIAS
+            keyPassword MYAPP_RELEASE_KEY_PASSWORD
+        }
     }
     buildTypes {
         debug {
@@ -196,7 +196,7 @@ dependencies {
 
     implementation project(':RCTWeChat')
 
-    implementation project(':react-native-qq')
+    // implementation project(':react-native-qq')
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

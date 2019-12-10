@@ -15,7 +15,7 @@ import {fetchExtendInvite, fetchExtendUser} from '../../api/extend';
 import QRCode from 'react-native-qrcode-svg';
 import * as WeChat from 'react-native-wechat';
 import {WToast} from 'react-native-smart-tip';
-import * as QQAPI from 'react-native-qq';
+// import * as QQAPI from 'react-native-qq';
 
 class ExtendScreen extends React.Component {
   static navigationOptions = {
@@ -100,6 +100,13 @@ class ExtendScreen extends React.Component {
   };
 
   OnShareWxFriends = () => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
     WeChat.isWXAppInstalled().then(isInstalled => {
       if (isInstalled) {
         WeChat.shareToTimeline({
@@ -123,6 +130,13 @@ class ExtendScreen extends React.Component {
   };
 
   OnShareQqFriend = () => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
     let qqshareInfo = {
       type: 'news',
       imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
@@ -130,30 +144,43 @@ class ExtendScreen extends React.Component {
       description: '大家一起赚钱拉',
       webpageUrl: 'http://www.lcode.org',
     };
-    // QQAPI.isQQInstalledAction().then(res => {
-    QQAPI.shareToQQ(qqshareInfo)
-      .then(res => {})
-      .catch(err => {
-        console.log('分享失败');
-      });
-    // });
+    // QQAPI.isQQInstalled().then(
+    //   install => {
+    //     QQAPI.shareToQQ(qqshareInfo)
+    //       .then(res => {})
+    //       .catch(err => {
+    //         console.log('分享失败');
+    //       });
+    //   },
+    //   err => {
+    //     toastOpts.data = '没有安装qq，请您安装qq之后再试';
+    //     WToast.show(toastOpts);
+    //   },
+    // );
   };
 
   OnShareQqFriends = () => {
-    let qqshareInfo = {
-      type: 'news',
-      imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
-      title: '小蜜罐',
-      description: '大家一起赚钱拉',
-      webpageUrl: 'http://www.lcode.org',
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
-    // QQAPI.isQQInstalledAction().then(res => {
-    QQAPI.shareToQzone(qqshareInfo)
-      .then(res => {})
-      .catch(err => {
-        console.log('分享失败');
-      });
-    // });
+    // let qqshareInfo = {
+    //   type: 'news',
+    //   imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+    //   title: '小蜜罐',
+    //   description: '大家一起赚钱拉',
+    //   webpageUrl: 'http://www.lcode.org',
+    // };
+    // // QQAPI.isQQInstalledAction().then(res => {
+    // QQAPI.shareToQzone(qqshareInfo)
+    //   .then(res => {})
+    //   .catch(err => {
+    //     console.log('分享失败');
+    //   });
+    // // });
   };
 
   render() {

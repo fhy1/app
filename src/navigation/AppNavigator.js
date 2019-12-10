@@ -28,6 +28,7 @@ import ZfbwithDrawScreen from '../containers/zfbwithDraw/index';
 import RechargeScreen from '../containers/recharge/index';
 import PayDetailScreen from '../containers/payDetail/index';
 import MemberScreen from '../containers/member/index';
+import RegisterScreen from '../containers/register/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -281,6 +282,17 @@ export default createAppContainer(
     },
     Member: {
       screen: MemberScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Register: {
+      screen: RegisterScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image

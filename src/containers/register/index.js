@@ -10,20 +10,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {WToast} from 'react-native-smart-tip';
-import {
-  fetchUserCode,
-  fetchCheckCode,
-  fetchCheckEnroll,
-  wxLogin,
-} from '../../api/login';
+import {wxGetWxInfo, fetchIsPhone, register} from '../../api/login';
 import {connect} from 'react-redux';
-import {getLogin} from '../../api/login';
 import * as WeChat from 'react-native-wechat';
-import {fetchMoneyAll, saveMoney} from '../../api/myinfo';
 
-class LoginScreen extends React.Component {
+class RegisterScreen extends React.Component {
   static navigationOptions = {
-    title: '登录',
+    title: '注册',
     headerStyle: {
       backgroundColor: '#FFDB44',
       borderBottomWidth: 0,
@@ -33,7 +26,7 @@ class LoginScreen extends React.Component {
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
-      fontWeight: 'bold',
+      fontWeight: 'normal',
     },
     /// 注意：如果右边没有视图，那么添加一个空白视图即可
     headerRight: <View />,
@@ -42,28 +35,19 @@ class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      topHeight: 0,
-      topWidth: 0,
-      showFlag: false,
-      clickTime: 60,
       phone: '',
       code: '',
+      newcode: '',
+      wx: {},
+      phoneFlag: false,
+      codeFlag: false,
+      upUID: '',
     };
   }
 
-  Time = null;
+  componentDidMount() {}
 
-  componentDidMount() {
-    let {width} = Dimensions.get('window');
-    this.setState({
-      topHeight: (915 * width) / 1513,
-      topWidth: isNaN(width) ? 0 : width,
-    });
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.Time);
-  }
+  componentWillUnmount() {}
 
   validateTel(tel) {
     const TEL_REGEXP = /^1([38]\d|5[0-35-9]|7[3678])\d{8}$/;
@@ -72,52 +56,6 @@ class LoginScreen extends React.Component {
     }
     return false;
   }
-
-  onClickPress = () => {
-    const {phone} = this.state;
-    const isPhone = this.validateTel(phone);
-    let toastOpts = {
-      data: '',
-      textColor: '#ffffff',
-      backgroundColor: '#444444',
-      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
-      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
-    };
-    console.log(isPhone);
-    if (isPhone) {
-      this.setState({
-        showFlag: true,
-      });
-
-      this.Time = setInterval(() => {
-        this.setState(state => {
-          if (state.clickTime === 0) {
-            clearInterval(this.Time);
-            return {
-              clickTime: 60,
-              showFlag: false,
-            };
-          } else {
-            return {
-              clickTime: state.clickTime - 1,
-              showFlag: true,
-            };
-          }
-        });
-      }, 1000);
-      fetchUserCode(phone).then(
-        () => {},
-        e => {
-          console.log(e);
-          toastOpts.data = '获取验证码失败，请稍后再试';
-          WToast.show(toastOpts);
-        },
-      );
-    } else {
-      toastOpts.data = '请输入正确的手机号';
-      WToast.show(toastOpts);
-    }
-  };
 
   onChangePhone = e => {
     this.setState({
@@ -131,8 +69,20 @@ class LoginScreen extends React.Component {
     });
   };
 
+  onChangeNewCode = e => {
+    this.setState({
+      newcode: e,
+    });
+  };
+
+  onChangeupUID = e => {
+    this.setState({
+      upUID: e,
+    });
+  };
+
   onClickLogin = () => {
-    const {phone, code} = this.state;
+    const {phone, code, phoneFlag, newcode, wx, upUID} = this.state;
     const isPhone = this.validateTel(phone);
     const {navigation} = this.props;
     let toastOpts = {
@@ -142,33 +92,49 @@ class LoginScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
+    if (phoneFlag) {
+      toastOpts.data = '请输入正确的手机号';
+      WToast.show(toastOpts);
+      return;
+    }
     if (isPhone) {
-      if (code) {
-        fetchCheckCode({phone, code}).then(
-          () => {
-            // console.log('成功啦');
-            fetchCheckEnroll({phone}).then(data => {
-              this.props.getLogin(data);
-              fetchMoneyAll(data.userId).then(
-                money => {
-                  this.props.saveMoney(money.data);
-                },
-                () => {},
-              );
-              navigation.navigate('Home');
-            });
-          },
-          () => {
-            toastOpts.data = '手机号或验证码不正确';
-            WToast.show(toastOpts);
-            this.setState({
-              code: '',
-            });
-          },
-        );
-      } else {
-        toastOpts.data = '请输入验证码';
+      if (!code) {
+        toastOpts.data = '请输入密码';
         WToast.show(toastOpts);
+      } else if (!newcode) {
+        toastOpts.data = '请输入确认密码';
+        WToast.show(toastOpts);
+      } else {
+        if (code == newcode) {
+          let data = {
+            phone: phone,
+            password: code,
+            openid: wx.openid,
+            nickname: wx.nickname,
+            sex: wx.sex,
+            headimgurl: wx.headimgurl,
+            province: wx.province,
+            city: wx.city,
+            country: wx.country,
+            upUID: upUID,
+          };
+          register(data).then(
+            () => {
+              toastOpts.data = '注册成功';
+              WToast.show(toastOpts);
+              setTimeout(() => {
+                this.props.navigation.goBack();
+              }, 1000);
+            },
+            () => {
+              toastOpts.data = '注册失败';
+              WToast.show(toastOpts);
+            },
+          );
+        } else {
+          toastOpts.data = '两次密码输入不一致';
+          WToast.show(toastOpts);
+        }
       }
     } else {
       toastOpts.data = '请输入正确的手机号';
@@ -176,7 +142,40 @@ class LoginScreen extends React.Component {
     }
   };
 
-  onHandelPress = () => {
+  onChangePhoneBlur = () => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    const {phone} = this.state;
+    if (phone.length != 11) {
+      toastOpts.data = '请输入正确的手机号';
+      WToast.show(toastOpts);
+      this.setState({
+        phoneFlag: true,
+      });
+    } else {
+      fetchIsPhone(phone).then(data => {
+        if (data.status == 0) {
+          toastOpts.data = data.msg;
+          WToast.show(toastOpts);
+          this.setState({
+            phoneFlag: false,
+            phone: 0,
+          });
+        } else {
+          this.setState({
+            phoneFlag: false,
+          });
+        }
+      });
+    }
+  };
+
+  onBindWx = () => {
     const {navigation} = this.props;
     let toastOpts = {
       data: '',
@@ -188,22 +187,17 @@ class LoginScreen extends React.Component {
     WeChat.sendAuthRequest('snsapi_userinfo').then(
       data => {
         console.log(data);
-        wxLogin(data.code).then(
+        wxGetWxInfo(data.code).then(
           data => {
-            console.log('登录成功', data);
-            toastOpts.data = '微信登录成功';
+            console.log('授权成功', data);
+            toastOpts.data = '微信授权成功';
             WToast.show(toastOpts);
-            this.props.getLogin(data);
-            navigation.navigate('Home');
-            fetchMoneyAll(data.userId).then(
-              money => {
-                this.props.saveMoney(money.data);
-              },
-              () => {},
-            );
+            this.setState({
+              wx: data,
+            });
           },
           () => {
-            toastOpts.data = '微信登录失败';
+            toastOpts.data = '微信授权失败';
             WToast.show(toastOpts);
           },
         );
@@ -216,37 +210,10 @@ class LoginScreen extends React.Component {
   };
 
   render() {
-    const {topHeight, topWidth, showFlag, clickTime, phone, code} = this.state;
+    const {phone, code, newcode, wx, upUID} = this.state;
     return (
       <View style={styles.loginView}>
         <ScrollView>
-          <View>
-            <Image
-              // @ts-ignore
-              source={require('../../assets/login_bg.png')}
-              style={{
-                width: topWidth,
-                height: topHeight,
-                marginTop: -1,
-              }}
-            />
-            <View
-              style={[
-                styles.loginHead,
-                {
-                  width: topWidth,
-                  height: topHeight,
-                },
-              ]}>
-              <Image
-                style={{width: 127, height: 127}}
-                source={require('../../assets/logo.png')}
-              />
-            </View>
-          </View>
-          <View style={styles.loginTitle}>
-            <Text style={styles.loginTitleTxt}>欢迎登陆</Text>
-          </View>
           <View style={styles.loginNavView}>
             <View style={styles.loginNavViewInput}>
               <TextInput
@@ -254,42 +221,70 @@ class LoginScreen extends React.Component {
                 placeholder="请输入手机号"
                 value={phone}
                 onChangeText={this.onChangePhone}
+                onBlur={this.onChangePhoneBlur}
               />
             </View>
             <View style={styles.loginNavViewInput}>
               <TextInput
-                placeholder="请输入验证码"
+                placeholder="请输入密码"
+                secureTextEntry={true}
                 style={styles.loginNavViewTextInput}
                 value={code}
                 onChangeText={this.onChangeCode}
               />
-              <View style={styles.loginNavViewInputBtn}>
-                {showFlag ? (
-                  <Text style={styles.loginNavViewInputTxt}>
-                    {clickTime + '秒'}
-                  </Text>
+            </View>
+            <View style={styles.loginNavViewInput}>
+              <TextInput
+                placeholder="请输入确认密码"
+                secureTextEntry={true}
+                style={styles.loginNavViewTextInput}
+                value={newcode}
+                onChangeText={this.onChangeNewCode}
+              />
+            </View>
+            <View style={styles.loginNavViewInput}>
+              <TextInput
+                placeholder="请输入邀请码 (可选填)"
+                secureTextEntry={true}
+                style={styles.loginNavViewTextInput}
+                value={upUID}
+                onChangeText={this.onChangeupUID}
+              />
+            </View>
+            <TouchableOpacity onPress={this.onBindWx}>
+              <View
+                style={{
+                  paddingBottom: 30,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                {wx.headimgurl ? (
+                  <>
+                    <Text
+                      style={{
+                        color: '#444444',
+                      }}>
+                      微信：
+                    </Text>
+                    <Image
+                      source={{uri: wx.headimgurl}}
+                      style={{width: 30, height: 30, borderRadius: 15}}
+                    />
+                  </>
                 ) : (
-                  <TouchableOpacity onPress={this.onClickPress}>
-                    <Text style={styles.loginNavViewInputTxt}>获取验证码</Text>
-                  </TouchableOpacity>
+                  <Text
+                    style={{
+                      color: '#444444',
+                    }}>
+                    点击绑定微信，绑定微信后才可注册
+                  </Text>
                 )}
               </View>
-            </View>
+            </TouchableOpacity>
             <TouchableOpacity onPress={this.onClickLogin}>
               <View style={styles.loginNavViewBtn}>
-                <Text style={styles.loginNavViewTxt}>登录</Text>
+                <Text style={styles.loginNavViewTxt}>注册</Text>
               </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.loginWx}>
-            <TouchableOpacity
-              style={styles.loginWxPress}
-              onPress={this.onHandelPress}>
-              <Image
-                style={styles.loginWxImg}
-                source={require('../../assets/wxLogo.png')}
-              />
-              <Text style={styles.loginWxTxt}>微信登录</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -303,25 +298,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
-  loginHead: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loginTitle: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loginTitleTxt: {
-    fontSize: 22,
-    fontWeight: 'normal',
-    color: '#333333',
-    marginTop: 15,
-    marginBottom: 20,
-  },
   loginNavView: {
+    paddingTop: 30,
     paddingLeft: 40,
     paddingRight: 40,
   },
@@ -384,13 +362,8 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    getLogin: data => dispatch(getLogin(data)),
-    saveMoney: data => dispatch(saveMoney(data)),
-    // fetchCheckCode: data => dispatch(fetchCheckCode(data)),
-    // fetchCheckEnroll: data => dispatch(fetchCheckEnroll(data)),
-  };
+  return {};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterScreen);
 // export default LoginScreen;

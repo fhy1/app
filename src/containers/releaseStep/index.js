@@ -18,6 +18,8 @@ import {paramToQuery2} from '../../utils/fetch';
 import FitImage from 'react-native-fit-image';
 import {WToast} from 'react-native-smart-tip';
 import {addNewJob} from '../../api/release';
+import * as WeChat from 'react-native-wechat';
+import {getWxPay} from '../../api/pay';
 
 class ReleaseStepScreen extends React.Component {
   static navigationOptions = {
@@ -77,6 +79,8 @@ class ReleaseStepScreen extends React.Component {
       optionVisible: false,
       steps: [],
       imgUrl: '',
+      sendMoney: '',
+      modalVisible2: false,
     };
   }
 
@@ -95,6 +99,7 @@ class ReleaseStepScreen extends React.Component {
   CloseModel = () => {
     this.setState({
       modalVisible: false,
+      modalVisible2: false,
     });
   };
 
@@ -251,8 +256,9 @@ class ReleaseStepScreen extends React.Component {
       console.log('newJob', newJob);
       addNewJob(newJob).then(data => {
         if (data.status == 2) {
-          toastOpts.data = '账户余额不足，请立即充值';
+          toastOpts.data = '账户余额不足';
           WToast.show(toastOpts);
+          this.moneyIn();
         } else {
           toastOpts.data = '申请成功请等待审核';
           WToast.show(toastOpts);
@@ -267,6 +273,64 @@ class ReleaseStepScreen extends React.Component {
     }
   };
 
+  moneyIn = () => {
+    this.setState({
+      modalVisible2: true,
+      sendMoney: '',
+    });
+  };
+
+  addSubmit2 = () => {
+    const {login} = this.props;
+    const {sendMoney} = this.state;
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    getWxPay(login.userId, sendMoney, 2, '').then(data => {
+      let money = data.data;
+      WeChat.isWXAppInstalled().then(isInstalled => {
+        if (isInstalled) {
+          WeChat.pay({
+            partnerId: money.partnerid, // 商家向财付通申请的商家id
+            prepayId: money.prepayid, // 预支付订单
+            nonceStr: money.noncestr, // 随机串，防重发
+            timeStamp: Number(money.timestamp), // 时间戳，防重发.
+            package: money.package, // 商家根据财付通文档填写的数据和签名
+            sign: money.sign, // 商家根据微信开放平台文档对数据做的签名
+          })
+            .then(requestJson => {
+              //支付成功回调
+              if (requestJson.errCode == '0') {
+                //回调成功处理
+                toastOpts.data = '充值成功';
+                WToast.show(toastOpts);
+                this.setState({
+                  modalVisible2: false,
+                });
+              }
+            })
+            .catch(err => {
+              toastOpts.data = '充值失败';
+              WToast.show(toastOpts);
+            });
+        } else {
+          toastOpts.data = '请先安装微信';
+          WToast.show(toastOpts);
+        }
+      });
+    });
+  };
+
+  handelOnChangeMoney = e => {
+    this.setState({
+      sendMoney: e,
+    });
+  };
+
   render() {
     const {navigation} = this.props;
     const {width} = Dimensions.get('window');
@@ -278,6 +342,8 @@ class ReleaseStepScreen extends React.Component {
       stepDetail,
       imgUrl,
       steps,
+      modalVisible2,
+      sendMoney,
     } = this.state;
     return (
       <View style={styles.releaseStepView}>
@@ -556,6 +622,42 @@ class ReleaseStepScreen extends React.Component {
                 </TouchableOpacity>
               </View>
             )}
+          </View>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible2}
+          onRequestClose={this.CloseModel}>
+          <View style={styles.taskModal}>
+            <View style={[styles.opinionModalView, {width: width * 0.8}]}>
+              <View style={styles.opinionTopTitle}>
+                <Text style={styles.opinionTopTitleTxt}>账户充值</Text>
+              </View>
+              <Text style={styles.opinionTitle}>目前仅支持微信充值</Text>
+              <TextInput
+                style={styles.opinionInp}
+                multiline={true}
+                placeholder="请输入充值金额"
+                maxLength={60}
+                value={sendMoney}
+                onChangeText={this.handelOnChangeMoney}
+              />
+              <View style={styles.opinionBtnView}>
+                <TouchableOpacity onPress={this.CloseModel}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#DDDDDD'}]}>
+                    <Text style={styles.opinionTxt}>取消</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.addSubmit2}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#FFDB44'}]}>
+                    <Text style={styles.opinionTxt}>充值</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </Modal>
       </View>

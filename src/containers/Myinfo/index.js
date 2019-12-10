@@ -63,6 +63,20 @@ class MyInfoScreen extends React.Component {
     console.log(money);
     console.log('login', login);
     const imgWidth = parseInt((topWidth / 350) * 80);
+    let member = '普通会员';
+    if (login) {
+      if (login.isMember == 1) {
+        member = '普通会员';
+      } else if (login.isMember == 2) {
+        member = '周会员';
+      } else if (login.isMember == 3) {
+        member = '月会员';
+      } else if (login.isMember == 4) {
+        member = '季会员';
+      } else if (login.isMember == 5) {
+        member = '年会员';
+      }
+    }
     return (
       <View style={styles.myInfoView}>
         <ScrollView>
@@ -116,6 +130,7 @@ class MyInfoScreen extends React.Component {
                 source={require('../../assets/login_bg.png')}
                 style={styles.swiperImage}
               />
+              {/* headimgurl */}
             </Swiper>
             <View
               style={[
@@ -124,8 +139,21 @@ class MyInfoScreen extends React.Component {
                   width: imgWidth,
                   height: imgWidth,
                   borderRadius: imgWidth / 2,
+                  overflow: 'hidden',
+                  backgroundColor: login && login.headimgurl ? '' : 'gray',
                 },
-              ]}></View>
+              ]}>
+              {login && login.headimgurl ? (
+                <Image
+                  style={{
+                    width: imgWidth,
+                    height: imgWidth,
+                    borderRadius: imgWidth / 2,
+                  }}
+                  source={{uri: login.headimgurl}}
+                />
+              ) : null}
+            </View>
             {login && login.userId ? (
               <View
                 style={{
@@ -139,7 +167,7 @@ class MyInfoScreen extends React.Component {
                   style={{color: '#444444', fontSize: 14, marginBottom: 14}}>
                   ID: {login.uid}
                 </Text>
-                <Text style={{color: '#444444', fontSize: 14}}>普通会员</Text>
+                <Text style={{color: '#444444', fontSize: 14}}>{member}</Text>
               </View>
             ) : (
               <View
@@ -603,11 +631,11 @@ const styles = StyleSheet.create({
   topView: {
     paddingLeft: 15,
     paddingRight: 15,
-    marginTop: -90,
+    marginTop: -80,
   },
   myInfoHead: {
     position: 'absolute',
-    backgroundColor: 'gray',
+    // backgroundColor: 'gray',
     top: 30,
     left: 15,
   },
