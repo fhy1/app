@@ -10,6 +10,7 @@ import {
   FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
+import {fetchUserReport} from '../../api/report';
 
 class ReportScreen extends React.Component {
   static navigationOptions = {
@@ -32,12 +33,30 @@ class ReportScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      labels: ['我的投诉', '我被投诉'],
-      labelStatus: 0,
+      labels: [
+        {title: '举报中', id: 1},
+        {title: '已回复', id: 2},
+        {title: '已提交', id: 3},
+        {title: '已审核', id: 4},
+      ],
+      labelStatus: 1,
+      report: {},
+      reportList: [],
+      page: 1,
+      size: 15,
     };
   }
 
-  componentDidMount = () => {};
+  componentDidMount = () => {
+    const {labelStatus, page, size} = this.state;
+    const {login} = this.props;
+    fetchUserReport(login.userId, labelStatus, page, size).then(report => {
+      this.setState({
+        report: report.data,
+        reportList: report.data.list,
+      });
+    });
+  };
 
   onHandelPress = index => {
     this.setState({
@@ -51,22 +70,24 @@ class ReportScreen extends React.Component {
       <View style={styles.reportView}>
         <View style={styles.reportTitleView}>
           <View style={styles.reportTitle}>
-            {labels.map((item, index) => {
-              return index == labelStatus ? (
+            {labels.map(item => {
+              return item.id == labelStatus ? (
                 <View
                   style={[styles.reportTitleText, styles.reportTitleClick]}
-                  key={index}>
-                  <Text style={styles.reportTitleTextClick}>{item}</Text>
+                  key={item.id}>
+                  <Text style={styles.reportTitleTextClick}>{item.title}</Text>
                 </View>
               ) : (
                 <TouchableOpacity
                   style={styles.reportTitleTextTouch}
-                  key={index}
-                  onPress={this.onHandelPress.bind(this, index)}>
+                  key={item.id}
+                  onPress={this.onHandelPress.bind(this, item.id)}>
                   <View
                     style={styles.reportTitleText}
                     onResponderGrant={this.onHandelPress}>
-                    <Text style={styles.reportTitleTextNormal}>{item}</Text>
+                    <Text style={styles.reportTitleTextNormal}>
+                      {item.title}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -75,22 +96,19 @@ class ReportScreen extends React.Component {
         </View>
         <FlatList
           style={styles.reportFlatList}
-          data={[
-            {title: '超级简单的任务', id: '1'},
-            {title: '超级简单的任务', id: '2'},
-          ]}
+          data={labels}
           ItemSeparatorComponent={() => (
             <View style={styles.reportFlatListLine} />
           )}
           renderItem={({item, index, separators}) => (
             <View style={styles.reportList} key={item.id}>
               <View style={styles.reportListTitle}>
-                <Text style={styles.reportListTitleTxt}>点赞关注即可</Text>
+                <Text style={styles.reportListTitleTxt}>{item.jobTitle}</Text>
                 <Text style={styles.reportListTitleMoney}>赏2.25元</Text>
               </View>
               <View style={styles.reportListNav}>
                 <Text style={styles.reportListNavTxt}>
-                  发布时间： 2019-11-10
+                  发布时间： {item.reportTime}
                 </Text>
                 <Text
                   style={[styles.reportListNavTxt, styles.reportListNavRight]}>
@@ -229,7 +247,9 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  return {};
+  return {
+    login: state.login.login,
+  };
 }
 
 function mapDispatchToProps(dispatch) {

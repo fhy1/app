@@ -13,6 +13,7 @@ import {
 import {connect} from 'react-redux';
 import {fetchAudit, editAudit} from '../../api/apply';
 import {WToast} from 'react-native-smart-tip';
+import {paramToQuery2} from '../../utils/fetch';
 
 class ApplyScreen extends React.Component {
   static navigationOptions = {
@@ -81,6 +82,7 @@ class ApplyScreen extends React.Component {
       pageSize: 15,
     });
     fetchAudit(1, 15, login.userId, index).then(data => {
+      console.log(data.data.list);
       this.setState({
         applyList: data.data.list,
       });
@@ -239,7 +241,7 @@ class ApplyScreen extends React.Component {
                   return (
                     <Image
                       key={index2}
-                      source={{uri: item2}}
+                      source={{uri: paramToQuery2(item2)}}
                       style={{width: 100, height: 100, resizeMode: 'cover'}}
                     />
                   );
@@ -254,7 +256,7 @@ class ApplyScreen extends React.Component {
                   <View style={styles.applyListButton}>
                     <TouchableOpacity
                       style={styles.applyListButtonClick}
-                      onPress={this.onFinish}>
+                      onPress={this.onFinish.bind(this, item.taskId, index)}>
                       <View>
                         <Text style={styles.applyListButtonTxt}>通过</Text>
                       </View>

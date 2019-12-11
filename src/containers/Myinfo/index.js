@@ -40,6 +40,7 @@ class MyInfoScreen extends React.Component {
     if (login && login.userId) {
       fetchMoneyAll(login.userId).then(
         money => {
+          console.log('moneymoney', money);
           this.props.saveMoney(money.data);
         },
         () => {},
@@ -60,7 +61,7 @@ class MyInfoScreen extends React.Component {
   render() {
     const {topHeight, topWidth} = this.state;
     const {navigation, login, money} = this.props;
-    console.log(money);
+    console.log('qqqqmoney', money);
     console.log('login', login);
     const imgWidth = parseInt((topWidth / 350) * 80);
     let member = '普通会员';
@@ -204,7 +205,7 @@ class MyInfoScreen extends React.Component {
                   <View style={styles.navViewMoneyMiddle}>
                     <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
                     <Text style={styles.navViewMoneyMiddleTxt2}>
-                      {money.balance} 元
+                      {money && money.balance ? money.balance : 0} 元
                     </Text>
                   </View>
                   {/* <TouchableOpacity
@@ -226,7 +227,7 @@ class MyInfoScreen extends React.Component {
                   <View style={styles.navViewMoneyMiddle}>
                     <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
                     <Text style={styles.navViewMoneyMiddleTxt2}>
-                      {money.bonus} 元
+                      {money && money.bonus ? money.bonus : 0} 元
                     </Text>
                   </View>
                   {/* <TouchableOpacity
@@ -275,7 +276,8 @@ class MyInfoScreen extends React.Component {
                   <View style={styles.navViewMoneyMiddle}>
                     <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
                     <Text style={styles.navViewMoneyMiddleTxt2}>
-                      {money.repaidBalance} 元
+                      {money && money.repaidBalance ? money.repaidBalance : 0}{' '}
+                      元
                     </Text>
                   </View>
                   {/* <TouchableOpacity
@@ -465,7 +467,7 @@ class MyInfoScreen extends React.Component {
               <TouchableOpacity
                 onPress={() => {
                   if (login && login.userId) {
-                    // navigation.navigate('Follow');
+                    navigation.navigate('News');
                   } else {
                     navigation.navigate('Login');
                   }
@@ -495,7 +497,7 @@ class MyInfoScreen extends React.Component {
               <TouchableOpacity
                 onPress={() => {
                   if (login && login.userId) {
-                    navigation.navigate('Report');
+                    navigation.navigate('ReportOne');
                   } else {
                     navigation.navigate('Login');
                   }

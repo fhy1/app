@@ -48,8 +48,8 @@ class ChartScreen extends React.Component {
 
   componentDidMount = () => {
     const {login} = this.props;
-    // const chartUserId = this.props.navigation.state.params.chartUserId;
-    const chartUserId = 25;
+    const chartUserId = this.props.navigation.state.params.chartUserId;
+    // const chartUserId = 25;
     this.setState({
       chartUserId: chartUserId,
     });

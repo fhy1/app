@@ -162,6 +162,7 @@ export function fetchHallSignUp(jobId, userId) {
 
 export function HallSubmit(data) {
   const url = paramToQuery(`${SUBMIT}`);
+  console.log(data);
   return fetch(url, {
     method: 'post',
     headers: {
@@ -183,7 +184,7 @@ export function HallSubmit(data) {
       }
     })
     .catch(e => {
-      console.log(e.msg);
+      console.log(e);
       return Promise.reject(e.msg);
     });
 }

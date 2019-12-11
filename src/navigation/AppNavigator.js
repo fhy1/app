@@ -31,6 +31,8 @@ import MemberScreen from '../containers/member/index';
 import RegisterScreen from '../containers/register/index';
 import ChartScreen from '../containers/chart/index';
 import FollowScreen from '../containers/follow/index';
+import NewsScreen from '../containers/news/index';
+import ReportOneScreen from '../containers/reportOne/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -317,6 +319,28 @@ export default createAppContainer(
     },
     Follow: {
       screen: FollowScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    News: {
+      screen: NewsScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    ReportOne: {
+      screen: ReportOneScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image

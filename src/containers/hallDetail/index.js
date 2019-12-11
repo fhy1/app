@@ -176,6 +176,9 @@ class HallDetailScreen extends React.Component {
                   toastOpts.data = '步骤' + item.sort + '未提交审核图';
                   // toastOpts.data = '提交成功，请等待审核 ...';
                   WToast.show(toastOpts);
+                  this.setState({
+                    isClick: false,
+                  });
                 }
               }
             });
@@ -192,7 +195,8 @@ class HallDetailScreen extends React.Component {
                     };
                   });
                 },
-                () => {
+                e => {
+                  console.log(e);
                   toastOpts.data = '提交失败，请检查网络';
                   WToast.show(toastOpts);
                   this.setState({
@@ -311,9 +315,21 @@ class HallDetailScreen extends React.Component {
   };
 
   goToChart = () => {
-    const {navigation} = this.props;
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    const {navigation, login} = this.props;
     const jobUserId = this.props.navigation.state.params.jobUserId;
-    navigation.navigate('Chart', {chartUserId: jobUserId});
+    if (login.userId == jobUserId) {
+      toastOpts.data = '无法和自己聊天';
+      WToast.show(toastOpts);
+    } else {
+      navigation.navigate('Chart', {chartUserId: jobUserId});
+    }
   };
 
   render() {
@@ -737,8 +753,8 @@ const styles = StyleSheet.create({
   },
   chartOut: {
     position: 'absolute',
-    right: 50,
-    bottom: 100,
+    right: 20,
+    bottom: 80,
   },
   // 聊天按钮
   chart: {

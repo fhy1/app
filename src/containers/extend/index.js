@@ -25,7 +25,7 @@ class ExtendScreen extends React.Component {
       borderBottomWidth: 0,
       shadowOpacity: 0,
     },
-    headerTintColor: '#444444',
+    headerTintColor: '#FFFFFF',
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',

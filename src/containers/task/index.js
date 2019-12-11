@@ -215,12 +215,12 @@ class TaskScreen extends React.Component {
     });
   };
 
-  clickReport = jobId => {
+  clickReport = taskId => {
     this.setState({
       modalVisible: true,
       reportDetail: '',
       imgUrl: '',
-      taskId: jobId,
+      taskId: taskId,
     });
   };
 
@@ -310,7 +310,7 @@ class TaskScreen extends React.Component {
                     <Text style={styles.taskListBodyText}>{item.jobTitle}</Text>
                     {labelStatus == 5 ? (
                       <TouchableOpacity
-                        onPress={this.clickReport.bind(this, item.jobId)}>
+                        onPress={this.clickReport.bind(this, item.taskId)}>
                         <View
                           style={{
                             width: 60,
