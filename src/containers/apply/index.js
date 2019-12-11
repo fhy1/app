@@ -273,7 +273,7 @@ class ApplyScreen extends React.Component {
                   </View>
                 </>
               ) : null}
-              {labelStatus == 5 ? (
+              {/* {labelStatus == 5 ? (
                 <>
                   <View style={styles.applyListLine}></View>
                   <View style={styles.applyListButton}>
@@ -282,7 +282,7 @@ class ApplyScreen extends React.Component {
                     </Text>
                   </View>
                 </>
-              ) : null}
+              ) : null} */}
             </View>
           )}
           keyExtractor={item => JSON.stringify(item.taskId)}

@@ -10,7 +10,8 @@ import {
   FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {fetchUserReport} from '../../api/report';
+import {fetchUserReport, fetchUserReportAudit} from '../../api/report';
+import {paramToQuery2} from '../../utils/fetch';
 
 class ReportScreen extends React.Component {
   static navigationOptions = {
@@ -59,13 +60,64 @@ class ReportScreen extends React.Component {
   };
 
   onHandelPress = index => {
+    const {login} = this.props;
     this.setState({
       labelStatus: index,
+      pageNo: 1,
+      pageSize: 15,
     });
+    if (index != 4) {
+      fetchUserReport(login.userId, index, 1, 15).then(report => {
+        this.setState({
+          report: report.data,
+          reportList: report.data.list,
+        });
+      });
+    } else {
+      fetchUserReportAudit(login.userId, 1, 15).then(report => {
+        this.setState({
+          report: report.data,
+          reportList: report.data.list,
+        });
+      });
+    }
+  };
+
+  fetchListNext = () => {
+    const {report} = this.state;
+    const {login} = this.props;
+    if (report.pageNum < report.pages) {
+      const {page} = this.state;
+      this.setState(
+        {
+          page: page + 1,
+        },
+        () => {
+          const {page, size, reportList, labelStatus} = this.state;
+          if (labelStatus != 4) {
+            fetchUserReport(login.userId, labelStatus, page, size).then(
+              report => {
+                this.setState({
+                  report: report.data,
+                  reportList: reportList.concat(report.data.list),
+                });
+              },
+            );
+          } else {
+            fetchUserReportAudit(login.userId, 1, 15).then(report => {
+              this.setState({
+                report: report.data,
+                reportList: report.data.list,
+              });
+            });
+          }
+        },
+      );
+    }
   };
 
   render() {
-    const {labels, labelStatus} = this.state;
+    const {labels, labelStatus, reportList, report} = this.state;
     return (
       <View style={styles.reportView}>
         <View style={styles.reportTitleView}>
@@ -96,43 +148,71 @@ class ReportScreen extends React.Component {
         </View>
         <FlatList
           style={styles.reportFlatList}
-          data={labels}
+          data={reportList}
           ItemSeparatorComponent={() => (
             <View style={styles.reportFlatListLine} />
           )}
+          ListEmptyComponent={() => (
+            <View style={styles.taskFlatListEmpty}>
+              <Text style={styles.taskFlatListEmptyTxt}>暂无数据</Text>
+            </View>
+          )}
+          refreshing={false}
+          ListFooterComponent={() =>
+            reportList.length > 0 ? (
+              <View style={styles.taskFlatListEmpty}>
+                <Text style={styles.taskFlatListEmptyTxt}>
+                  {report.pageNum == report.pages
+                    ? '没有更多了，亲'
+                    : '正在加载中，请稍等~'}
+                </Text>
+              </View>
+            ) : null
+          }
+          onEndReachedThreshold={0}
+          onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
-            <View style={styles.reportList} key={item.id}>
+            <View style={styles.reportList}>
               <View style={styles.reportListTitle}>
                 <Text style={styles.reportListTitleTxt}>{item.jobTitle}</Text>
-                <Text style={styles.reportListTitleMoney}>赏2.25元</Text>
+                {/* <Text style={styles.reportListTitleMoney}>赏2.25元</Text> */}
               </View>
               <View style={styles.reportListNav}>
                 <Text style={styles.reportListNavTxt}>
                   发布时间： {item.reportTime}
                 </Text>
-                <Text
+                {/* <Text
                   style={[styles.reportListNavTxt, styles.reportListNavRight]}>
                   剩余100份
-                </Text>
+                </Text> */}
               </View>
               <View style={styles.reportListBtnView}>
                 <View style={styles.reportListBtn}>
-                  <Text style={styles.reportListBtnTxt}>公众号</Text>
-                </View>
-                <View style={styles.reportListBtn}>
-                  <Text style={styles.reportListBtnTxt}>点赞关注</Text>
+                  <Text style={styles.reportListBtnTxt}>{item.jobSource}</Text>
                 </View>
               </View>
               <View style={styles.reportListLine}></View>
+              <View style={styles.applyListLine}></View>
               <View>
-                <Text>举报原因：</Text>
+                <Text style={styles.applyNoPassTxt}>
+                  举报原因: {item.reportReason}
+                </Text>
+                {item.reportImg ? (
+                  <View style={styles.applyListButton}>
+                    <Text style={styles.applyNoPassTxt}>举报图片:</Text>
+                    <Image
+                      style={{width: 100, height: 100}}
+                      source={{uri: paramToQuery2(item.reportImg)}}
+                    />
+                  </View>
+                ) : null}
               </View>
-              <View>
+              {/* <View>
                 <Text>举报结果：通过</Text>
-              </View>
+              </View> */}
             </View>
           )}
-          keyExtractor={item => item.id}
+          keyExtractor={(item, index) => JSON.stringify(index)}
         />
       </View>
     );
@@ -243,6 +323,30 @@ const styles = StyleSheet.create({
   reportListLine: {
     height: 0.5,
     backgroundColor: '#DDDDDD',
+  },
+  taskFlatListEmpty: {
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  taskFlatListEmptyTxt: {
+    fontWeight: 'bold',
+    fontSize: 12,
+    color: '#444444',
+  },
+
+  applyListLine: {
+    height: 0.5,
+    backgroundColor: '#DDDDDD',
+  },
+  applyListButton: {
+    // flexDirection: 'row',
+  },
+  applyNoPassTxt: {
+    paddingTop: 10.5,
+    paddingBottom: 10.5,
+    color: '#444444',
+    fontSize: 12,
   },
 });
 

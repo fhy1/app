@@ -93,7 +93,8 @@ class TaskScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {task, login} = this.state;
+    const {task} = this.state;
+    const {login} = this.props;
     if (task.pageNum < task.pages) {
       const {pageNo} = this.state;
       this.setState(
@@ -360,6 +361,16 @@ class TaskScreen extends React.Component {
                     </View>
                   </View>
                 </View>
+                {labelStatus == 5 ? (
+                  <>
+                    <View style={styles.applyListLine}></View>
+                    <View style={styles.applyListButton}>
+                      <Text style={styles.applyNoPassTxt}>
+                        未通过原因: {item.refuseReason}
+                      </Text>
+                    </View>
+                  </>
+                ) : null}
               </View>
             </TouchableOpacity>
           )}
@@ -602,6 +613,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#444444',
     fontWeight: 'normal',
+  },
+
+  applyListLine: {
+    height: 0.5,
+    backgroundColor: '#DDDDDD',
+  },
+  applyListButton: {
+    flexDirection: 'row',
+  },
+  applyNoPassTxt: {
+    paddingTop: 10.5,
+    paddingBottom: 10.5,
+    color: '#444444',
+    fontSize: 12,
   },
 });
 
