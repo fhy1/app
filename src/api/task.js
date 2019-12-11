@@ -21,6 +21,7 @@ export function fetchTaskCode(pageNo, pageSize, userId, status) {
   const url = paramToQuery(
     `${CODE}?pageNo=${pageNo}&pageSize=${pageSize}&userId=${userId}&status=${status}`,
   );
+
   return fetch(url)
     .then(res => {
       return res.json();
@@ -29,6 +30,7 @@ export function fetchTaskCode(pageNo, pageSize, userId, status) {
       if (data.error) {
         return Promise.reject(data);
       } else {
+        console.log(data);
         return data;
       }
     })

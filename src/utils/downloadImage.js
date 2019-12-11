@@ -1,4 +1,5 @@
-import {Platform, CameraRoll} from 'react-native';
+import {Platform} from 'react-native';
+import CameraRoll from '@react-native-community/cameraroll';
 import RNFS from 'react-native-fs';
 
 export const DownloadImage = uri => {

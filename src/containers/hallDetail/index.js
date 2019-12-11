@@ -165,7 +165,7 @@ class HallDetailScreen extends React.Component {
             };
             let flag = true;
             jobStepList.forEach(item => {
-              if (item.checkPicture == 1) {
+              if (item.checkPicture == 2) {
                 if (item.checkStepPicture) {
                   newApply.jobStepDtoList.push({
                     checkPicture: item.checkStepPicture,
@@ -312,7 +312,8 @@ class HallDetailScreen extends React.Component {
 
   goToChart = () => {
     const {navigation} = this.props;
-    navigation.navigate('Chart');
+    const jobUserId = this.props.navigation.state.params.jobUserId;
+    navigation.navigate('Chart', {chartUserId: jobUserId});
   };
 
   render() {
@@ -474,7 +475,7 @@ class HallDetailScreen extends React.Component {
                           </Text>
                         </View>
                       ) : null}
-                      {item.checkPicture == 1 ? (
+                      {item.checkPicture == 2 ? (
                         <View>
                           <TouchableOpacity
                             onPress={this.selectPhotoTapped.bind(this, index)}>

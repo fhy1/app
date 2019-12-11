@@ -79,7 +79,8 @@ class ExtendScreen extends React.Component {
       if (isInstalled) {
         WeChat.shareToSession({
           title: '小蜜罐',
-          description: '分享自:江清清的技术专栏(www.lcode.org)',
+          description:
+            '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
           thumbImage:
             'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
           type: 'news',
@@ -111,7 +112,8 @@ class ExtendScreen extends React.Component {
       if (isInstalled) {
         WeChat.shareToTimeline({
           title: '小蜜罐',
-          description: '分享自:江清清的技术专栏(www.lcode.org)',
+          description:
+            '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
           thumbImage:
             'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
           type: 'news',
@@ -141,7 +143,8 @@ class ExtendScreen extends React.Component {
       type: 'news',
       imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
       title: '小蜜罐',
-      description: '大家一起赚钱拉',
+      description:
+        '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
       webpageUrl: 'http://www.lcode.org',
     };
     // QQAPI.isQQInstalled().then(

@@ -80,7 +80,9 @@ export function fetchCheckCode(data) {
 }
 
 export function fetchCheckEnroll(data) {
-  const url = paramToQuery(`${ENROLL}?phone=${data.phone}`);
+  const url = paramToQuery(
+    `${ENROLL}?phone=${data.phone}&password=${data.code}`,
+  );
   console.log('url', url);
   return fetch(url)
     .then(res => {
@@ -98,7 +100,7 @@ export function fetchCheckEnroll(data) {
     })
     .catch(e => {
       console.log(e.message);
-      return Promise.reject(e.message);
+      return Promise.reject(e.message ? e.message : e.msg);
     });
 }
 

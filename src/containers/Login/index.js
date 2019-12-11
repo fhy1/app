@@ -144,22 +144,20 @@ class LoginScreen extends React.Component {
     };
     if (isPhone) {
       if (code) {
-        fetchCheckCode({phone, code}).then(
-          () => {
-            // console.log('成功啦');
-            fetchCheckEnroll({phone}).then(data => {
-              this.props.getLogin(data);
-              fetchMoneyAll(data.userId).then(
-                money => {
-                  this.props.saveMoney(money.data);
-                },
-                () => {},
-              );
-              navigation.navigate('Home');
-            });
+        // console.log('成功啦');
+        fetchCheckEnroll({phone, code}).then(
+          data => {
+            this.props.getLogin(data);
+            fetchMoneyAll(data.userId).then(
+              money => {
+                this.props.saveMoney(money.data);
+              },
+              () => {},
+            );
+            navigation.navigate('Home');
           },
-          () => {
-            toastOpts.data = '手机号或验证码不正确';
+          data => {
+            toastOpts.data = data;
             WToast.show(toastOpts);
             this.setState({
               code: '',
@@ -167,7 +165,7 @@ class LoginScreen extends React.Component {
           },
         );
       } else {
-        toastOpts.data = '请输入验证码';
+        toastOpts.data = '请输入密码';
         WToast.show(toastOpts);
       }
     } else {
@@ -192,7 +190,7 @@ class LoginScreen extends React.Component {
     };
     WeChat.sendAuthRequest('snsapi_userinfo').then(
       data => {
-        console.log(data);
+        console.log('this', data);
         wxLogin(data.code).then(
           data => {
             console.log('登录成功', data);
@@ -207,13 +205,15 @@ class LoginScreen extends React.Component {
               () => {},
             );
           },
-          () => {
+          e => {
+            console.log(e);
             toastOpts.data = '微信登录失败';
             WToast.show(toastOpts);
           },
         );
       },
-      () => {
+      e => {
+        console.log(e);
         toastOpts.data = '微信授权失败';
         WToast.show(toastOpts);
       },
@@ -279,8 +279,8 @@ class LoginScreen extends React.Component {
                 paddingLeft: 5,
                 paddingRight: 5,
               }}>
-              <TouchableOpacity onPress={this.onClickLogin}>
-                <Text style={{color: '#666666'}}>忘记密码</Text>
+              <TouchableOpacity>
+                <Text style={{color: '#666666'}}></Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={this.onClickRegister}>
                 <Text style={{color: '#666666'}}>注册</Text>

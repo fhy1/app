@@ -95,8 +95,8 @@ class ReleaseTaskScreen extends React.Component {
       toastOpts.data = '请选择任务类型';
       WToast.show(toastOpts);
     } else {
-      if (parseFloat(taskJob.jobPrice) >= 0.3) {
-        if (parseInt(taskJob.jobNum) >= 11) {
+      if (parseFloat(taskJob.jobPrice) >= 0.2) {
+        if (parseInt(taskJob.jobNum) >= 10) {
           taskJob.jobPrice = parseFloat(
             parseFloat(taskJob.jobPrice).toFixed(2),
           );
@@ -208,7 +208,7 @@ class ReleaseTaskScreen extends React.Component {
             <Text style={styles.releaseListTxt}>任务标题</Text>
             <TextInput
               style={styles.releaseListInput}
-              placeholder="需填写真实项目名称"
+              placeholder="需填写任务标题"
               onChangeText={this.handelOnChange.bind(this, 'jobTitle')}
               value={taskJob.jobTitle}
             />
@@ -229,7 +229,7 @@ class ReleaseTaskScreen extends React.Component {
               style={styles.releaseListInput}
               placeholder="限制提交时间 （小时）"
               onChangeText={this.handelOnChange.bind(this, 'submissionTime')}
-              value={taskJob.submissionTime}
+              value={`${taskJob.submissionTime}`}
             />
           </View>
           {/* <TouchableOpacity onPress={this.ShowModel}>
@@ -402,9 +402,9 @@ class ReleaseTaskScreen extends React.Component {
             <TextInput
               style={styles.releaseListInput}
               keyboardType="numeric"
-              placeholder="最少0.3元/人"
+              placeholder="最少0.2元/人"
               onChangeText={this.handelOnChange.bind(this, 'jobPrice')}
-              value={taskJob.jobPrice}
+              value={`${taskJob.jobPrice}`}
             />
           </View>
           <View style={styles.releaseList}>
@@ -412,9 +412,9 @@ class ReleaseTaskScreen extends React.Component {
             <TextInput
               style={styles.releaseListInput}
               keyboardType="numeric"
-              placeholder="最少11人"
+              placeholder="最少10人"
               onChangeText={this.handelOnChange.bind(this, 'jobNum')}
-              value={taskJob.jobNum}
+              value={`${taskJob.jobNum}`}
             />
           </View>
           <View style={styles.releaseListBtn}>

@@ -1,4 +1,4 @@
-package your.xmfl.xmfking.wxapi;
+package com.xmfl.xmfking.wxapi;
 
 import android.app.Activity;
 import android.os.Bundle;

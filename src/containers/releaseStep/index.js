@@ -81,6 +81,7 @@ class ReleaseStepScreen extends React.Component {
       imgUrl: '',
       sendMoney: '',
       modalVisible2: false,
+      isclick: false,
     };
   }
 
@@ -245,31 +246,42 @@ class ReleaseStepScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
-
-    if (steps.length > 0) {
-      console.log('steps', steps);
-      newJob.stepList = steps;
-      newJob.stepList.forEach((item, index) => {
-        newJob.stepList[index]['sort'] = index + 1;
-      });
-      newJob.userId = login.userId;
-      console.log('newJob', newJob);
-      addNewJob(newJob).then(data => {
-        if (data.status == 2) {
-          toastOpts.data = '账户余额不足';
-          WToast.show(toastOpts);
-          this.moneyIn();
-        } else {
-          toastOpts.data = '申请成功请等待审核';
-          WToast.show(toastOpts);
-          setTimeout(() => {
-            navigation.navigate('MyInfo');
-          }, 1000);
-        }
-      });
-    } else {
-      toastOpts.data = '请添加步骤';
-      WToast.show(toastOpts);
+    if (!this.state.isclick) {
+      this.state.isclick = true;
+      if (steps.length > 0) {
+        console.log('steps', steps);
+        newJob.stepList = steps;
+        newJob.stepList.forEach((item, index) => {
+          newJob.stepList[index]['sort'] = index + 1;
+        });
+        newJob.userId = login.userId;
+        console.log('newJob', newJob);
+        addNewJob(newJob).then(
+          data => {
+            if (data.status == 2) {
+              toastOpts.data = '账户余额不足';
+              WToast.show(toastOpts);
+              this.moneyIn();
+            } else {
+              toastOpts.data = '申请成功请等待审核';
+              WToast.show(toastOpts);
+              setTimeout(() => {
+                navigation.navigate('MyInfo');
+              }, 1000);
+            }
+            this.state.isclick = false;
+          },
+          () => {
+            this.state.isclick = false;
+            toastOpts.data = '申请失败，请检查网络';
+            WToast.show(toastOpts);
+          },
+        );
+      } else {
+        toastOpts.data = '请添加步骤';
+        WToast.show(toastOpts);
+        this.state.isclick = false;
+      }
     }
   };
 

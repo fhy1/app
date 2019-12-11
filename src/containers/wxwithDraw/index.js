@@ -125,19 +125,10 @@ class WxwithDrawScreen extends React.Component {
     return (
       <View style={styles.withdrawView}>
         <View style={styles.withdrawTop}>
-          {login.openid ? (
-            <View style={styles.withdrawList}>
-              <Text>微信： </Text>
-              <Text>{login.nickname}</Text>
-            </View>
-          ) : (
-            <TouchableOpacity onPress={this.applyWx}>
-              <View style={styles.withdrawList}>
-                <Text>微信： </Text>
-                <Text>点击绑定微信</Text>
-              </View>
-            </TouchableOpacity>
-          )}
+          <View style={styles.withdrawList}>
+            <Text>微信： </Text>
+            <Text>{login.nickname}</Text>
+          </View>
           <View style={styles.withdrawList}>
             <Text>提现金额：</Text>
             <TextInput
