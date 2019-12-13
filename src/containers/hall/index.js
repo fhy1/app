@@ -209,12 +209,11 @@ class HallScreen extends React.Component {
     }
   };
 
-  handelOnJumpToDetail = (jobId, userId) => {
+  handelOnJumpToDetail = jobId => {
     const {navigation, login} = this.props;
     if (login && login.userId) {
       navigation.navigate('HallDetail', {
         jobId: jobId,
-        jobUserId: userId,
       });
     } else {
       navigation.navigate('Login');
@@ -286,11 +285,7 @@ class HallScreen extends React.Component {
           onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
             <TouchableOpacity
-              onPress={this.handelOnJumpToDetail.bind(
-                this,
-                item.jobId,
-                item.userId,
-              )}>
+              onPress={this.handelOnJumpToDetail.bind(this, item.jobId)}>
               <View style={styles.hallList}>
                 <View style={styles.hallListIcon}>
                   {item.headimgurl ? (

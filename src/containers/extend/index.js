@@ -67,6 +67,7 @@ class ExtendScreen extends React.Component {
   };
 
   OnShareWxFriend = () => {
+    const {login} = this.props;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -82,9 +83,15 @@ class ExtendScreen extends React.Component {
           description:
             '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
           thumbImage:
-            'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+            'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
           type: 'news',
-          webpageUrl: 'http://www.lcode.org',
+          webpageUrl:
+            'http://212.64.70.14/web/resign/main.html?nickName=' +
+            login.nickname +
+            '&headImg=' +
+            login.headimgurl +
+            '&upUID=' +
+            login.uid,
           // type: 'text',
           // description: '大家一起赚钱拉',
         }).catch(error => {
@@ -101,6 +108,7 @@ class ExtendScreen extends React.Component {
   };
 
   OnShareWxFriends = () => {
+    const {login} = this.props;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -115,9 +123,15 @@ class ExtendScreen extends React.Component {
           description:
             '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
           thumbImage:
-            'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+            'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
           type: 'news',
-          webpageUrl: 'http://www.lcode.org',
+          webpageUrl:
+            'http://212.64.70.14/web/resign/main.html?nickName=' +
+            login.nickname +
+            '&headImg=' +
+            login.headimgurl +
+            '&upUID=' +
+            login.uid,
           // type: 'text',
           // description: '大家一起赚钱拉',
         }).catch(error => {
@@ -139,13 +153,21 @@ class ExtendScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
+    const {login} = this.props;
     let qqshareInfo = {
       type: 'news',
-      imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+      imageUrl:
+        'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
       title: '小蜜罐',
       description:
         '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
-      webpageUrl: 'http://www.lcode.org',
+      webpageUrl:
+        'http://212.64.70.14/web/resign/main.html?nickName=' +
+        login.nickname +
+        '&headImg=' +
+        login.headimgurl +
+        '&upUID=' +
+        login.uid,
     };
     // QQAPI.isQQInstalled().then(
     //   install => {
@@ -196,6 +218,14 @@ class ExtendScreen extends React.Component {
     for (let i = 0; i < 70; i++) {
       dashView.push(<View key={i} style={styles.extendDashed} />);
     }
+    let myInvite = login.uid
+      ? 'http://212.64.70.14/web/resign/main.html?nickName=' +
+        login.nickname +
+        '&headImg=' +
+        login.headimgurl +
+        '&upUID=' +
+        login.uid
+      : '1';
     return (
       <View style={styles.extendView}>
         <ScrollView>
@@ -228,14 +258,23 @@ class ExtendScreen extends React.Component {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <QRCode
-                  value={login ? login.uid : '1'}
-                  logoBorderRadius={1}
-                  color={'#191919'}
-                  backgroundColor={'#ffffff'}
-                  logoSize={30}
-                  size={(width / 375) * 110 - 10}
-                />
+                {login && login.uid ? (
+                  <QRCode
+                    value={
+                      'http://212.64.70.14/web/resign/main.html?nickName=' +
+                      login.nickname +
+                      '&headImg=' +
+                      login.headimgurl +
+                      '&upUID=' +
+                      login.uid
+                    }
+                    logoBorderRadius={1}
+                    color={'#191919'}
+                    backgroundColor={'#ffffff'}
+                    logoSize={30}
+                    size={(width / 375) * 110 - 10}
+                  />
+                ) : null}
               </View>
             </View>
           </View>

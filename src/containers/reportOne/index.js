@@ -53,7 +53,7 @@ class ReportOneScreen extends React.Component {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('TutorialDetail');
+            navigation.navigate('Reported');
           }}>
           <View style={styles.tutorialList}>
             <Text style={styles.tutorialListTxt}>我被举报</Text>

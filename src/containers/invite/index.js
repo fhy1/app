@@ -33,19 +33,29 @@ class InviteScreen extends React.Component {
     super(props);
     this.state = {
       inviteRule: [],
+      myInvite: '',
     };
   }
 
   componentDidMount = async () => {
     const inviteRule = await fetchInviteRule();
+    const {login} = this.props;
     this.setState({
       inviteRule: inviteRule.data,
+      myInvite:
+        'http://212.64.70.14/web/resign/main.html?nickName=' +
+        login.nickname +
+        '&headImg=' +
+        login.headimgurl +
+        '&upUID=' +
+        login.uid,
     });
   };
 
   render() {
     const {login} = this.props;
-    const {inviteRule} = this.state;
+    const {inviteRule, myInvite} = this.state;
+    console.log(myInvite);
     let dashView = [];
     for (let i = 0; i < 70; i++) {
       dashView.push(<View key={i} style={styles.inviteDashed} />);
@@ -65,14 +75,16 @@ class InviteScreen extends React.Component {
                 marginTop: 20,
                 marginBottom: 20,
               }}>
-              <QRCode
-                value={login.uid}
-                logoBorderRadius={1}
-                color={'#191919'}
-                backgroundColor={'#ffffff'}
-                logoSize={30}
-                size={120}
-              />
+              {myInvite != '' ? (
+                <QRCode
+                  value={myInvite}
+                  logoBorderRadius={1}
+                  color={'#191919'}
+                  backgroundColor={'#ffffff'}
+                  logoSize={30}
+                  size={120}
+                />
+              ) : null}
             </View>
             <View>
               <Text style={styles.inviteEwm}>奖励规则: </Text>

@@ -21,7 +21,7 @@ export function fetchChart(data) {
       }
     })
     .catch(e => {
-      console.log('err1', e.message);
+      console.log('err1', e);
       return Promise.reject(e.message);
     });
 }

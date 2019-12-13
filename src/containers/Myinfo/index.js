@@ -11,9 +11,10 @@ import {
 import FitImage from 'react-native-fit-image';
 import Swiper from 'react-native-swiper';
 import {connect} from 'react-redux';
-import {fetchMoneyAll, saveMoney} from '../../api/myinfo';
+import {fetchMoneyAll, saveMoney, saveChart} from '../../api/myinfo';
 import {getLogin} from '../../api/login';
 import {setData} from '../../utils/storage';
+import {fetchChart} from '../../api/chart';
 
 class MyInfoScreen extends React.Component {
   constructor(props) {
@@ -26,6 +27,7 @@ class MyInfoScreen extends React.Component {
         repaidBalance: 0,
         bonus: 0,
       },
+      news: 0,
     };
   }
 
@@ -45,6 +47,19 @@ class MyInfoScreen extends React.Component {
         },
         () => {},
       );
+      let data = {
+        pageNo: 1,
+        pageSize: 10000,
+        userId: login.userId,
+      };
+      fetchChart(data).then(news => {
+        let newPage = 0;
+        news.data.list.forEach(item => {
+          console.log(item);
+          newPage = newPage + item.newsNum;
+        });
+        this.props.saveChart(newPage);
+      });
     }
   }
 
@@ -60,7 +75,7 @@ class MyInfoScreen extends React.Component {
 
   render() {
     const {topHeight, topWidth} = this.state;
-    const {navigation, login, money} = this.props;
+    const {navigation, login, money, chartNum} = this.props;
     console.log('qqqqmoney', money);
     console.log('login', login);
     const imgWidth = parseInt((topWidth / 350) * 80);
@@ -205,7 +220,8 @@ class MyInfoScreen extends React.Component {
                   <View style={styles.navViewMoneyMiddle}>
                     <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
                     <Text style={styles.navViewMoneyMiddleTxt2}>
-                      {money && money.balance ? money.balance : 0} 元
+                      {money && money.balance ? money.balance : 0}{' '}
+                      <Text style={{fontSize: 12}}>元</Text>
                     </Text>
                   </View>
                   {/* <TouchableOpacity
@@ -227,44 +243,10 @@ class MyInfoScreen extends React.Component {
                   <View style={styles.navViewMoneyMiddle}>
                     <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
                     <Text style={styles.navViewMoneyMiddleTxt2}>
-                      {money && money.bonus ? money.bonus : 0} 元
+                      {money && money.bonus ? money.bonus : 0}{' '}
+                      <Text style={{fontSize: 12}}>元</Text>
                     </Text>
                   </View>
-                  {/* <TouchableOpacity
-                  onPress={() => {
-                    // getWxPay(7, 0.1, 2, '').then(data => {
-                    //   let xxx = data.data;
-                    //   WeChat.isWXAppInstalled().then(isInstalled => {
-                    //     if (isInstalled) {
-                    //       WeChat.pay({
-                    //         partnerId: xxx.partnerid, // 商家向财付通申请的商家id
-                    //         prepayId: xxx.prepayid, // 预支付订单
-                    //         nonceStr: xxx.noncestr, // 随机串，防重发
-                    //         timeStamp: xxx.timestamp, // 时间戳，防重发.
-                    //         package: xxx.package, // 商家根据财付通文档填写的数据和签名
-                    //         sign: xxx.sign, // 商家根据微信开放平台文档对数据做的签名
-                    //       })
-                    //         .then(requestJson => {
-                    //           //支付成功回调
-                    //           if (requestJson.errCode == '0') {
-                    //             //回调成功处理
-                    //             Alert.alert('支付失败');
-                    //           }
-                    //         })
-                    //         .catch(err => {
-                    //           Alert.alert('支付失败');
-                    //         });
-                    //     } else {
-                    //       Alert.alert('请安装微信');
-                    //     }
-                    //   });
-                    // });
-                    // navigation.navigate('Withdraw');
-                  }}>
-                  <View style={styles.navViewMoneybtn}>
-                    <Text style={styles.navViewMoneybtnTxt}>提现</Text>
-                  </View>
-                </TouchableOpacity> */}
                 </View>
                 <View style={styles.navViewLine}>
                   <View style={styles.navViewLineIn}></View>
@@ -277,7 +259,7 @@ class MyInfoScreen extends React.Component {
                     <Text style={styles.navViewMoneyMiddleTxt1}>￥ </Text>
                     <Text style={styles.navViewMoneyMiddleTxt2}>
                       {money && money.repaidBalance ? money.repaidBalance : 0}{' '}
-                      元
+                      <Text style={{fontSize: 12}}>元</Text>
                     </Text>
                   </View>
                   {/* <TouchableOpacity
@@ -444,12 +426,12 @@ class MyInfoScreen extends React.Component {
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
-                    {/* <FitImage
+                    <FitImage
                       style={{width: 21, height: 19}}
                       // @ts-ignore
-                      source={require('../../assets/report.png')}
+                      source={require('../../assets/guanzhu.png')}
                       resizeMode="contain"
-                    /> */}
+                    />
                   </View>
                   <View style={styles.myinfoMoreTxt}>
                     <Text style={styles.myinfoMoreTxtTitle}>我的关注</Text>
@@ -474,15 +456,22 @@ class MyInfoScreen extends React.Component {
                 }}>
                 <View style={styles.myinfoMoreItem}>
                   <View style={styles.myinfoMoreIcon}>
-                    {/* <FitImage
+                    <FitImage
                       style={{width: 21, height: 19}}
                       // @ts-ignore
-                      source={require('../../assets/report.png')}
+                      source={require('../../assets/xiaoxi.png')}
                       resizeMode="contain"
-                    /> */}
+                    />
                   </View>
                   <View style={styles.myinfoMoreTxt}>
-                    <Text style={styles.myinfoMoreTxtTitle}>我的消息</Text>
+                    <Text style={styles.myinfoMoreTxtTitle}>
+                      我的消息
+                      {chartNum > 0 ? (
+                        <Text style={{fontSize: 12, color: '#f75139'}}>
+                          {'  '}({chartNum}未读)
+                        </Text>
+                      ) : null}
+                    </Text>
                   </View>
                   <View style={styles.myinfoMoreGo}>
                     <FitImage
@@ -812,6 +801,7 @@ function mapStateToProps(state) {
   return {
     login: state.login.login,
     money: state.myinfo.money,
+    chartNum: state.myinfo.chartNum,
   };
 }
 
@@ -819,6 +809,7 @@ function mapDispatchToProps(dispatch) {
   return {
     saveMoney: data => dispatch(saveMoney(data)),
     getLogin: data => dispatch(getLogin(data)),
+    saveChart: data => dispatch(saveChart(data)),
   };
 }
 

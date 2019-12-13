@@ -12,6 +12,7 @@ import {connect} from 'react-redux';
 import {WToast} from 'react-native-smart-tip';
 import {getWxPay} from '../../api/pay';
 import * as WeChat from 'react-native-wechat';
+import {getData, setData} from '../../utils/storage';
 
 class MemberScreen extends React.Component {
   static navigationOptions = {
@@ -82,7 +83,7 @@ class MemberScreen extends React.Component {
 
   componentDidMount = () => {};
 
-  memberPross = (sendMoney, index) => {
+  memberPross = async (sendMoney, index) => {
     const {login} = this.props;
     let toastOpts = {
       data: '',
@@ -91,6 +92,7 @@ class MemberScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
+    let loginthing = await getData('userNews');
     getWxPay(login.userId, sendMoney, 1, index).then(data => {
       let money = data.data;
       WeChat.isWXAppInstalled().then(isInstalled => {
@@ -99,7 +101,7 @@ class MemberScreen extends React.Component {
             partnerId: money.partnerid, // 商家向财付通申请的商家id
             prepayId: money.prepayid, // 预支付订单
             nonceStr: money.noncestr, // 随机串，防重发
-            timeStamp: JSON.stringify(money.timestamp), // 时间戳，防重发.
+            timeStamp: Number(money.timestamp), // 时间戳，防重发.
             package: money.package, // 商家根据财付通文档填写的数据和签名
             sign: money.sign, // 商家根据微信开放平台文档对数据做的签名
           })
@@ -109,6 +111,9 @@ class MemberScreen extends React.Component {
                 //回调成功处理
                 toastOpts.data = '支付成功';
                 WToast.show(toastOpts);
+                loginThing.isMember = Number(index) + 1;
+                this.props.getLogin(loginThing);
+                setData('userNews', loginThing);
               }
             })
             .catch(err => {
@@ -369,7 +374,9 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {};
+  return {
+    getLogin: data => dispatch(getLogin(data)),
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MemberScreen);

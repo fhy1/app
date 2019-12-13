@@ -1,5 +1,5 @@
 import {paramToQuery} from '../utils/fetch';
-import {MYINFO_MONEY} from '../constants/myinfo';
+import {MYINFO_MONEY, MYINFO_CHART} from '../constants/myinfo';
 const MONEY = 'money/all';
 export const saveMoney = json => {
   console.log(111);
@@ -8,6 +8,14 @@ export const saveMoney = json => {
     json,
   };
 };
+
+export const saveChart = json => {
+  return {
+    type: MYINFO_CHART,
+    json,
+  };
+};
+
 export function fetchMoneyAll(userId) {
   const url = paramToQuery(`${MONEY}?userId=${userId}`);
   console.log('url', url);

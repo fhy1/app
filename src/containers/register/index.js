@@ -245,7 +245,6 @@ class RegisterScreen extends React.Component {
             <View style={styles.loginNavViewInput}>
               <TextInput
                 placeholder="请输入邀请码 (可选填)"
-                secureTextEntry={true}
                 style={styles.loginNavViewTextInput}
                 value={upUID}
                 onChangeText={this.onChangeupUID}
@@ -276,7 +275,7 @@ class RegisterScreen extends React.Component {
                     style={{
                       color: '#444444',
                     }}>
-                    点击绑定微信，绑定微信后才可注册
+                    点击此处绑定微信
                   </Text>
                 )}
               </View>

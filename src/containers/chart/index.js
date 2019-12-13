@@ -13,7 +13,8 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {WToast} from 'react-native-smart-tip';
-import {fetchChartRecord, addChart} from '../../api/chart';
+import {fetchChartRecord, addChart, fetchChart} from '../../api/chart';
+import {saveChart} from '../../api/myinfo';
 
 class ChartScreen extends React.Component {
   static navigationOptions = {
@@ -93,6 +94,13 @@ class ChartScreen extends React.Component {
             });
           }
         }
+        fetchChart(data).then(news => {
+          let newPage = 0;
+          news.data.list.forEach(item => {
+            newPage = newPage + item.newsNum;
+          });
+          this.props.saveChart(newPage);
+        });
         // console.log(res);
         // this.setState({
         //   page: res.data.pageNum,
@@ -373,7 +381,9 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {};
+  return {
+    saveChart: data => dispatch(saveChart(data)),
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChartScreen);

@@ -8,14 +8,22 @@ import {
   Dimensions,
   TouchableOpacity,
   FlatList,
+  Modal,
+  TextInput,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {fetchUserReport, fetchUserReportAudit} from '../../api/report';
+import {
+  fetchUserReport,
+  fetchUserReportAudit,
+  rewportEnd,
+  rewportCommit,
+} from '../../api/report';
 import {paramToQuery2} from '../../utils/fetch';
+import {WToast} from 'react-native-smart-tip';
 
 class ReportScreen extends React.Component {
   static navigationOptions = {
-    title: '举报维权',
+    title: '我的举报',
     headerStyle: {
       backgroundColor: '#FFDB44',
       borderBottomWidth: 0,
@@ -45,6 +53,9 @@ class ReportScreen extends React.Component {
       reportList: [],
       page: 1,
       size: 15,
+      refuteReason: '',
+      reportId: '',
+      modalVisible: false,
     };
   }
 
@@ -59,12 +70,18 @@ class ReportScreen extends React.Component {
     });
   };
 
+  componentWillUnmount = () => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
   onHandelPress = index => {
     const {login} = this.props;
     this.setState({
       labelStatus: index,
-      pageNo: 1,
-      pageSize: 15,
+      page: 1,
+      size: 15,
     });
     if (index != 4) {
       fetchUserReport(login.userId, index, 1, 15).then(report => {
@@ -107,7 +124,7 @@ class ReportScreen extends React.Component {
             fetchUserReportAudit(login.userId, 1, 15).then(report => {
               this.setState({
                 report: report.data,
-                reportList: report.data.list,
+                reportList: reportList.concat(report.data.list),
               });
             });
           }
@@ -116,8 +133,109 @@ class ReportScreen extends React.Component {
     }
   };
 
+  onFinish = reportId => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    const {labelStatus} = this.state;
+    const {login} = this.props;
+    rewportEnd(reportId).then(
+      () => {
+        this.setState({
+          page: 1,
+          size: 15,
+        });
+        if (labelStatus != 4) {
+          fetchUserReport(login.userId, labelStatus, 1, 15).then(report => {
+            this.setState({
+              report: report.data,
+              reportList: report.data.list,
+            });
+          });
+        } else {
+          fetchUserReportAudit(login.userId, 1, 15).then(report => {
+            this.setState({
+              report: report.data,
+              reportList: report.data.list,
+            });
+          });
+        }
+        toastOpts.data = '结束成功';
+        WToast.show(toastOpts);
+      },
+      () => {
+        toastOpts.data = '结束失败';
+        WToast.show(toastOpts);
+      },
+    );
+  };
+
+  onNoPass = reportId => {
+    this.setState({
+      modalVisible: true,
+      refuteReason: '',
+      reportId: reportId,
+    });
+  };
+
+  handelOnChangeRefuteReason = e => {
+    this.setState({
+      refuteReason: e,
+    });
+  };
+
+  addSubmit = () => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    let toastOpts2 = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    const {refuteReason, reportId} = this.state;
+    if (!refuteReason) {
+      toastOpts.data = '请输入提交内容';
+      WToast.show(toastOpts);
+    } else {
+      rewportCommit(reportId, refuteReason).then(
+        e => {
+          console.log(e);
+          this.setState({
+            modalVisible: false,
+          });
+          toastOpts2.data = '提交成功';
+          WToast.show(toastOpts2);
+          this.onHandelPress(3);
+        },
+        () => {
+          toastOpts.data = '提交失败';
+          WToast.show(toastOpts);
+        },
+      );
+    }
+  };
+
   render() {
-    const {labels, labelStatus, reportList, report} = this.state;
+    const {
+      labels,
+      labelStatus,
+      reportList,
+      report,
+      modalVisible,
+      refuteReason,
+    } = this.state;
+    const {width} = Dimensions.get('window');
     return (
       <View style={styles.reportView}>
         <View style={styles.reportTitleView}>
@@ -191,14 +309,13 @@ class ReportScreen extends React.Component {
                   <Text style={styles.reportListBtnTxt}>{item.jobSource}</Text>
                 </View>
               </View>
-              <View style={styles.reportListLine}></View>
               <View style={styles.applyListLine}></View>
               <View>
                 <Text style={styles.applyNoPassTxt}>
                   举报原因: {item.reportReason}
                 </Text>
                 {item.reportImg ? (
-                  <View style={styles.applyListButton}>
+                  <View>
                     <Text style={styles.applyNoPassTxt}>举报图片:</Text>
                     <Image
                       style={{width: 100, height: 100}}
@@ -207,6 +324,124 @@ class ReportScreen extends React.Component {
                   </View>
                 ) : null}
               </View>
+              {labelStatus == 2 ? (
+                <>
+                  <View style={styles.applyListLine}></View>
+                  <View>
+                    <Text style={styles.applyNoPassTxt}>
+                      赏金主回复: {item.replyReason}
+                    </Text>
+                    <Text style={styles.applyNoPassTxt2}>
+                      回复时间: {item.replyTime}
+                    </Text>
+                    {item.replyImg ? (
+                      <View>
+                        <Text style={styles.applyNoPassTxt}>举报图片:</Text>
+                        <Image
+                          style={{width: 100, height: 100}}
+                          source={{uri: paramToQuery2(item.replyImg)}}
+                        />
+                      </View>
+                    ) : null}
+                  </View>
+                  <View style={styles.applyListLine}></View>
+                  <View style={styles.applyListButton}>
+                    <TouchableOpacity
+                      style={styles.applyListButtonClick}
+                      onPress={this.onFinish.bind(this, item.reportId)}>
+                      <View>
+                        <Text style={styles.applyListButtonTxt}>结束举报</Text>
+                      </View>
+                    </TouchableOpacity>
+                    <View style={styles.applyListButtonLine}></View>
+
+                    <TouchableOpacity
+                      style={styles.applyListButtonClick}
+                      onPress={this.onNoPass.bind(this, item.reportId)}>
+                      <View>
+                        <Text style={styles.applyListButtonTxt}>
+                          继续举报
+                          <Text style={{fontSize: 10}}>
+                            （将提交至系统审核）
+                          </Text>
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : null}
+              {labelStatus == 3 ? (
+                <>
+                  <View style={styles.applyListLine}></View>
+                  <View>
+                    <Text style={styles.applyNoPassTxt}>
+                      赏金主回复: {item.replyReason}
+                    </Text>
+                    <Text style={styles.applyNoPassTxt2}>
+                      回复时间: {item.replyTime}
+                    </Text>
+                    {item.replyImg ? (
+                      <View>
+                        <Text style={styles.applyNoPassTxt}>举报图片:</Text>
+                        <Image
+                          style={{width: 100, height: 100}}
+                          source={{uri: paramToQuery2(item.replyImg)}}
+                        />
+                      </View>
+                    ) : null}
+                  </View>
+                  <View style={styles.applyListLine}></View>
+                  <View>
+                    <Text style={styles.applyNoPassTxt}>
+                      提交原因: {item.refuteReason}
+                    </Text>
+                    <Text style={styles.applyNoPassTxt2}>
+                      提交时间: {item.refuteTime}
+                    </Text>
+                  </View>
+                </>
+              ) : null}
+
+              {labelStatus == 4 ? (
+                <>
+                  <View style={styles.applyListLine}></View>
+                  <View>
+                    <Text style={styles.applyNoPassTxt}>
+                      赏金主回复: {item.replyReason}
+                    </Text>
+                    <Text style={styles.applyNoPassTxt2}>
+                      回复时间: {item.replyTime}
+                    </Text>
+                    {item.replyImg ? (
+                      <View>
+                        <Text style={styles.applyNoPassTxt}>举报图片:</Text>
+                        <Image
+                          style={{width: 100, height: 100}}
+                          source={{uri: paramToQuery2(item.replyImg)}}
+                        />
+                      </View>
+                    ) : null}
+                  </View>
+                  <View style={styles.applyListLine}></View>
+                  <View>
+                    <Text style={styles.applyNoPassTxt}>
+                      提交原因: {item.refuteReason}
+                    </Text>
+                    <Text style={styles.applyNoPassTxt2}>
+                      提交时间: {item.refuteTime}
+                    </Text>
+                  </View>
+                  <View style={styles.applyListLine}></View>
+                  <View>
+                    <Text style={styles.applyNoPassTxt}>
+                      审核结果: {item.auditReason}
+                    </Text>
+                    <Text style={styles.applyNoPassTxt2}>
+                      审核时间: {item.auditTime}
+                    </Text>
+                  </View>
+                </>
+              ) : null}
               {/* <View>
                 <Text>举报结果：通过</Text>
               </View> */}
@@ -214,6 +449,42 @@ class ReportScreen extends React.Component {
           )}
           keyExtractor={(item, index) => JSON.stringify(index)}
         />
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={this.CloseModel}>
+          <View style={styles.taskModal}>
+            <View style={[styles.opinionModalView, {width: width * 0.8}]}>
+              <View style={styles.opinionTopTitle}>
+                <Text style={styles.opinionTopTitleTxt}>提交审核</Text>
+              </View>
+              <Text style={styles.opinionTitle}>提交原因</Text>
+              <TextInput
+                style={styles.opinionInp}
+                multiline={true}
+                placeholder="请详细描述提交原因（必填）"
+                maxLength={60}
+                value={refuteReason}
+                onChangeText={this.handelOnChangeRefuteReason}
+              />
+              <View style={styles.opinionBtnView}>
+                <TouchableOpacity onPress={this.CloseModel}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#DDDDDD'}]}>
+                    <Text style={styles.opinionTxt}>取消</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.addSubmit}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#FFDB44'}]}>
+                    <Text style={styles.opinionTxt}>提交</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -340,13 +611,92 @@ const styles = StyleSheet.create({
     backgroundColor: '#DDDDDD',
   },
   applyListButton: {
-    // flexDirection: 'row',
+    flexDirection: 'row',
+  },
+  applyListButtonLine: {
+    width: 1,
+    backgroundColor: '#DDDDDD',
+  },
+  applyListButtonClick: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 12.5,
+    paddingBottom: 12.5,
+  },
+  applyListButtonTxt: {
+    color: '#444444',
+    fontSize: 14,
+    fontWeight: 'normal',
   },
   applyNoPassTxt: {
     paddingTop: 10.5,
     paddingBottom: 10.5,
     color: '#444444',
     fontSize: 12,
+  },
+  applyNoPassTxt2: {
+    paddingTop: 0,
+    paddingBottom: 10.5,
+    color: '#444444',
+    fontSize: 12,
+  },
+
+  //弹框
+  taskModal: {
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    flex: 1,
+    alignItems: 'center',
+  },
+  opinionModalView: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 96,
+    padding: 13,
+    borderRadius: 4,
+  },
+  opinionTopTitle: {
+    alignItems: 'center',
+  },
+  opinionTopTitleTxt: {
+    fontSize: 16,
+    color: '#444444',
+    fontWeight: 'bold',
+  },
+  opinionTitle: {
+    marginTop: 16.5,
+    marginBottom: 16.5,
+    fontSize: 14,
+    color: '#444444',
+    lineHeight: 30,
+    fontWeight: 'normal',
+  },
+  opinionInp: {
+    height: 80,
+    backgroundColor: '#F3F3F3',
+    textAlignVertical: 'top',
+  },
+  opinionInp2: {
+    height: 40,
+    backgroundColor: '#F3F3F3',
+    textAlignVertical: 'top',
+  },
+  opinionBtnView: {
+    marginTop: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  opinionBtn: {
+    width: 120,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  opinionTxt: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'normal',
   },
 });
 

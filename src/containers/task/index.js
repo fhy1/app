@@ -142,7 +142,7 @@ class TaskScreen extends React.Component {
     const {reportDetail, imgUrl, taskId} = this.state;
     const {login} = this.props;
     if (!reportDetail) {
-      toastOpts.data = '请输入图片描述';
+      toastOpts.data = '请输入举报原因';
       WToast.show(toastOpts);
     } else {
       report(login.userId, taskId, reportDetail, imgUrl).then(
@@ -159,6 +159,18 @@ class TaskScreen extends React.Component {
           WToast.show(toastOpts);
         },
       );
+    }
+  };
+
+  handelOnJumpToDetail = jobId => {
+    console.log(jobId);
+    const {navigation, login} = this.props;
+    if (login && login.userId) {
+      navigation.navigate('HallDetail', {
+        jobId: jobId,
+      });
+    } else {
+      navigation.navigate('Login');
     }
   };
 
@@ -182,6 +194,12 @@ class TaskScreen extends React.Component {
       noData: false,
       storageOptions: {
         skipBackup: true,
+      },
+      permissionDenied: {
+        title: '没有权限',
+        text: '需要调用您的摄像头和图库权限，可去设置-应用-权限中赋予',
+        reTryTitle: '重试',
+        okTitle: '确定',
       },
     };
 
@@ -295,7 +313,7 @@ class TaskScreen extends React.Component {
           renderItem={({item, index, separators}) => (
             <TouchableOpacity
               key={index}
-              // onPress={() => this._onPress(item)}
+              onPress={() => this.handelOnJumpToDetail(item.jobId)}
               // onShowUnderlay={separators.highlight}
               // onHideUnderlay={separators.unhighlight}
             >
@@ -308,7 +326,7 @@ class TaskScreen extends React.Component {
                 </View>
                 <View style={styles.taskListBody}>
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={styles.taskListBodyText}>{item.jobTitle}</Text>
+                    <Text style={styles.taskListBodyText}>{item.jobId}</Text>
                     {labelStatus == 5 ? (
                       <TouchableOpacity
                         onPress={this.clickReport.bind(this, item.taskId)}>
@@ -361,17 +379,17 @@ class TaskScreen extends React.Component {
                     </View>
                   </View>
                 </View>
-                {labelStatus == 5 ? (
-                  <>
-                    <View style={styles.applyListLine}></View>
-                    <View style={styles.applyListButton}>
-                      <Text style={styles.applyNoPassTxt}>
-                        未通过原因: {item.refuseReason}
-                      </Text>
-                    </View>
-                  </>
-                ) : null}
               </View>
+              {labelStatus == 5 ? (
+                <>
+                  {/* <View style={styles.applyListLine}></View> */}
+                  <View style={styles.applyListButton}>
+                    <Text style={styles.applyNoPassTxt}>
+                      未通过原因: {item.refuseReason}
+                    </Text>
+                  </View>
+                </>
+              ) : null}
             </TouchableOpacity>
           )}
           keyExtractor={item => JSON.stringify(item.jobId)}

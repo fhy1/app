@@ -263,12 +263,11 @@ class LoginScreen extends React.Component {
             </View>
             <View style={[styles.loginNavViewInput, {marginBottom: 15}]}>
               <TextInput
-                secureTextEntry={false}
+                secureTextEntry={true}
                 placeholder="请输入密码"
                 style={styles.loginNavViewTextInput}
                 value={code}
                 onChangeText={this.onChangeCode}
-                secureTextEntry={false}
               />
             </View>
             <View

@@ -45,7 +45,7 @@ class ReleaseStepScreen extends React.Component {
       stepTypes: [
         {
           title: '输入网址',
-          type: '2',
+          type: '3',
           detail: '填写网址',
         },
         {
@@ -82,6 +82,7 @@ class ReleaseStepScreen extends React.Component {
       sendMoney: '',
       modalVisible2: false,
       isclick: false,
+      titles: [],
     };
   }
 
@@ -124,8 +125,10 @@ class ReleaseStepScreen extends React.Component {
   removeStep = index => {
     this.setState(state => {
       state.steps.splice(index, 1);
+      state.titles.splice(index, 1);
       return {
         stepDetail: state.steps,
+        titles: state.titles,
       };
     });
   };
@@ -157,6 +160,12 @@ class ReleaseStepScreen extends React.Component {
       noData: false,
       storageOptions: {
         skipBackup: true,
+      },
+      permissionDenied: {
+        title: '没有权限',
+        text: '需要调用您的摄像头权限，可去设置-应用-权限中赋予',
+        reTryTitle: '重试',
+        okTitle: '确定',
       },
     };
 
@@ -226,10 +235,15 @@ class ReleaseStepScreen extends React.Component {
               stepType: stepDetail.type,
               website: stepDetail.website,
             });
+      const newtitles = state.titles.concat(stepDetail.title);
+      console.log(stepDetail);
+      console.log(newtitles);
+      console.log(newsteps);
       return {
         steps: newsteps,
         modalVisible: false,
         optionVisible: false,
+        titles: newtitles,
       };
     });
   };
@@ -259,8 +273,17 @@ class ReleaseStepScreen extends React.Component {
         addNewJob(newJob).then(
           data => {
             if (data.status == 2) {
+              toastOpts.data = '您被加入黑名单,请联系客服';
+              WToast.show(toastOpts);
+              this.state.isclick = false;
+            } else if (data.status == 3) {
+              toastOpts.data = '发布任务达到上限';
+              WToast.show(toastOpts);
+              this.state.isclick = false;
+            } else if (data.status == 4) {
               toastOpts.data = '账户余额不足';
               WToast.show(toastOpts);
+              this.state.isclick = false;
               this.moneyIn();
             } else {
               toastOpts.data = '申请成功请等待审核';
@@ -356,6 +379,7 @@ class ReleaseStepScreen extends React.Component {
       steps,
       modalVisible2,
       sendMoney,
+      titles,
     } = this.state;
     return (
       <View style={styles.releaseStepView}>
@@ -403,21 +427,25 @@ class ReleaseStepScreen extends React.Component {
                     </Text>
                   </View>
                   <View style={styles.stepViewBodyInsLine} />
-                  {item.stepType == 2 ? (
+                  {item.stepType == 1 ? (
                     <View style={styles.stepViewBodyIns}>
-                      <Text style={styles.stepViewBodyTxt1}>添加网址： </Text>
-                      <Text style={styles.stepViewBodyTxt2}>
-                        {item.website}
+                      <Text style={styles.stepViewBodyTxt1}>
+                        {titles[index]}：{' '}
                       </Text>
-                    </View>
-                  ) : (
-                    <View style={styles.stepViewBodyIns}>
-                      <Text style={styles.stepViewBodyTxt1}>图文说明： </Text>
                       <FitImage
                         style={{width: 200, height: 200}}
                         source={{uri: paramToQuery2(item.picture)}}
                         resizeMode="contain"
                       />
+                    </View>
+                  ) : (
+                    <View style={styles.stepViewBodyIns}>
+                      <Text style={styles.stepViewBodyTxt1}>
+                        {titles[index]}：{' '}
+                      </Text>
+                      <Text style={styles.stepViewBodyTxt2}>
+                        {item.website}
+                      </Text>
                     </View>
                   )}
                   <View style={styles.stepViewBodyInsLine} />

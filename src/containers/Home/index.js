@@ -10,6 +10,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Linking,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import {getData} from '../../utils/storage';
@@ -48,27 +49,6 @@ class HomeScreen extends React.Component {
     if (data && data !== 'err') {
       this.props.getLogin(data);
     }
-    // const data2 = {
-    //   city: null,
-    //   country: null,
-    //   headimgurl: null,
-    //   isAdmin: 0,
-    //   isMember: 1,
-    //   memberTime: null,
-    //   nickName: null,
-    //   openid: null,
-    //   phone: '13337903991',
-    //   province: null,
-    //   reason: null,
-    //   sex: null,
-    //   status: 0,
-    //   // uid: '1856659',
-    //   uid: '39143550',
-    //   upUID: null,
-    //   userId: 7,
-    // };
-    // this.props.getLogin(data2);
-    // this.props.fetchHomeImg();
     const [homeImgs, recommend] = await Promise.all([
       fetchHomeImg(),
       fetchHomeRecommend(1, 10),
@@ -128,7 +108,6 @@ class HomeScreen extends React.Component {
     if (login && login.userId) {
       navigation.navigate('HallDetail', {
         jobId: jobId,
-        jobUserId: userId,
       });
     } else {
       navigation.navigate('Login');
@@ -154,6 +133,15 @@ class HomeScreen extends React.Component {
       );
     }
   }
+
+  handelOnClickKeFu = () => {
+    const {navigation, login} = this.props;
+    if (login && login.userId) {
+      navigation.navigate('Service');
+    } else {
+      navigation.navigate('Login');
+    }
+  };
 
   render() {
     const {swiperHeight, width, signFlag, recommendList, homeImgs} = this.state;
@@ -535,14 +523,17 @@ class HomeScreen extends React.Component {
                     <Text>签到打卡</Text>
                   </View>
                 )}
-
-                <View style={styles.navTitleCardIcon}>
-                  <Image
-                    style={styles.navTitleCardImg}
-                    source={require('../../assets/service.png')}
-                  />
-                  <Text>联系客服</Text>
-                </View>
+                <TouchableOpacity
+                  style={styles.navTitleCardIcon}
+                  onPress={this.handelOnClickKeFu}>
+                  <View style={styles.navTitleCardIcon}>
+                    <Image
+                      style={styles.navTitleCardImg}
+                      source={require('../../assets/service.png')}
+                    />
+                    <Text>联系客服</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
               <View style={styles.navTitleCard}>
                 <TouchableOpacity

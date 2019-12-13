@@ -33,6 +33,8 @@ import ChartScreen from '../containers/chart/index';
 import FollowScreen from '../containers/follow/index';
 import NewsScreen from '../containers/news/index';
 import ReportOneScreen from '../containers/reportOne/index';
+import ReportedScreen from '../containers/reported/index';
+import ServiceScreen from '../containers/service/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -341,6 +343,28 @@ export default createAppContainer(
     },
     ReportOne: {
       screen: ReportOneScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Reported: {
+      screen: ReportedScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Service: {
+      screen: ServiceScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image

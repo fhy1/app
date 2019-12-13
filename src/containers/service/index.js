@@ -10,12 +10,12 @@ import {
   FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {fetchChart} from '../../api/chart';
+import {fetchCustomer} from '../../api/service';
 import {WToast} from 'react-native-smart-tip';
 
 class NewsScreen extends React.Component {
   static navigationOptions = {
-    title: '我的消息',
+    title: '选择客服',
     headerStyle: {
       backgroundColor: '#FFDB44',
       borderBottomWidth: 0,
@@ -42,45 +42,11 @@ class NewsScreen extends React.Component {
   }
 
   componentDidMount = () => {
-    const {pageNo, pageSize} = this.state;
-    const {login} = this.props;
-    let data = {
-      pageNo: pageNo,
-      pageSize: pageSize,
-      userId: login.userId,
-    };
-    fetchChart(data).then(news => {
+    fetchCustomer().then(news => {
       this.setState({
-        news: news.data,
-        newsList: news.data.list,
+        newsList: news.data,
       });
     });
-  };
-
-  fetchListNext = () => {
-    const {news, pageNo} = this.state;
-    const {login} = this.props;
-    if (news.pageNum < news.pages) {
-      this.setState(
-        {
-          pageNo: pageNo + 1,
-        },
-        () => {
-          const {pageNo, pageSize, newsList} = this.state;
-          let data = {
-            pageNo: pageNo,
-            pageSize: pageSize,
-            userId: login.userId,
-          };
-          fetchChart(data).then(news => {
-            this.setState({
-              news: news.data,
-              newsList: newsList.concat(news.data.list),
-            });
-          });
-        },
-      );
-    }
   };
 
   goToChart = targetId => {
@@ -112,25 +78,7 @@ class NewsScreen extends React.Component {
           ItemSeparatorComponent={() => (
             <View style={styles.hallFlatListLine}></View>
           )}
-          ListEmptyComponent={() => (
-            <View style={styles.flatListLineEmpty}>
-              <Text style={styles.flatListEmptyTxt}>暂无数据</Text>
-            </View>
-          )}
           refreshing={false}
-          ListFooterComponent={() =>
-            newsList.length > 0 ? (
-              <View style={styles.flatListLineEmpty}>
-                <Text style={styles.flatListEmptyTxt}>
-                  {news.pageNum == news.pages
-                    ? '没有更多了，亲'
-                    : '正在加载中，请稍等~'}
-                </Text>
-              </View>
-            ) : null
-          }
-          onEndReachedThreshold={0}
-          onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
             <TouchableOpacity
               onPress={this.goToChart.bind(this, item.targetId)}>
@@ -143,7 +91,7 @@ class NewsScreen extends React.Component {
                       borderRadius: 5,
                       marginRight: 15,
                     }}
-                    source={{uri: item.targetImg}}
+                    source={{uri: item.headimgurl}}
                   />
                   {item.newsNum > 0 ? (
                     <View
@@ -169,12 +117,7 @@ class NewsScreen extends React.Component {
                     </View>
                   ) : null}
                   <View>
-                    <Text style={{color: '#444444'}}>{item.uid}</Text>
-                    <Text style={{color: '#666666', marginTop: 3}}>
-                      {item.newsContent.length > 18
-                        ? item.newsContent.length.subString(0, 18)
-                        : item.newsContent}
-                    </Text>
+                    <Text style={{color: '#444444'}}>{item.nickname}</Text>
                   </View>
                   <View style={{position: 'absolute', right: 0}}>
                     <Text style={{color: '#666666'}}>{item.newsTime}</Text>

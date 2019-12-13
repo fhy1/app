@@ -6,6 +6,9 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  Modal,
+  TextInput,
+  Linking,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {fetchHallDetail, fetchHallSignUp, HallSubmit} from '../../api/hall';
@@ -15,6 +18,7 @@ import {WToast} from 'react-native-smart-tip';
 import ImagePicker from 'react-native-image-picker';
 import {upLoadImg} from '../../api/upload';
 import {DownloadImage} from '../../utils/downloadImage';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 class HallDetailScreen extends React.Component {
   static navigationOptions = {
@@ -42,25 +46,27 @@ class HallDetailScreen extends React.Component {
       jobStepList: [],
       isFollow: false,
       isClick: false,
+      imgVisible: false,
+      images: [],
+      commitInfo: '',
     };
   }
 
   componentDidMount = () => {
     const jobId = this.props.navigation.state.params.jobId;
-    const jobUserId = this.props.navigation.state.params.jobUserId;
+    // const jobUserId = this.props.navigation.state.params.jobUserId;
     const {login} = this.props;
     console.log(login);
     fetchHallDetail(jobId, login.userId).then(jobDetail => {
-      console.log(jobDetail);
+      console.log('jobDetailsss', jobDetail);
       this.setState({
         jobDetail: jobDetail.data,
         jobStepList: jobDetail.data.jobStepList,
       });
-    });
-    isFollow(login.userId, jobUserId).then(data => {
-      console.log('1111', data);
-      this.setState({
-        isFollow: data.data == 2 ? false : true,
+      isFollow(login.userId, jobDetail.data.userId).then(data => {
+        this.setState({
+          isFollow: data.data == 2 ? false : true,
+        });
       });
     });
   };
@@ -119,10 +125,41 @@ class HallDetailScreen extends React.Component {
       });
   };
 
+  onChangecommitInfo = e => {
+    this.setState({
+      commitInfo: e,
+    });
+  };
+
+  contactBaidu = httpDetail => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    var baiduURL = 'http://www.baidu.com/';
+
+    Linking.canOpenURL(httpDetail)
+      .then(supported => {
+        if (!supported) {
+          toastOpts.data = '不支持链接至: ' + httpDetail;
+          WToast.show(toastOpts);
+        } else {
+          return Linking.openURL(httpDetail);
+        }
+      })
+      .catch(err => {
+        toastOpts.data = '链接错误 : ' + httpDetail;
+        WToast.show(toastOpts);
+      });
+  };
+
   hallEnroll = status => {
     const jobId = this.props.navigation.state.params.jobId;
     const {login} = this.props;
-    const {jobStepList, isClick} = this.state;
+    const {jobStepList, isClick, commitInfo} = this.state;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -182,7 +219,16 @@ class HallDetailScreen extends React.Component {
                 }
               }
             });
+            if (commitInfo == '') {
+              flag = false;
+              toastOpts.data = '请输入您的提交信息';
+              WToast.show(toastOpts);
+              this.setState({
+                isClick: false,
+              });
+            }
             if (flag) {
+              newApply.commitInfo = commitInfo;
               HallSubmit(newApply).then(
                 () => {
                   toastOpts.data = '提交成功，请等待审核 ...';
@@ -232,6 +278,12 @@ class HallDetailScreen extends React.Component {
       storageOptions: {
         skipBackup: true,
       },
+      permissionDenied: {
+        title: '没有权限',
+        text: '需要调用您的摄像头权限，可去设置-应用-权限中赋予',
+        reTryTitle: '重试',
+        okTitle: '确定',
+      },
     };
 
     ImagePicker.showImagePicker(options, response => {
@@ -275,7 +327,7 @@ class HallDetailScreen extends React.Component {
 
   clickToPerson = () => {
     const {login} = this.props;
-    const jobUserId = this.props.navigation.state.params.jobUserId;
+    // const jobUserId = this.props.navigation.state.params.jobUserId;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -283,10 +335,9 @@ class HallDetailScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
-    const {isFollow} = this.state;
-    console.log(jobUserId);
+    const {isFollow, jobDetail} = this.state;
     if (!isFollow) {
-      addFollow(login.userId, jobUserId).then(
+      addFollow(login.userId, jobDetail.userId).then(
         () => {
           toastOpts.data = '关注成功';
           WToast.show(toastOpts);
@@ -300,7 +351,7 @@ class HallDetailScreen extends React.Component {
         },
       );
     } else {
-      delFollow(login.userId, jobUserId).then(
+      delFollow(login.userId, jobDetail.userId).then(
         () => {
           this.setState({
             isFollow: false,
@@ -323,17 +374,32 @@ class HallDetailScreen extends React.Component {
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
     const {navigation, login} = this.props;
-    const jobUserId = this.props.navigation.state.params.jobUserId;
-    if (login.userId == jobUserId) {
+    const {jobDetail} = this.state;
+    if (login.userId == jobDetail.userId) {
       toastOpts.data = '无法和自己聊天';
       WToast.show(toastOpts);
     } else {
-      navigation.navigate('Chart', {chartUserId: jobUserId});
+      navigation.navigate('Chart', {chartUserId: jobDetail.userId});
     }
   };
 
+  clickImg = uri => {
+    let img = [{url: uri}];
+    this.setState({
+      images: img,
+      imgVisible: true,
+    });
+  };
+
   render() {
-    const {imgH, jobDetail, jobStepList, isFollow} = this.state;
+    const {
+      imgH,
+      jobDetail,
+      jobStepList,
+      isFollow,
+      images,
+      commitInfo,
+    } = this.state;
     console.log('jobDetail:', jobDetail);
     console.log('jobStepList:', jobStepList);
     return (
@@ -448,24 +514,30 @@ class HallDetailScreen extends React.Component {
                     <View style={styles.hallStepNav}>
                       {item.stepType == 1 ? (
                         <View>
-                          <Image
-                            onLoadStart={this.setSize.bind(
+                          <TouchableOpacity
+                            onPress={this.clickImg.bind(
                               this,
                               paramToQuery2(item.picture),
-                              index,
-                            )} //多张可多加该图index参数
-                            onLayout={this.setSizeIos.bind(
-                              this,
-                              paramToQuery2(item.picture),
-                              index,
-                            )}
-                            style={{
-                              width: 100,
-                              height: imgH[index],
-                              marginTop: 10,
-                            }}
-                            source={{uri: paramToQuery2(item.picture)}}
-                          />
+                            )}>
+                            <Image
+                              onLoadStart={this.setSize.bind(
+                                this,
+                                paramToQuery2(item.picture),
+                                index,
+                              )} //多张可多加该图index参数
+                              onLayout={this.setSizeIos.bind(
+                                this,
+                                paramToQuery2(item.picture),
+                                index,
+                              )}
+                              style={{
+                                width: 100,
+                                height: imgH[index],
+                                marginTop: 10,
+                              }}
+                              source={{uri: paramToQuery2(item.picture)}}
+                            />
+                          </TouchableOpacity>
 
                           <TouchableOpacity
                             onPress={this.handelSavePicture.bind(
@@ -481,6 +553,19 @@ class HallDetailScreen extends React.Component {
                                 保存图片
                               </Text>
                             </View>
+                          </TouchableOpacity>
+                        </View>
+                      ) : null}
+                      {item.stepType == 3 ? (
+                        <View>
+                          <TouchableOpacity
+                            onPress={this.contactBaidu.bind(
+                              this,
+                              item.website,
+                            )}>
+                            <Text style={styles.hallStepBodyTxt}>
+                              {item.website}
+                            </Text>
                           </TouchableOpacity>
                         </View>
                       ) : null}
@@ -548,6 +633,17 @@ class HallDetailScreen extends React.Component {
             })}
           </View>
 
+          <View style={styles.opinionInpView}>
+            <TextInput
+              style={styles.opinionInp}
+              multiline={true}
+              value={commitInfo}
+              placeholder="请输入您的提交信息"
+              onChangeText={this.onChangecommitInfo}
+              maxLength={60}
+            />
+          </View>
+
           <TouchableOpacity
             onPress={this.hallEnroll.bind(this, jobDetail.status)}>
             <View style={styles.hallDetailBtn}>
@@ -568,6 +664,17 @@ class HallDetailScreen extends React.Component {
             <Text style={styles.chartTxt}>私信</Text>
           </View>
         </TouchableOpacity>
+        <Modal
+          visible={this.state.imgVisible}
+          transparent={true}
+          onRequestClose={() => this.setState({imgVisible: false})}>
+          <ImageViewer
+            onClick={() => this.setState({imgVisible: false})}
+            imageUrls={images}
+            index={0}
+          />
+        </Modal>
+        <View></View>
       </View>
     );
   }
@@ -767,6 +874,20 @@ const styles = StyleSheet.create({
   },
   chartTxt: {
     color: '#FFFFFF',
+  },
+
+  opinionInpView: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 30,
+    paddingRight: 30,
+    backgroundColor: '#FFFFFF',
+  },
+  opinionInp: {
+    height: 150,
+    backgroundColor: '#F3F3F3',
+    textAlignVertical: 'top',
+    borderRadius: 5,
   },
 });
 
