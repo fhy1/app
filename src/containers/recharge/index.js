@@ -14,6 +14,7 @@ import {connect} from 'react-redux';
 import {getWxPay} from '../../api/pay';
 import * as WeChat from 'react-native-wechat';
 import {WToast} from 'react-native-smart-tip';
+import {fetchMoneyAll, saveMoney} from '../../api/myinfo';
 
 class RechargeScreen extends React.Component {
   static navigationOptions = {
@@ -92,6 +93,9 @@ class RechargeScreen extends React.Component {
                 WToast.show(toastOpts);
                 this.setState({
                   modalVisible: false,
+                });
+                fetchMoneyAll(login.userId).then(money => {
+                  this.props.saveMoney(money.data);
                 });
               }
             })
@@ -408,7 +412,9 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {};
+  return {
+    saveMoney: data => dispatch(saveMoney(data)),
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(RechargeScreen);

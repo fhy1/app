@@ -49,7 +49,7 @@ class NewsScreen extends React.Component {
     });
   };
 
-  goToChart = targetId => {
+  goToChart = userId => {
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -59,11 +59,11 @@ class NewsScreen extends React.Component {
     };
     const {navigation, login} = this.props;
 
-    if (login.userId == targetId) {
+    if (login.userId == userId) {
       toastOpts.data = '无法和自己聊天';
       WToast.show(toastOpts);
     } else {
-      navigation.navigate('Chart', {chartUserId: targetId});
+      navigation.navigate('Chart', {chartUserId: userId});
     }
   };
 
@@ -80,8 +80,7 @@ class NewsScreen extends React.Component {
           )}
           refreshing={false}
           renderItem={({item, index, separators}) => (
-            <TouchableOpacity
-              onPress={this.goToChart.bind(this, item.targetId)}>
+            <TouchableOpacity onPress={this.goToChart.bind(this, item.userId)}>
               <View style={styles.followList}>
                 <View style={styles.followListView}>
                   <Image

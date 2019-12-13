@@ -20,6 +20,7 @@ import {WToast} from 'react-native-smart-tip';
 import {addNewJob} from '../../api/release';
 import * as WeChat from 'react-native-wechat';
 import {getWxPay} from '../../api/pay';
+import {fetchMoneyAll, saveMoney} from '../../api/myinfo';
 
 class ReleaseStepScreen extends React.Component {
   static navigationOptions = {
@@ -288,6 +289,9 @@ class ReleaseStepScreen extends React.Component {
             } else {
               toastOpts.data = '申请成功请等待审核';
               WToast.show(toastOpts);
+              fetchMoneyAll(login.userId).then(money => {
+                this.props.saveMoney(money.data);
+              });
               setTimeout(() => {
                 navigation.navigate('MyInfo');
               }, 1000);
@@ -345,6 +349,9 @@ class ReleaseStepScreen extends React.Component {
                 WToast.show(toastOpts);
                 this.setState({
                   modalVisible2: false,
+                });
+                fetchMoneyAll(login.userId).then(money => {
+                  this.props.saveMoney(money.data);
                 });
               }
             })
@@ -915,7 +922,9 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {};
+  return {
+    saveMoney: data => dispatch(saveMoney(data)),
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReleaseStepScreen);

@@ -11,13 +11,13 @@ import {
   FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {fetchHalljob} from '../../api/hall';
+import {fetchFoot} from '../../api/foot';
 import {WToast} from 'react-native-smart-tip';
 import {paramToQuery2} from '../../utils/fetch';
 
-class SearchScreen extends React.Component {
+class footScreen extends React.Component {
   static navigationOptions = {
-    title: '搜索任务',
+    title: '浏览历史',
     headerStyle: {
       backgroundColor: '#FFDB44',
       borderBottomWidth: 0,
@@ -36,53 +36,27 @@ class SearchScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      search: {},
-      searchList: [],
-      searchFlag: false,
-      searchTxt: '',
+      foot: {},
+      footList: [],
       page: 1,
       size: 15,
     };
   }
 
-  componentDidMount = () => {};
-
-  handelOnSerchHall = () => {
-    const {searchTxt} = this.state;
-    let toastOpts = {
-      data: '',
-      textColor: '#ffffff',
-      backgroundColor: '#444444',
-      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
-      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+  componentDidMount = () => {
+    const {login} = this.props;
+    console.log(login);
+    let data = {
+      userId: login.userId,
+      page: 1,
+      size: 15,
     };
-    if (searchTxt) {
-      fetchHalljob(1, 15, 0, '', searchTxt).then(
-        search => {
-          console.log(search.data.list);
-          this.setState({
-            search: search.data,
-            searchFlag: true,
-            searchList: search.data.list,
-            page: 1,
-          });
-        },
-        () => {
-          toastOpts.data = '搜索失败';
-          WToast.show(toastOpts);
-        },
-      );
-    } else {
-      toastOpts.data = '搜索内容不能为空';
-      WToast.show(toastOpts);
-    }
-    // .then(search => {
-    // this.setState({
-    //   search: search.data,
-    //   searchList: search.data.list,
-    //   searchFlag: true,
-    // });
-    // });
+    fetchFoot(data).then(foot => {
+      this.setState({
+        foot: foot.data,
+        footList: foot.data.list,
+      });
+    });
   };
 
   handelOnJumpToDetail = jobId => {
@@ -96,36 +70,28 @@ class SearchScreen extends React.Component {
     }
   };
 
-  onChangeSearchTxt = e => {
-    this.setState({
-      searchTxt: e,
-    });
-  };
-
   fetchListNext = () => {
-    const {search} = this.state;
-    if (search.pageNum < search.pages) {
+    const {login} = this.props;
+    const {foot} = this.state;
+    if (foot.pageNum < foot.pages) {
       const {page} = this.state;
       this.setState(
         {
           page: page + 1,
         },
         () => {
-          const {page, size, searchList, searchTxt} = this.state;
-          fetchHalljob(page, size, 0, '', searchTxt).then(
-            search => {
-              console.log(search.data.list);
-              this.setState({
-                search: search.data,
-                searchFlag: true,
-                searchList: searchList.concat(search.data.list),
-              });
-            },
-            () => {
-              toastOpts.data = '搜索失败';
-              WToast.show(toastOpts);
-            },
-          );
+          const {page, size, footList} = this.state;
+          let data = {
+            userId: login.userId,
+            page: page,
+            size: size,
+          };
+          fetchFoot(data).then(foot => {
+            this.setState({
+              foot: foot.data,
+              footList: footList.concat(foot.data.list),
+            });
+          });
         },
       );
     }
@@ -133,109 +99,83 @@ class SearchScreen extends React.Component {
 
   render() {
     const {navigation} = this.props;
-    const {search, searchList, searchFlag, searchTxt} = this.state;
+    const {foot, footList} = this.state;
     return (
-      <View style={styles.searchView}>
-        <View style={styles.titleSearch}>
-          <View style={styles.navSearch}>
-            <Image
-              style={styles.navSearchImg}
-              source={require('../../assets/search.png')}
-            />
-            <TextInput
-              style={styles.navSearchTextInput}
-              value={searchTxt}
-              onChangeText={this.onChangeSearchTxt}
-              placeholder="搜索你喜欢的任务!"
-            />
-          </View>
-          <TouchableOpacity onPress={this.handelOnSerchHall}>
-            <View style={styles.navSearchBtn}>
-              <Text>搜索</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.searchLine}>
-          <View style={styles.searchLineCenter} />
-        </View>
+      <View style={styles.footView}>
         <FlatList
-          style={styles.searchFlatList}
-          data={searchList}
+          style={styles.footFlatList}
+          data={footList}
           ItemSeparatorComponent={() => (
-            <View style={styles.searchFlatListLine} />
+            <View style={styles.footFlatListLine} />
           )}
           ListEmptyComponent={() => (
-            <View style={styles.searchListEmpty}>
-              <Text style={styles.searchListEmptyTxt}>
-                {searchFlag ? '未查到您输入的任务' : ''}
-              </Text>
+            <View style={styles.footListEmpty}>
+              <Text style={styles.footListEmptyTxt}>暂无记录</Text>
             </View>
           )}
           refreshing={false}
           ListFooterComponent={() =>
-            searchList.length > 0 ? (
-              <View style={styles.searchListEmpty}>
-                <Text style={styles.searchListEmptyTxt}>
-                  {search.pageNum == search.pages
+            footList.length > 0 ? (
+              <View style={styles.footListEmpty}>
+                <Text style={styles.footListEmptyTxt}>
+                  {foot.pageNum == foot.pages
                     ? '没有更多了，亲'
                     : '正在加载中，请稍等~'}
                 </Text>
               </View>
             ) : null
           }
-          onEndReachedThreshold={0}
+          onEndReachedThreshold={1}
           onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
             <TouchableOpacity
               onPress={this.handelOnJumpToDetail.bind(this, item.jobId)}>
-              <View style={styles.searchList}>
-                <View style={styles.searchListIcon}>
+              <View style={styles.footList}>
+                <View style={styles.footListIcon}>
                   {item.headimgurl ? (
                     <Image
-                      style={styles.searchListIconImg}
+                      style={styles.footListIconImg}
                       // @ts-ignore
                       source={{uri: item.headimgurl}}
                     />
                   ) : (
                     <Image
-                      style={styles.searchListIconImg}
+                      style={styles.footListIconImg}
                       // @ts-ignore
                       source={require('../../assets/head.png')}
                     />
                   )}
                 </View>
-                <View style={styles.searchListBody}>
+                <View style={styles.footListBody}>
                   <View>
-                    <Text style={styles.searchListBodyText}>
-                      {item.jobTitle}
-                    </Text>
+                    <Text style={styles.footListBodyText}>{item.jobTitle}</Text>
                   </View>
-                  <View style={styles.searchListBodyView}>
-                    <View style={styles.searchListBodybtn1}>
-                      <View style={styles.searchListBodybtn}>
-                        <Text style={styles.searchListBodybtnTxt}>
+                  <View style={styles.footListBodyView}>
+                    <View style={styles.footListBodybtn1}>
+                      <View style={styles.footListBodybtn}>
+                        <Text style={styles.footListBodybtnTxt}>
                           {item.jobSource}
                         </Text>
                       </View>
                     </View>
-                    <View style={styles.searchListBodybtn2}>
-                      <View style={styles.searchListBodybtn}>
-                        <Text style={styles.searchListBodybtnTxt}>
+                    {/* <View style={styles.footListBodybtn2}>
+                      <View style={styles.footListBodybtn}>
+                        <Text style={styles.footListBodybtnTxt}>
                           {item.typeName}
                         </Text>
                       </View>
-                    </View>
+                    </View> */}
                   </View>
                 </View>
-                <View style={styles.searchListRight}>
-                  <View style={styles.searchListRightBody}>
+                <View style={styles.footListRight}>
+                  <View style={styles.footListRightBody}>
                     <View>
-                      <Text style={styles.searchListRightTop}>
+                      <Text style={styles.footListRightTop}>
                         赏{item.releasePrice}元
                       </Text>
                     </View>
                     <View>
-                      <Text style={styles.searchListRightBottom}>
+                      <Text style={styles.footListRightBottom}>
                         剩余{item.surplusNum}份
                       </Text>
                     </View>
@@ -252,27 +192,28 @@ class SearchScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  searchView: {
+  footView: {
     flex: 1,
     backgroundColor: '#F3F3F3',
+    paddingTop: 15,
   },
-  titleSearch: {
+  titlefoot: {
     paddingLeft: 15,
     paddingRight: 15,
     marginTop: 15,
     flexDirection: 'row',
   },
-  searchLine: {
+  footLine: {
     paddingLeft: 15,
     paddingRight: 15,
     marginTop: 15,
     marginBottom: 15,
   },
-  searchLineCenter: {
+  footLineCenter: {
     height: 1,
     backgroundColor: '#DDDDDD',
   },
-  navSearch: {
+  navfoot: {
     height: 44,
     backgroundColor: '#FFFFFF',
     borderRadius: 4,
@@ -282,14 +223,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  navSearchImg: {
+  navfootImg: {
     width: 21,
     marginRight: 5,
   },
-  navSearchTextInput: {
+  navfootTextInput: {
     flex: 1,
   },
-  navSearchBtn: {
+  navfootBtn: {
     width: 90,
     height: 44,
     alignItems: 'center',
@@ -298,7 +239,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     borderRadius: 4,
   },
-  searchList: {
+  footList: {
     height: 68,
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
@@ -306,44 +247,44 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     borderRadius: 4,
   },
-  searchListIcon: {
+  footListIcon: {
     width: 36,
     height: '100%',
     alignItems: 'center',
   },
-  searchListIconImg: {
+  footListIconImg: {
     width: 36,
     height: 36,
     marginTop: 16,
   },
-  searchListBody: {
+  footListBody: {
     flex: 1,
     justifyContent: 'center',
     paddingLeft: 12,
   },
-  searchListBodyView: {
+  footListBodyView: {
     flexDirection: 'row',
     marginTop: 6,
   },
-  searchListBodyText: {
+  footListBodyText: {
     fontSize: 16,
     color: '#444444',
     fontWeight: 'bold',
   },
-  searchListBodybtn1: {
+  footListBodybtn1: {
     minWidth: 60,
     height: 22,
     borderRadius: 4,
     overflow: 'hidden',
     marginRight: 10,
   },
-  searchListBodybtn2: {
+  footListBodybtn2: {
     width: 72,
     height: 22,
     borderRadius: 4,
     overflow: 'hidden',
   },
-  searchListBodybtn: {
+  footListBodybtn: {
     paddingLeft: 8,
     paddingRight: 8,
     flex: 1,
@@ -351,42 +292,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFDB44',
   },
-  searchListBodybtnTxt: {
+  footListBodybtnTxt: {
     color: '#444444',
     fontSize: 12,
   },
-  searchListRight: {
+  footListRight: {
     width: 80,
     height: '100%',
   },
-  searchListRightBody: {
+  footListRightBody: {
     flex: 1,
     justifyContent: 'center',
   },
-  searchListRightTop: {
+  footListRightTop: {
     fontSize: 14,
     color: '#FD3F3F',
   },
-  searchListRightBottom: {
+  footListRightBottom: {
     marginTop: 8,
     fontSize: 12,
     color: '#666666',
   },
-  searchFlatList: {
+  footFlatList: {
     backgroundColor: '#F3F3F3',
     paddingLeft: 15,
     paddingRight: 15,
   },
-  searchFlatListLine: {
+  footFlatListLine: {
     height: 10,
     backgroundColor: '#F3F3F3',
   },
-  searchListEmpty: {
+  footListEmpty: {
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  searchListEmptyTxt: {
+  footListEmptyTxt: {
     fontWeight: 'bold',
     fontSize: 12,
     color: '#444444',
@@ -403,4 +344,4 @@ function mapDispatchToProps(dispatch) {
   return {};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(footScreen);

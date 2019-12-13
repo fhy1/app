@@ -8,6 +8,7 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
 import {WToast} from 'react-native-smart-tip';
 import {
@@ -15,6 +16,8 @@ import {
   fetchCheckCode,
   fetchCheckEnroll,
   wxLogin,
+  bindWxLogin,
+  wxGetWxInfo,
 } from '../../api/login';
 import {connect} from 'react-redux';
 import {getLogin} from '../../api/login';
@@ -48,6 +51,8 @@ class LoginScreen extends React.Component {
       clickTime: 60,
       phone: '',
       code: '',
+      modalVisible: false,
+      bindWxData: {},
     };
   }
 
@@ -63,6 +68,9 @@ class LoginScreen extends React.Component {
 
   componentWillUnmount() {
     clearInterval(this.Time);
+    this.setState({
+      modalVisible: false,
+    });
   }
 
   validateTel(tel) {
@@ -147,14 +155,21 @@ class LoginScreen extends React.Component {
         // console.log('成功啦');
         fetchCheckEnroll({phone, code}).then(
           data => {
-            this.props.getLogin(data);
-            fetchMoneyAll(data.userId).then(
-              money => {
-                this.props.saveMoney(money.data);
-              },
-              () => {},
-            );
-            navigation.navigate('Home');
+            if (data.openid) {
+              this.props.getLogin(data);
+              fetchMoneyAll(data.userId).then(
+                money => {
+                  this.props.saveMoney(money.data);
+                },
+                () => {},
+              );
+              navigation.navigate('Home');
+            } else {
+              this.setState({
+                modalVisible: true,
+                bindWxData: data,
+              });
+            }
           },
           data => {
             toastOpts.data = data;
@@ -220,8 +235,91 @@ class LoginScreen extends React.Component {
     );
   };
 
+  CloseModel = () => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
+  bindWx = () => {};
+
+  addSubmit = () => {
+    const {navigation} = this.props;
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.LONG, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    const {phone, code} = this.state;
+    let {bindWxData} = this.state;
+    console.log('phone', phone);
+    console.log('code', code);
+    WeChat.sendAuthRequest('snsapi_userinfo').then(
+      data => {
+        console.log(data);
+        wxGetWxInfo(data.code).then(
+          data => {
+            console.log('授权成功', data);
+            toastOpts.data = '微信授权成功';
+            WToast.show(toastOpts);
+            let bindwechrt = {
+              phone: phone,
+              password: code,
+              openid: data.openid,
+              nickname: data.nickname,
+              sex: data.sex,
+              headimgurl: data.headimgurl,
+              province: data.province,
+              city: data.city,
+              country: data.country,
+            };
+            bindWxLogin(bindwechrt).then(
+              res => {
+                console.log('res', res);
+                this.props.getLogin(res.data);
+                fetchMoneyAll(res.data.userId).then(
+                  money => {
+                    this.props.saveMoney(money.data);
+                  },
+                  () => {},
+                );
+                this.setState({
+                  modalVisible: false,
+                });
+                navigation.navigate('Home');
+              },
+              () => {
+                toastOpts.data = '绑定失败';
+                WToast.show(toastOpts);
+              },
+            );
+          },
+          () => {
+            toastOpts.data = '微信授权失败';
+            WToast.show(toastOpts);
+          },
+        );
+      },
+      () => {
+        toastOpts.data = '微信授权失败';
+        WToast.show(toastOpts);
+      },
+    );
+  };
+
   render() {
-    const {topHeight, topWidth, showFlag, clickTime, phone, code} = this.state;
+    const {
+      topHeight,
+      topWidth,
+      showFlag,
+      clickTime,
+      phone,
+      code,
+      modalVisible,
+    } = this.state;
+    const {width} = Dimensions.get('window');
     return (
       <View style={styles.loginView}>
         <ScrollView>
@@ -303,6 +401,38 @@ class LoginScreen extends React.Component {
             </TouchableOpacity>
           </View>
         </ScrollView>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={this.CloseModel}>
+          <View style={styles.taskModal}>
+            <View style={[styles.opinionModalView, {width: width * 0.8}]}>
+              <View style={styles.opinionTopTitle}>
+                <Text style={styles.opinionTopTitleTxt}>绑定微信</Text>
+              </View>
+              <TouchableOpacity onPress={this.bindWx}>
+                <Text style={styles.opinionTitle}>
+                  登录需绑定微信，点击此处绑定微信
+                </Text>
+              </TouchableOpacity>
+              <View style={styles.opinionBtnView}>
+                <TouchableOpacity onPress={this.CloseModel}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#DDDDDD'}]}>
+                    <Text style={styles.opinionTxt}>取消</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.addSubmit}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#FFDB44'}]}>
+                    <Text style={styles.opinionTxt}>去绑定</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -384,6 +514,63 @@ const styles = StyleSheet.create({
   loginWxTxt: {
     color: '#666666',
     fontSize: 14,
+  },
+
+  //弹框
+  taskModal: {
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    flex: 1,
+    alignItems: 'center',
+  },
+  opinionModalView: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 96,
+    padding: 13,
+    borderRadius: 4,
+  },
+  opinionTopTitle: {
+    alignItems: 'center',
+  },
+  opinionTopTitleTxt: {
+    fontSize: 16,
+    color: '#444444',
+    fontWeight: 'bold',
+  },
+  opinionTitle: {
+    marginTop: 16.5,
+    marginBottom: 16.5,
+    fontSize: 14,
+    color: '#444444',
+    lineHeight: 30,
+    fontWeight: 'normal',
+  },
+  opinionInp: {
+    height: 80,
+    backgroundColor: '#F3F3F3',
+    textAlignVertical: 'top',
+  },
+  opinionInp2: {
+    height: 40,
+    backgroundColor: '#F3F3F3',
+    textAlignVertical: 'top',
+  },
+  opinionBtnView: {
+    marginTop: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  opinionBtn: {
+    width: 120,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  opinionTxt: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'normal',
   },
 });
 

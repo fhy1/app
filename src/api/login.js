@@ -13,6 +13,7 @@ const WXLOGIN = 'user/weChatLogin';
 const WXINFO = 'user/wxInfo';
 const ISPHONE = 'user/isExistPhone';
 const REGISTER = 'user/register';
+const BindWx = 'user/bindWx';
 
 export const getCode = json => {
   return {
@@ -173,6 +174,32 @@ export function fetchIsPhone(phone) {
 export function register(data) {
   const url = paramToQuery(
     `${REGISTER}?phone=${data.phone}&password=${data.password}&openid=${data.openid}&nickname=${data.nickname}&sex=${data.sex}&headimgurl=${data.headimgurl}&upUID=${data.upUID}&country=${data.country}&city=${data.city}&province=${data.province}`,
+  );
+  console.log('url', url);
+  return fetch(url, {
+    method: 'post',
+  })
+    .then(res => {
+      console.log(res.status);
+      return res.json();
+    })
+    .then(async data => {
+      console.log('enroll', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
+    })
+    .catch(e => {
+      console.log(e.message);
+      return Promise.reject(e.message);
+    });
+}
+
+export function bindWxLogin(data) {
+  const url = paramToQuery(
+    `${BindWx}?phone=${data.phone}&password=${data.password}&openid=${data.openid}&nickname=${data.nickname}&sex=${data.sex}&headimgurl=${data.headimgurl}&upUID=${data.upUID}&country=${data.country}&city=${data.city}&province=${data.province}`,
   );
   console.log('url', url);
   return fetch(url, {

@@ -9,6 +9,7 @@ import {
   Modal,
   TextInput,
   Linking,
+  TouchableHighlight,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {fetchHallDetail, fetchHallSignUp, HallSubmit} from '../../api/hall';
@@ -21,23 +22,59 @@ import {DownloadImage} from '../../utils/downloadImage';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
 class HallDetailScreen extends React.Component {
-  static navigationOptions = {
-    title: '悬赏详情',
-    headerStyle: {
-      backgroundColor: '#FFDB44',
-      borderBottomWidth: 0,
-      shadowOpacity: 0,
-    },
-    headerTintColor: '#444444',
-    headerTitleStyle: {
-      flex: 1,
-      textAlign: 'center',
-      fontWeight: 'normal',
-    },
-    /// 注意：如果右边没有视图，那么添加一个空白视图即可
-    headerRight: <View />,
+  static navigationOptions = ({navigation}) => {
+    return {
+      title: '悬赏详情',
+      headerStyle: {
+        backgroundColor: '#FFDB44',
+        borderBottomWidth: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: '#444444',
+      headerTitleStyle: {
+        flex: 1,
+        textAlign: 'center',
+        fontWeight: 'normal',
+      },
+      /// 注意：如果右边没有视图，那么添加一个空白视图即可
+      headerRight: (
+        <TouchableOpacity onPress={navigation.getParam('changeChoose')}>
+          <View
+            style={{
+              alignItems: 'center',
+              paddingRight: 20,
+              paddingLeft: 20,
+              paddingTop: 10,
+              paddingBottom: 10,
+            }}>
+            <View
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: 3,
+                backgroundColor: '#444444',
+                marginBottom: 3,
+              }}></View>
+            <View
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: 3,
+                backgroundColor: '#444444',
+                marginBottom: 3,
+              }}></View>
+            <View
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: 3,
+                backgroundColor: '#444444',
+              }}></View>
+          </View>
+        </TouchableOpacity>
+      ),
+    };
   };
-
   constructor(props) {
     super(props);
     this.state = {
@@ -49,10 +86,12 @@ class HallDetailScreen extends React.Component {
       imgVisible: false,
       images: [],
       commitInfo: '',
+      ruleShow: false,
     };
   }
 
   componentDidMount = () => {
+    this.props.navigation.setParams({changeChoose: this.changeChoose});
     const jobId = this.props.navigation.state.params.jobId;
     // const jobUserId = this.props.navigation.state.params.jobUserId;
     const {login} = this.props;
@@ -68,6 +107,14 @@ class HallDetailScreen extends React.Component {
           isFollow: data.data == 2 ? false : true,
         });
       });
+    });
+  };
+
+  changeChoose = () => {
+    const {ruleShow} = this.state;
+    console.log(ruleShow);
+    this.setState({
+      ruleShow: !ruleShow,
     });
   };
 
@@ -391,6 +438,11 @@ class HallDetailScreen extends React.Component {
     });
   };
 
+  GotoRule = id => {
+    const {navigation} = this.props;
+    navigation.navigate('Rule', {id: id});
+  };
+
   render() {
     const {
       imgH,
@@ -399,9 +451,8 @@ class HallDetailScreen extends React.Component {
       isFollow,
       images,
       commitInfo,
+      ruleShow,
     } = this.state;
-    console.log('jobDetail:', jobDetail);
-    console.log('jobStepList:', jobStepList);
     return (
       <View style={styles.hallDetailView}>
         <ScrollView>
@@ -674,7 +725,20 @@ class HallDetailScreen extends React.Component {
             index={0}
           />
         </Modal>
-        <View></View>
+        {ruleShow ? (
+          <View style={styles.ruleShow}>
+            <TouchableHighlight onPress={this.GotoRule.bind(this, 1)}>
+              <View style={styles.ruleShowView}>
+                <Text style={styles.ruleShowViewTxt}>发布规则</Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this.GotoRule.bind(this, 2)}>
+              <View style={styles.ruleShowView}>
+                <Text style={styles.ruleShowViewTxt}>接单规则</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        ) : null}
       </View>
     );
   }
@@ -888,6 +952,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F3F3',
     textAlignVertical: 'top',
     borderRadius: 5,
+  },
+
+  // 规则
+  ruleShow: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    borderWidth: 0.5,
+    borderColor: 'rgba(0,0,0,0.1)',
+  },
+  ruleShowView: {
+    width: 120,
+    height: 40,
+    backgroundColor: '#FFFFFF',
+    paddingLeft: 15,
+    justifyContent: 'center',
+  },
+  ruleShowViewTxt: {
+    color: '#666666',
   },
 });
 

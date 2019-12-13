@@ -486,6 +486,36 @@ class MyInfoScreen extends React.Component {
               <TouchableOpacity
                 onPress={() => {
                   if (login && login.userId) {
+                    navigation.navigate('Foot');
+                  } else {
+                    navigation.navigate('Login');
+                  }
+                }}>
+                <View style={styles.myinfoMoreItem}>
+                  <View style={styles.myinfoMoreIcon}>
+                    <FitImage
+                      style={{width: 21, height: 19}}
+                      // @ts-ignore
+                      source={require('../../assets/foot.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <View style={styles.myinfoMoreTxt}>
+                    <Text style={styles.myinfoMoreTxtTitle}>浏览历史</Text>
+                  </View>
+                  <View style={styles.myinfoMoreGo}>
+                    <FitImage
+                      style={{width: 15, height: 30}}
+                      // @ts-ignore
+                      source={require('../../assets/go.png')}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  if (login && login.userId) {
                     navigation.navigate('ReportOne');
                   } else {
                     navigation.navigate('Login');
@@ -513,7 +543,7 @@ class MyInfoScreen extends React.Component {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => {
                   if (login && login.userId) {
                     navigation.navigate('Tutorial');
@@ -542,7 +572,7 @@ class MyInfoScreen extends React.Component {
                     />
                   </View>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity
                 onPress={() => {
                   if (login && login.userId) {

@@ -35,6 +35,8 @@ import NewsScreen from '../containers/news/index';
 import ReportOneScreen from '../containers/reportOne/index';
 import ReportedScreen from '../containers/reported/index';
 import ServiceScreen from '../containers/service/index';
+import RuleScreen from '../containers/rule/index';
+import FootScreen from '../containers/foot/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -365,6 +367,28 @@ export default createAppContainer(
     },
     Service: {
       screen: ServiceScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Rule: {
+      screen: RuleScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    Foot: {
+      screen: FootScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image

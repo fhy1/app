@@ -13,6 +13,7 @@ const TYPE = 'hall/type';
 const DETAIL = 'hall/jobDetails';
 const SIGNUP = 'hall/signUp';
 const SUBMIT = 'hall/submit';
+const JOBREFESH = 'job/refreshJob';
 
 export const getHallJob = json => {
   return {
@@ -185,6 +186,29 @@ export function HallSubmit(data) {
     })
     .catch(e => {
       console.log(e);
+      return Promise.reject(e.msg);
+    });
+}
+
+export function refeshJob(jobId) {
+  const url = paramToQuery(`${JOBREFESH}?jobId=${jobId}`);
+  console.log(url);
+  return fetch(url, {
+    method: 'put',
+  })
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      console.log('refesh', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
+    })
+    .catch(e => {
+      console.log(e.msg);
       return Promise.reject(e.msg);
     });
 }

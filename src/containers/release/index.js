@@ -1,5 +1,14 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Dimensions,
+  Modal,
+  TextInput,
+} from 'react-native';
 import {connect} from 'react-redux';
 import {
   fetchJobRelease,
@@ -7,6 +16,8 @@ import {
   editReleaseEnd,
 } from '../../api/release';
 import {WToast} from 'react-native-smart-tip';
+import {refeshJob} from '../../api/hall';
+import {fetchMoneyAll, saveMoney} from '../../api/myinfo';
 
 class ReleaseScreen extends React.Component {
   static navigationOptions = ({navigation}) => {
@@ -56,6 +67,8 @@ class ReleaseScreen extends React.Component {
       pageSize: 15,
       release: {},
       releaseList: [],
+      modalVisible: false,
+      jobId: '',
     };
   }
 
@@ -73,6 +86,12 @@ class ReleaseScreen extends React.Component {
       },
       () => {},
     );
+  };
+
+  componentWillUnmount = () => {
+    this.setState({
+      modalVisible: false,
+    });
   };
 
   goToclick = () => {
@@ -199,8 +218,64 @@ class ReleaseScreen extends React.Component {
     }
   };
 
+  clickRefesh = jobId => {
+    this.setState({
+      jobId: jobId,
+      modalVisible: true,
+    });
+  };
+
+  CloseModel = () => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
+  addSubmit = () => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    const {login} = this.props;
+    const {jobId} = this.state;
+    refeshJob(jobId).then(
+      data => {
+        if (data.status == 2) {
+          toastOpts.data = '您当前为黑名单用户无法刷新，请联系客服';
+          WToast.show(toastOpts);
+        } else if (data.status == 4) {
+          toastOpts.data = '账户余额不足';
+          WToast.show(toastOpts);
+        } else {
+          toastOpts.data = '刷新成功';
+          WToast.show(toastOpts);
+          fetchMoneyAll(login.userId).then(money => {
+            this.props.saveMoney(money.data);
+          });
+        }
+        this.setState({
+          modalVisible: false,
+        });
+      },
+      () => {
+        toastOpts.data = '刷新失败';
+        WToast.show(toastOpts);
+      },
+    );
+  };
+
   render() {
-    const {labels, labelStatus, release, releaseList} = this.state;
+    const {
+      labels,
+      labelStatus,
+      release,
+      releaseList,
+      modalVisible,
+    } = this.state;
+    const {width} = Dimensions.get('window');
     console.log(releaseList);
     return (
       <View style={styles.releaseView}>
@@ -259,6 +334,26 @@ class ReleaseScreen extends React.Component {
             <View style={styles.releaseList} key={item.id}>
               <View style={styles.releaseListTitle}>
                 <Text style={styles.releaseListTitleTxt}>{item.jobTitle}</Text>
+                {labelStatus == 3 ? (
+                  <TouchableOpacity
+                    onPress={this.clickRefesh.bind(this, item.jobId)}>
+                    <View
+                      style={{
+                        height: 18,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderColor: '#FFDB44',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                        marginLeft: 5,
+                        padding: 8,
+                      }}>
+                      <Text style={{fontSize: 12, color: '#666666'}}>
+                        刷新置顶
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ) : null}
                 <Text style={styles.releaseListTitleMoney}>
                   赏{item.releasePrice}元
                 </Text>
@@ -327,6 +422,36 @@ class ReleaseScreen extends React.Component {
           )}
           keyExtractor={item => JSON.stringify(item.jobId)}
         />
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={this.CloseModel}>
+          <View style={styles.taskModal}>
+            <View style={[styles.opinionModalView, {width: width * 0.8}]}>
+              <View style={styles.opinionTopTitle}>
+                <Text style={styles.opinionTopTitleTxt}>刷新任务</Text>
+              </View>
+              <Text style={styles.opinionTitle}>
+                刷新任务将扣除您账户余额，是否继续？
+              </Text>
+              <View style={styles.opinionBtnView}>
+                <TouchableOpacity onPress={this.CloseModel}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#DDDDDD'}]}>
+                    <Text style={styles.opinionTxt}>取消</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.addSubmit}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#FFDB44'}]}>
+                    <Text style={styles.opinionTxt}>继续</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -467,6 +592,63 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#444444',
   },
+
+  //弹框
+  taskModal: {
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    flex: 1,
+    alignItems: 'center',
+  },
+  opinionModalView: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 96,
+    padding: 13,
+    borderRadius: 4,
+  },
+  opinionTopTitle: {
+    alignItems: 'center',
+  },
+  opinionTopTitleTxt: {
+    fontSize: 16,
+    color: '#444444',
+    fontWeight: 'bold',
+  },
+  opinionTitle: {
+    marginTop: 16.5,
+    marginBottom: 16.5,
+    fontSize: 14,
+    color: '#444444',
+    lineHeight: 30,
+    fontWeight: 'normal',
+  },
+  opinionInp: {
+    height: 80,
+    backgroundColor: '#F3F3F3',
+    textAlignVertical: 'top',
+  },
+  opinionInp2: {
+    height: 40,
+    backgroundColor: '#F3F3F3',
+    textAlignVertical: 'top',
+  },
+  opinionBtnView: {
+    marginTop: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  opinionBtn: {
+    width: 120,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  opinionTxt: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'normal',
+  },
 });
 
 function mapStateToProps(state) {
@@ -476,7 +658,9 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {};
+  return {
+    saveMoney: data => dispatch(saveMoney(data)),
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReleaseScreen);
