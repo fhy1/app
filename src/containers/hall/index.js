@@ -301,6 +301,18 @@ class HallScreen extends React.Component {
                       source={require('../../assets/head.png')}
                     />
                   )}
+                  {item.isRecommend ? (
+                    <Image
+                      style={styles.tuijianImg}
+                      source={require('../../assets/tuijian.png')}
+                    />
+                  ) : null}
+                  {item.isMember != 1 ? (
+                    <Image
+                      style={styles.huiyuanImg}
+                      source={require('../../assets/huiyuan.png')}
+                    />
+                  ) : null}
                 </View>
                 <View style={styles.hallListBody}>
                   <View>
@@ -456,14 +468,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   hallListIcon: {
-    width: 36,
+    width: 40,
     height: '100%',
     alignItems: 'center',
   },
   hallListIconImg: {
-    width: 36,
-    height: 36,
-    marginTop: 16,
+    width: 40,
+    height: 40,
+    marginTop: 14,
+  },
+  tuijianImg: {
+    position: 'absolute',
+    top: 14,
+    left: 0,
+    width: 20,
+    height: 20,
+  },
+  huiyuanImg: {
+    position: 'absolute',
+    bottom: 14,
+    right: 0,
+    width: 14,
+    height: 14,
   },
   hallListBody: {
     flex: 1,
@@ -480,21 +506,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   hallListBodybtn1: {
-    minWidth: 60,
     height: 20,
     borderRadius: 4,
     overflow: 'hidden',
     marginRight: 10,
   },
   hallListBodybtn2: {
-    width: 72,
     height: 20,
     borderRadius: 4,
     overflow: 'hidden',
   },
   hallListBodybtn: {
-    paddingLeft: 8,
-    paddingRight: 8,
+    paddingLeft: 6,
+    paddingRight: 6,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -503,10 +527,6 @@ const styles = StyleSheet.create({
   hallListBodybtnTxt: {
     fontSize: 12,
     color: '#444444',
-  },
-  hallListRight: {
-    width: 80,
-    height: '100%',
   },
   hallListRightBody: {
     flex: 1,
@@ -520,6 +540,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     color: '#666666',
+    textAlign: 'right',
   },
   hallFlatList: {
     paddingLeft: 15,

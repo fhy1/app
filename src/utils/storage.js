@@ -17,7 +17,6 @@ async function getData(key) {
     const value = await AsyncStorage.getItem(key);
     if (value !== null) {
       // value previously stored
-      console.log(value);
       return JSON.parse(value);
     }
   } catch (e) {

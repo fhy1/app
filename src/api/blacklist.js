@@ -20,14 +20,11 @@ export const clearBlacklist = () => {
 
 export function fetchBlacklistUser(pageNo, pageSize) {
   const url = paramToQuery(`${BLACK}?pageNo=${pageNo}&pageSize=${pageSize}`);
-  console.log('url', url);
   return fetch(url)
     .then(res => {
-      console.log(res.status);
       return res.json();
     })
     .then(async data => {
-      console.log('blacklist', data);
       if (data.error) {
         return Promise.reject(data);
       } else {

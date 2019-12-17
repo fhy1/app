@@ -62,14 +62,11 @@ export function fetchHalljob(
   const url = paramToQuery(
     `${JOB}?pageNo=${pageNo}&pageSize=${pageSize}&label=${labelStatus}&typeId=${typeId}&keyWord=${keyWord}`,
   );
-  console.log(url);
   return fetch(url)
     .then(res => {
       return res.json();
     })
     .then(data => {
-      console.log('job', data.status);
-      console.log('jobList', data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -77,7 +74,6 @@ export function fetchHalljob(
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message);
     });
 }
@@ -85,14 +81,12 @@ export function fetchHalljobNext(pageNo, pageSize, labelStatus, typeId) {
   const url = paramToQuery(
     `${JOB}?pageNo=${pageNo}&pageSize=${pageSize}&label=${labelStatus}&typeId=${typeId}`,
   );
-  console.log(url);
   return dispatch => {
     return fetch(url)
       .then(res => {
         return res.json();
       })
       .then(data => {
-        console.log('jobNext', data);
         if (data.error) {
           return Promise.reject(data);
         } else {
@@ -100,7 +94,6 @@ export function fetchHalljobNext(pageNo, pageSize, labelStatus, typeId) {
         }
       })
       .catch(e => {
-        console.log(e.message);
         return Promise.reject(e.message);
       });
   };
@@ -119,7 +112,6 @@ export function fetchHallType() {
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message);
     });
 }
@@ -133,7 +125,7 @@ export function fetchHallDetail(jobId, userId) {
       return data;
     })
     .catch(e => {
-      console.log(e.message);
+      return Promise.reject(e.message);
     });
 }
 export function fetchHallSignUp(jobId, userId) {
@@ -143,7 +135,6 @@ export function fetchHallSignUp(jobId, userId) {
       return res.json();
     })
     .then(data => {
-      console.log('signup', data);
       if (data.error) {
         data.msg = '报名';
         return Promise.reject(data);
@@ -156,14 +147,12 @@ export function fetchHallSignUp(jobId, userId) {
       }
     })
     .catch(e => {
-      console.log(e.msg);
       return Promise.reject(e.msg);
     });
 }
 
 export function HallSubmit(data) {
   const url = paramToQuery(`${SUBMIT}`);
-  console.log(data);
   return fetch(url, {
     method: 'post',
     headers: {
@@ -177,7 +166,6 @@ export function HallSubmit(data) {
       return res.json();
     })
     .then(data => {
-      console.log('submit', data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -185,14 +173,12 @@ export function HallSubmit(data) {
       }
     })
     .catch(e => {
-      console.log(e);
       return Promise.reject(e.msg);
     });
 }
 
 export function refeshJob(jobId) {
   const url = paramToQuery(`${JOBREFESH}?jobId=${jobId}`);
-  console.log(url);
   return fetch(url, {
     method: 'put',
   })
@@ -200,7 +186,6 @@ export function refeshJob(jobId) {
       return res.json();
     })
     .then(data => {
-      console.log('refesh', data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -208,7 +193,6 @@ export function refeshJob(jobId) {
       }
     })
     .catch(e => {
-      console.log(e.msg);
       return Promise.reject(e.msg);
     });
 }

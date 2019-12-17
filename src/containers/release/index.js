@@ -544,8 +544,8 @@ const styles = StyleSheet.create({
     top: 0,
   },
   releaseListBtn: {
-    paddingLeft: 12,
-    paddingRight: 12,
+    paddingLeft: 6,
+    paddingRight: 6,
     height: 22,
     alignItems: 'center',
     justifyContent: 'center',

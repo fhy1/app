@@ -67,7 +67,6 @@ class TaskScreen extends React.Component {
       login.userId,
       labelStatus,
     );
-    console.log(task);
     this.setState({
       task: task.data,
       taskList: task.data.list,
@@ -147,7 +146,6 @@ class TaskScreen extends React.Component {
     } else {
       report(login.userId, taskId, reportDetail, imgUrl).then(
         e => {
-          console.log(e);
           this.setState({
             modalVisible: false,
           });
@@ -163,7 +161,6 @@ class TaskScreen extends React.Component {
   };
 
   handelOnJumpToDetail = jobId => {
-    console.log(jobId);
     const {navigation, login} = this.props;
     if (login && login.userId) {
       navigation.navigate('HallDetail', {
@@ -204,8 +201,6 @@ class TaskScreen extends React.Component {
     };
 
     ImagePicker.showImagePicker(options, response => {
-      console.log('Response = ', response);
-
       if (response.didCancel) {
         console.log('User cancelled photo picker');
       } else if (response.error) {
@@ -218,11 +213,9 @@ class TaskScreen extends React.Component {
           name: response.fileName,
           type: 'image/png',
         };
-        console.log(source);
         // You can also display the image using data:
         // let source = { uri: 'data:image/jpeg;base64,' + response.data };
         upLoadImg(source).then(img => {
-          console.log('source', img);
           this.setState({
             imgUrl: img.data,
           });
@@ -515,21 +508,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   taskListBodybtn1: {
-    minWidth: 60,
     height: 20,
     borderRadius: 4,
     overflow: 'hidden',
     marginRight: 10,
   },
   taskListBodybtn2: {
-    width: 72,
     height: 20,
     borderRadius: 4,
     overflow: 'hidden',
   },
   taskListBodybtn: {
-    paddingLeft: 8,
-    paddingRight: 8,
+    paddingLeft: 6,
+    paddingRight: 6,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -538,10 +529,6 @@ const styles = StyleSheet.create({
   taskListBodybtnTxt: {
     fontSize: 12,
     color: '#444444',
-  },
-  taskListRight: {
-    width: 80,
-    height: '100%',
   },
   taskListRightBody: {
     flex: 1,
@@ -555,6 +542,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     color: '#666666',
+    textAlign: 'right',
   },
   taskFlatList: {
     paddingLeft: 15,

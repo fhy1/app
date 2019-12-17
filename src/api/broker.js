@@ -9,7 +9,6 @@ export function fetchRule(data) {
       return res.json();
     })
     .then(data => {
-      console.log(data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -17,7 +16,6 @@ export function fetchRule(data) {
       }
     })
     .catch(e => {
-      console.log('err1', e.message);
       return Promise.reject(e.message);
     });
 }

@@ -24,7 +24,6 @@ export function fetchInviteRule() {
       }
     })
     .catch(e => {
-      console.log('err1', e.message);
       return Promise.reject(e.message);
     });
 }

@@ -14,6 +14,7 @@ import {connect} from 'react-redux';
 import {fetchAudit, editAudit} from '../../api/apply';
 import {WToast} from 'react-native-smart-tip';
 import {paramToQuery2} from '../../utils/fetch';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 class ApplyScreen extends React.Component {
   static navigationOptions = {
@@ -50,6 +51,8 @@ class ApplyScreen extends React.Component {
       ques: '',
       taskId: '',
       clickIndex: 0,
+      imgVisible: false,
+      images: [],
     };
   }
   componentDidMount = async () => {
@@ -71,6 +74,7 @@ class ApplyScreen extends React.Component {
   componentWillUnmount = () => {
     this.setState({
       modalVisible: false,
+      imgVisible: false,
     });
   };
 
@@ -158,6 +162,14 @@ class ApplyScreen extends React.Component {
     });
   };
 
+  onShowImg = uri => {
+    let img = [{url: uri}];
+    this.setState({
+      images: img,
+      imgVisible: true,
+    });
+  };
+
   render() {
     const {
       labels,
@@ -166,6 +178,8 @@ class ApplyScreen extends React.Component {
       applyList,
       modalVisible,
       ques,
+      imgVisible,
+      images,
     } = this.state;
     const {width} = Dimensions.get('window');
     return (
@@ -239,11 +253,14 @@ class ApplyScreen extends React.Component {
               <View style={styles.applyListImg}>
                 {item.imgList.map((item2, index2) => {
                   return (
-                    <Image
-                      key={index2}
-                      source={{uri: paramToQuery2(item2)}}
-                      style={{width: 100, height: 100, resizeMode: 'cover'}}
-                    />
+                    <TouchableOpacity
+                      onPress={this.onShowImg.bind(this, paramToQuery2(item2))}>
+                      <Image
+                        key={index2}
+                        source={{uri: paramToQuery2(item2)}}
+                        style={{width: 100, height: 100, resizeMode: 'cover'}}
+                      />
+                    </TouchableOpacity>
                   );
                 })}
               </View>
@@ -322,6 +339,16 @@ class ApplyScreen extends React.Component {
               </View>
             </View>
           </View>
+        </Modal>
+        <Modal
+          visible={this.state.imgVisible}
+          transparent={true}
+          onRequestClose={() => this.setState({imgVisible: false})}>
+          <ImageViewer
+            onClick={() => this.setState({imgVisible: false})}
+            imageUrls={images}
+            index={0}
+          />
         </Modal>
       </View>
     );

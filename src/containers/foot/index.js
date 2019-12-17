@@ -272,21 +272,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   footListBodybtn1: {
-    minWidth: 60,
     height: 22,
     borderRadius: 4,
     overflow: 'hidden',
     marginRight: 10,
   },
   footListBodybtn2: {
-    width: 72,
     height: 22,
     borderRadius: 4,
     overflow: 'hidden',
   },
   footListBodybtn: {
-    paddingLeft: 8,
-    paddingRight: 8,
+    paddingLeft: 6,
+    paddingRight: 6,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -295,10 +293,6 @@ const styles = StyleSheet.create({
   footListBodybtnTxt: {
     color: '#444444',
     fontSize: 12,
-  },
-  footListRight: {
-    width: 80,
-    height: '100%',
   },
   footListRightBody: {
     flex: 1,
@@ -312,6 +306,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     color: '#666666',
+    textAlign: 'right',
   },
   footFlatList: {
     backgroundColor: '#F3F3F3',

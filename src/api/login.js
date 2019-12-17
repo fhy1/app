@@ -36,14 +36,11 @@ export const getLogin = json => {
 
 export function fetchUserCode(phone) {
   const url = paramToQuery(`${CODE}?phone=${phone}`);
-  console.log('url', url);
   return fetch(url)
     .then(res => {
-      console.log(res.status);
       return res.json();
     })
     .then(data => {
-      console.log('code', data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -51,7 +48,6 @@ export function fetchUserCode(phone) {
       }
     })
     .catch(e => {
-      console.log('err1', e.message);
       return Promise.reject(e.message);
     });
 }
@@ -60,14 +56,11 @@ export function fetchCheckCode(data) {
   const url = paramToQuery(
     `${CHECKCODE}?phone=${data.phone}&code=${data.code}`,
   );
-  console.log('url', url);
   return fetch(url)
     .then(res => {
-      console.log(res.status);
       return res.json();
     })
     .then(data => {
-      console.log('checkcode', data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -75,7 +68,6 @@ export function fetchCheckCode(data) {
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message);
     });
 }
@@ -84,14 +76,11 @@ export function fetchCheckEnroll(data) {
   const url = paramToQuery(
     `${ENROLL}?phone=${data.phone}&password=${data.code}`,
   );
-  console.log('url', url);
   return fetch(url)
     .then(res => {
-      console.log(res.status);
       return res.json();
     })
     .then(async data => {
-      console.log('enroll', data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -100,21 +89,17 @@ export function fetchCheckEnroll(data) {
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message ? e.message : e.msg);
     });
 }
 
 export function wxLogin(code) {
   const url = paramToQuery(`${WXLOGIN}?code=${code}`);
-  console.log('url', url);
   return fetch(url)
     .then(res => {
-      console.log(res.status);
       return res.json();
     })
     .then(async data => {
-      console.log('enroll', data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -123,21 +108,17 @@ export function wxLogin(code) {
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message);
     });
 }
 
 export function wxGetWxInfo(code) {
   const url = paramToQuery(`${WXINFO}?code=${code}`);
-  console.log('url', url);
   return fetch(url)
     .then(res => {
-      console.log(res.status);
       return res.json();
     })
     .then(async data => {
-      console.log('enroll', data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -145,20 +126,16 @@ export function wxGetWxInfo(code) {
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message);
     });
 }
 export function fetchIsPhone(phone) {
   const url = paramToQuery(`${ISPHONE}?phone=${phone}`);
-  console.log('url', url);
   return fetch(url)
     .then(res => {
-      console.log(res.status);
       return res.json();
     })
     .then(async data => {
-      console.log('enroll', data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -166,7 +143,6 @@ export function fetchIsPhone(phone) {
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message);
     });
 }
@@ -175,16 +151,13 @@ export function register(data) {
   const url = paramToQuery(
     `${REGISTER}?phone=${data.phone}&password=${data.password}&openid=${data.openid}&nickname=${data.nickname}&sex=${data.sex}&headimgurl=${data.headimgurl}&upUID=${data.upUID}&country=${data.country}&city=${data.city}&province=${data.province}`,
   );
-  console.log('url', url);
   return fetch(url, {
     method: 'post',
   })
     .then(res => {
-      console.log(res.status);
       return res.json();
     })
     .then(async data => {
-      console.log('enroll', data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -192,7 +165,6 @@ export function register(data) {
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message);
     });
 }
@@ -201,16 +173,13 @@ export function bindWxLogin(data) {
   const url = paramToQuery(
     `${BindWx}?phone=${data.phone}&password=${data.password}&openid=${data.openid}&nickname=${data.nickname}&sex=${data.sex}&headimgurl=${data.headimgurl}&upUID=${data.upUID}&country=${data.country}&city=${data.city}&province=${data.province}`,
   );
-  console.log('url', url);
   return fetch(url, {
     method: 'post',
   })
     .then(res => {
-      console.log(res.status);
       return res.json();
     })
     .then(async data => {
-      console.log('enroll', data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -218,7 +187,6 @@ export function bindWxLogin(data) {
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message);
     });
 }

@@ -6,13 +6,11 @@ export function fetchFoot(data) {
   const url = paramToQuery(
     `${FOOT}?userId=${data.userId}&pageNo=${data.page}&pageSize=${data.size}`,
   );
-  console.log(url);
   return fetch(url)
     .then(res => {
       return res.json();
     })
     .then(data => {
-      console.log(data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -20,7 +18,6 @@ export function fetchFoot(data) {
       }
     })
     .catch(e => {
-      console.log('err1', e);
       return Promise.reject(e.message);
     });
 }

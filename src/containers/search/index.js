@@ -59,7 +59,6 @@ class SearchScreen extends React.Component {
     if (searchTxt) {
       fetchHalljob(1, 15, 0, '', searchTxt).then(
         search => {
-          console.log(search.data.list);
           this.setState({
             search: search.data,
             searchFlag: true,
@@ -114,7 +113,6 @@ class SearchScreen extends React.Component {
           const {page, size, searchList, searchTxt} = this.state;
           fetchHalljob(page, size, 0, '', searchTxt).then(
             search => {
-              console.log(search.data.list);
               this.setState({
                 search: search.data,
                 searchFlag: true,
@@ -203,6 +201,18 @@ class SearchScreen extends React.Component {
                       source={require('../../assets/head.png')}
                     />
                   )}
+                  {item.isRecommend ? (
+                    <Image
+                      style={styles.tuijianImg}
+                      source={require('../../assets/tuijian.png')}
+                    />
+                  ) : null}
+                  {item.isMember != 1 ? (
+                    <Image
+                      style={styles.huiyuanImg}
+                      source={require('../../assets/huiyuan.png')}
+                    />
+                  ) : null}
                 </View>
                 <View style={styles.searchListBody}>
                   <View>
@@ -307,14 +317,28 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   searchListIcon: {
-    width: 36,
+    width: 40,
     height: '100%',
     alignItems: 'center',
   },
   searchListIconImg: {
-    width: 36,
-    height: 36,
-    marginTop: 16,
+    width: 40,
+    height: 40,
+    marginTop: 14,
+  },
+  tuijianImg: {
+    position: 'absolute',
+    top: 14,
+    left: 0,
+    width: 20,
+    height: 20,
+  },
+  huiyuanImg: {
+    position: 'absolute',
+    bottom: 14,
+    right: 0,
+    width: 14,
+    height: 14,
   },
   searchListBody: {
     flex: 1,
@@ -331,21 +355,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   searchListBodybtn1: {
-    minWidth: 60,
     height: 22,
     borderRadius: 4,
     overflow: 'hidden',
     marginRight: 10,
   },
   searchListBodybtn2: {
-    width: 72,
     height: 22,
     borderRadius: 4,
     overflow: 'hidden',
   },
   searchListBodybtn: {
-    paddingLeft: 8,
-    paddingRight: 8,
+    paddingLeft: 6,
+    paddingRight: 6,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -354,10 +376,6 @@ const styles = StyleSheet.create({
   searchListBodybtnTxt: {
     color: '#444444',
     fontSize: 12,
-  },
-  searchListRight: {
-    width: 80,
-    height: '100%',
   },
   searchListRightBody: {
     flex: 1,
@@ -371,6 +389,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     color: '#666666',
+    textAlign: 'right',
   },
   searchFlatList: {
     backgroundColor: '#F3F3F3',

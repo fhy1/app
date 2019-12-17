@@ -605,6 +605,18 @@ class HomeScreen extends React.Component {
                                 source={require('../../assets/head.png')}
                               />
                             )}
+                            {item.isRecommend ? (
+                              <Image
+                                style={styles.tuijianImg}
+                                source={require('../../assets/tuijian.png')}
+                              />
+                            ) : null}
+                            {item.isMember != 1 ? (
+                              <Image
+                                style={styles.huiyuanImg}
+                                source={require('../../assets/huiyuan.png')}
+                              />
+                            ) : null}
                           </View>
                           <View style={styles.homeListBody}>
                             <View>
@@ -767,14 +779,27 @@ const styles = StyleSheet.create({
     borderBottomColor: '#DDDDDD',
   },
   homeListIcon: {
-    width: 36,
-    height: '100%',
+    width: 40,
     alignItems: 'center',
   },
   homeListIconImg: {
-    width: 36,
-    height: 36,
-    marginTop: 16,
+    width: 40,
+    height: 40,
+    marginTop: 14,
+  },
+  tuijianImg: {
+    position: 'absolute',
+    top: 14,
+    left: 0,
+    width: 20,
+    height: 20,
+  },
+  huiyuanImg: {
+    position: 'absolute',
+    bottom: 14,
+    right: 0,
+    width: 14,
+    height: 14,
   },
   homeListBody: {
     flex: 1,
@@ -791,21 +816,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   homeListBodybtn1: {
-    minWidth: 60,
     height: 22,
     borderRadius: 4,
     overflow: 'hidden',
     marginRight: 10,
   },
   homeListBodybtn2: {
-    width: 72,
     height: 22,
     borderRadius: 4,
     overflow: 'hidden',
   },
   homeListBodybtn: {
-    paddingLeft: 5,
-    paddingRight: 5,
+    paddingLeft: 6,
+    paddingRight: 6,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -814,10 +837,6 @@ const styles = StyleSheet.create({
   homeListBodybtnTxt: {
     fontSize: 12,
     color: '#444444',
-  },
-  homeListRight: {
-    width: 80,
-    height: '100%',
   },
   homeListRightBody: {
     flex: 1,
@@ -831,6 +850,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     color: '#666666',
+    textAlign: 'right',
   },
   dot: {
     //选中的圆点样式

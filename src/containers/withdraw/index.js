@@ -11,6 +11,7 @@ import {
 import {connect} from 'react-redux';
 import {HeaderBackButton} from 'react-navigation-stack';
 import FitImage from 'react-native-fit-image';
+import {fetchRule} from '../../api/rule';
 import {WToast} from 'react-native-smart-tip';
 
 class WithdrawScreen extends React.Component {
@@ -33,13 +34,18 @@ class WithdrawScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {type: ''};
+    this.state = {type: '', ruleList: []};
   }
 
   componentDidMount = () => {
     const type = this.props.navigation.state.params.type;
     this.setState({
       type: type,
+    });
+    fetchRule(8).then(rule => {
+      this.setState({
+        ruleList: rule.data,
+      });
     });
   };
 
@@ -64,56 +70,80 @@ class WithdrawScreen extends React.Component {
   };
 
   render() {
-    const {type} = this.state;
+    const {type, ruleList} = this.state;
     const {money} = this.props;
     return (
       <View style={styles.withdrawView}>
-        <View style={styles.withdrawTop}>
-          <Image style={styles.hbb} source={require('../../assets/hbb.png')} />
-          <Text style={styles.withdrawMoney}>￥ {money[type]}</Text>
-          <Text style={styles.withdrawMoneyTxt}>（可提现金额）</Text>
-        </View>
-        <View style={styles.withdrawBody}>
-          <View style={styles.withdrawList}>
-            <Text style={styles.withdrawListTiTle}>提现至： </Text>
+        <ScrollView>
+          <View style={styles.withdrawTop}>
+            <Image
+              style={styles.hbb}
+              source={require('../../assets/hbb.png')}
+            />
+            <Text style={styles.withdrawMoney}>￥ {money[type]}</Text>
+            <Text style={styles.withdrawMoneyTxt}>（可提现金额）</Text>
           </View>
-          <View style={styles.withdrawLine}></View>
-          <TouchableOpacity onPress={this.withdrawZfb}>
+          <View style={styles.withdrawBody}>
             <View style={styles.withdrawList}>
-              <Image
-                style={styles.withdrawLogo}
-                source={require('../../assets/zfb.png')}
-              />
-              <Text style={styles.withdrawLogoTxt}>支付宝</Text>
-              <View style={styles.myinfoMoreGo}>
-                <FitImage
-                  style={{width: 15, height: 30}}
-                  // @ts-ignore
-                  source={require('../../assets/go.png')}
-                  resizeMode="contain"
-                />
-              </View>
+              <Text style={styles.withdrawListTiTle}>提现至： </Text>
             </View>
-          </TouchableOpacity>
-          <View style={styles.withdrawLine}></View>
-          <TouchableOpacity onPress={this.withdrawWx}>
-            <View style={styles.withdrawList}>
-              <Image
-                style={styles.withdrawLogo}
-                source={require('../../assets/wx.png')}
-              />
-              <Text style={styles.withdrawLogoTxt}>微信</Text>
-              <View style={styles.myinfoMoreGo}>
-                <FitImage
-                  style={{width: 15, height: 30}}
-                  // @ts-ignore
-                  source={require('../../assets/go.png')}
-                  resizeMode="contain"
+            <View style={styles.withdrawLine}></View>
+            <TouchableOpacity onPress={this.withdrawZfb}>
+              <View style={styles.withdrawList}>
+                <Image
+                  style={styles.withdrawLogo}
+                  source={require('../../assets/zfb.png')}
                 />
+                <Text style={styles.withdrawLogoTxt}>支付宝</Text>
+                <View style={styles.myinfoMoreGo}>
+                  <FitImage
+                    style={{width: 15, height: 30}}
+                    // @ts-ignore
+                    source={require('../../assets/go.png')}
+                    resizeMode="contain"
+                  />
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-        </View>
+            </TouchableOpacity>
+            <View style={styles.withdrawLine}></View>
+            <TouchableOpacity onPress={this.withdrawWx}>
+              <View style={styles.withdrawList}>
+                <Image
+                  style={styles.withdrawLogo}
+                  source={require('../../assets/wx.png')}
+                />
+                <Text style={styles.withdrawLogoTxt}>微信</Text>
+                <View style={styles.myinfoMoreGo}>
+                  <FitImage
+                    style={{width: 15, height: 30}}
+                    // @ts-ignore
+                    source={require('../../assets/go.png')}
+                    resizeMode="contain"
+                  />
+                </View>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.ruleView}>
+            {ruleList.map(item => {
+              return item.sort > 1 ? (
+                <Text key={item.sort} style={styles.inviteEwmTxt}>
+                  {item.sort - 1}: {item.introduce}
+                </Text>
+              ) : (
+                <Text key={item.sort} style={styles.inviteEwm}>
+                  {item.introduce}
+                </Text>
+              );
+              // return {item.sort > 1
+              //       ?
+              //       <Text key={item.sort} style={styles.inviteEwmTxt}>`${item.sort - 1} ${item.introduce}`
+              //   </Text>
+              //       : item.introduce}
+              // );
+            })}
+          </View>
+        </ScrollView>
       </View>
     );
   }
@@ -179,6 +209,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'absolute',
     right: -15,
+  },
+
+  ruleView: {
+    marginTop: 15,
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 15,
+    paddingBottom: 15,
+  },
+  inviteEwmTxt: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'normal',
+    marginTop: 4,
+    lineHeight: 22,
+    paddingTop: 10,
+  },
+  inviteEwm: {
+    fontSize: 16,
+    color: '#444444',
+    fontWeight: 'bold',
   },
 });
 

@@ -29,14 +29,11 @@ export function fetchOptionAll(pageNo, pageSize) {
   const url = paramToQuery(
     `${OPTIONALL}?pageNo=${pageNo}&pageSize=${pageSize}`,
   );
-  console.log('url', url);
   return fetch(url)
     .then(res => {
       return res.json();
     })
     .then(data => {
-      console.log('option', data.status);
-      console.log('option', data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -44,7 +41,6 @@ export function fetchOptionAll(pageNo, pageSize) {
       }
     })
     .catch(e => {
-      console.log('err1', e.message);
       return Promise.reject(e.message);
     });
 }

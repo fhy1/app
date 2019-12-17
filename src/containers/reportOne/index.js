@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import FitImage from 'react-native-fit-image';
+import {fetchRule} from '../../api/rule';
 
 class ReportOneScreen extends React.Component {
   static navigationOptions = {
@@ -29,44 +30,77 @@ class ReportOneScreen extends React.Component {
     headerRight: <View />,
   };
 
-  componentDidMount = () => {};
+  constructor(props) {
+    super(props);
+    this.state = {ruleList: []};
+  }
+
+  componentDidMount = () => {
+    fetchRule(9).then(rule => {
+      this.setState({
+        ruleList: rule.data,
+      });
+    });
+  };
 
   render() {
+    const {ruleList} = this.state;
     const {navigation} = this.props;
     return (
       <View style={styles.tutorialView}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('Report');
-          }}>
-          <View style={styles.tutorialList}>
-            <Text style={styles.tutorialListTxt}>我的举报</Text>
-            <View style={styles.myinfoMoreGo}>
-              <FitImage
-                style={{width: 15, height: 30}}
-                // @ts-ignore
-                source={require('../../assets/go.png')}
-                resizeMode="contain"
-              />
+        <ScrollView>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Report');
+            }}>
+            <View style={styles.tutorialList}>
+              <Text style={styles.tutorialListTxt}>我的举报</Text>
+              <View style={styles.myinfoMoreGo}>
+                <FitImage
+                  style={{width: 15, height: 30}}
+                  // @ts-ignore
+                  source={require('../../assets/go.png')}
+                  resizeMode="contain"
+                />
+              </View>
             </View>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('Reported');
-          }}>
-          <View style={styles.tutorialList}>
-            <Text style={styles.tutorialListTxt}>我被举报</Text>
-            <View style={styles.myinfoMoreGo}>
-              <FitImage
-                style={{width: 15, height: 30}}
-                // @ts-ignore
-                source={require('../../assets/go.png')}
-                resizeMode="contain"
-              />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Reported');
+            }}>
+            <View style={styles.tutorialList}>
+              <Text style={styles.tutorialListTxt}>我被举报</Text>
+              <View style={styles.myinfoMoreGo}>
+                <FitImage
+                  style={{width: 15, height: 30}}
+                  // @ts-ignore
+                  source={require('../../assets/go.png')}
+                  resizeMode="contain"
+                />
+              </View>
             </View>
+          </TouchableOpacity>
+          <View style={styles.ruleView}>
+            {ruleList.map(item => {
+              return item.sort > 1 ? (
+                <Text key={item.sort} style={styles.inviteEwmTxt}>
+                  {item.sort - 1}: {item.introduce}
+                </Text>
+              ) : (
+                <Text key={item.sort} style={styles.inviteEwm}>
+                  {item.introduce}
+                </Text>
+              );
+              // return {item.sort > 1
+              //       ?
+              //       <Text key={item.sort} style={styles.inviteEwmTxt}>`${item.sort - 1} ${item.introduce}`
+              //   </Text>
+              //       : item.introduce}
+              // );
+            })}
           </View>
-        </TouchableOpacity>
+        </ScrollView>
       </View>
     );
   }
@@ -95,6 +129,29 @@ const styles = StyleSheet.create({
     width: 48,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+
+  ruleView: {
+    marginTop: 15,
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 15,
+    paddingBottom: 15,
+  },
+  inviteEwmTxt: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'normal',
+    marginTop: 4,
+    lineHeight: 22,
+    paddingTop: 10,
+  },
+  inviteEwm: {
+    fontSize: 16,
+    color: '#444444',
+    fontWeight: 'bold',
   },
 });
 

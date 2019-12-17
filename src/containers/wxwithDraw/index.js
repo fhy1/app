@@ -98,10 +98,8 @@ class WxwithDrawScreen extends React.Component {
     const {login} = this.props;
     WeChat.sendAuthRequest('snsapi_userinfo').then(
       data => {
-        console.log(data);
         wxBind(data.code, login.userId).then(
           data => {
-            console.log('绑定成功', data);
             toastOpts.data = '微信绑定成功';
             WToast.show(toastOpts);
             this.props.getLogin(data);

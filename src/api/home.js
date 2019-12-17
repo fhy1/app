@@ -52,7 +52,6 @@ export function fetchHomeImg() {
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message);
     });
 }
@@ -71,7 +70,6 @@ export function fetchHomeSignIn(userId) {
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message);
     });
 }
@@ -92,7 +90,6 @@ export function SignInHome(userId) {
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message);
     });
 }
@@ -113,7 +110,6 @@ export function fetchHomeRecommend(pageNo, pageSize) {
       }
     })
     .catch(e => {
-      console.log(e.message);
       return Promise.reject(e.message);
     });
 }
