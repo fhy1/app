@@ -9,12 +9,14 @@ import {
   Modal,
   TouchableOpacity,
   TextInput,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {getWxPay} from '../../api/pay';
+import {getWxPay, getZfbPay} from '../../api/pay';
 import * as WeChat from 'react-native-wechat';
 import {WToast} from 'react-native-smart-tip';
 import {fetchMoneyAll, saveMoney} from '../../api/myinfo';
+import Alipay from 'react-native-yunpeng-alipay';
 
 class RechargeScreen extends React.Component {
   static navigationOptions = {
@@ -39,6 +41,7 @@ class RechargeScreen extends React.Component {
     this.state = {
       modalVisible: false,
       sendMoney: '',
+      isWx: true,
     };
   }
 
@@ -65,7 +68,7 @@ class RechargeScreen extends React.Component {
 
   addSubmit = () => {
     const {login} = this.props;
-    const {sendMoney} = this.state;
+    const {sendMoney, isWx} = this.state;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -73,47 +76,73 @@ class RechargeScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
-    getWxPay(login.userId, sendMoney, 2, '').then(data => {
-      let money = data.data;
-      WeChat.isWXAppInstalled().then(isInstalled => {
-        if (isInstalled) {
-          WeChat.pay({
-            partnerId: money.partnerid, // 商家向财付通申请的商家id
-            prepayId: money.prepayid, // 预支付订单
-            nonceStr: money.noncestr, // 随机串，防重发
-            timeStamp: Number(money.timestamp), // 时间戳，防重发.
-            package: money.package, // 商家根据财付通文档填写的数据和签名
-            sign: money.sign, // 商家根据微信开放平台文档对数据做的签名
-          })
-            .then(requestJson => {
-              //支付成功回调
-              if (requestJson.errCode == '0') {
-                //回调成功处理
-                toastOpts.data = '支付成功';
-                WToast.show(toastOpts);
-                this.setState({
-                  modalVisible: false,
-                });
-                fetchMoneyAll(login.userId).then(money => {
-                  this.props.saveMoney(money.data);
-                });
-              }
+
+    if (isWx) {
+      getWxPay(login.userId, sendMoney, 2, '').then(data => {
+        let money = data.data;
+        WeChat.isWXAppInstalled().then(isInstalled => {
+          if (isInstalled) {
+            WeChat.pay({
+              partnerId: money.partnerid, // 商家向财付通申请的商家id
+              prepayId: money.prepayid, // 预支付订单
+              nonceStr: money.noncestr, // 随机串，防重发
+              timeStamp: Number(money.timestamp), // 时间戳，防重发.
+              package: money.package, // 商家根据财付通文档填写的数据和签名
+              sign: money.sign, // 商家根据微信开放平台文档对数据做的签名
             })
-            .catch(err => {
-              toastOpts.data = '支付失败';
-              WToast.show(toastOpts);
-            });
-        } else {
-          toastOpts.data = '请先安装微信';
-          WToast.show(toastOpts);
-        }
+              .then(requestJson => {
+                //支付成功回调
+                if (requestJson.errCode == '0') {
+                  //回调成功处理
+                  toastOpts.data = '支付成功';
+                  WToast.show(toastOpts);
+                  this.setState({
+                    modalVisible: false,
+                  });
+                  fetchMoneyAll(login.userId).then(money => {
+                    this.props.saveMoney(money.data);
+                  });
+                }
+              })
+              .catch(err => {
+                toastOpts.data = '支付失败';
+                WToast.show(toastOpts);
+              });
+          } else {
+            toastOpts.data = '请先安装微信';
+            WToast.show(toastOpts);
+          }
+        });
       });
+    } else {
+      getZfbPay(login.userId, sendMoney, 2, '').then(zfb => {
+        console.log('hahaha1', zfb.data);
+        Alipay.pay(zfb.data).then(
+          data => {
+            toastOpts.data = '支付成功';
+            WToast.show(toastOpts);
+            this.setState({
+              modalVisible: false,
+            });
+            fetchMoneyAll(login.userId).then(money => {
+              this.props.saveMoney(money.data);
+            });
+          },
+          err => {},
+        );
+      });
+    }
+  };
+
+  ChangeCheck = () => {
+    this.setState({
+      isWx: !this.state.isWx,
     });
   };
 
   render() {
     const {money, navigation} = this.props;
-    const {modalVisible, sendMoney} = this.state;
+    const {modalVisible, sendMoney, isWx} = this.state;
     const {width} = Dimensions.get('window');
     return (
       <View style={styles.rechargeView}>
@@ -231,7 +260,58 @@ class RechargeScreen extends React.Component {
               <View style={styles.opinionTopTitle}>
                 <Text style={styles.opinionTopTitleTxt}>账户充值</Text>
               </View>
-              <Text style={styles.opinionTitle}>目前仅支持微信充值</Text>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={styles.opinionTitle}>支付方式</Text>
+                <View style={styles.releaseListCheck}>
+                  <TouchableWithoutFeedback onPress={this.ChangeCheck}>
+                    {isWx ? (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckOne,
+                        ]}
+                        source={require('../../assets/checkbox.png')}
+                      />
+                    ) : (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckOne,
+                        ]}
+                        source={require('../../assets/checkboxno.png')}
+                      />
+                    )}
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback onPress={this.ChangeCheck}>
+                    <View>
+                      <Text style={styles.releaseListCheckTxt}>微信</Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback onPress={this.ChangeCheck}>
+                    {isWx ? (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckTwo,
+                        ]}
+                        source={require('../../assets/checkboxno.png')}
+                      />
+                    ) : (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckTwo,
+                        ]}
+                        source={require('../../assets/checkbox.png')}
+                      />
+                    )}
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback onPress={this.ChangeCheck}>
+                    <Text style={styles.releaseListCheckTxt}>支付宝</Text>
+                  </TouchableWithoutFeedback>
+                </View>
+              </View>
+
               <TextInput
                 style={styles.opinionInp}
                 multiline={true}
@@ -373,12 +453,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   opinionTitle: {
-    marginTop: 16.5,
+    marginTop: 20,
     marginBottom: 16.5,
     fontSize: 14,
     color: '#444444',
-    lineHeight: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
     fontWeight: 'normal',
+    marginRight: 10,
   },
   opinionInp: {
     height: 40,
@@ -401,6 +484,27 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#444444',
     fontWeight: 'normal',
+  },
+
+  releaseListCheckTxt: {
+    color: '#666666',
+  },
+  releaseListCheckImg: {
+    width: 22,
+    height: 22,
+    marginRight: 11,
+  },
+  releaseListCheckOne: {
+    marginLeft: 12,
+  },
+  releaseListCheckTwo: {
+    marginLeft: 55,
+  },
+  releaseListCheck: {
+    // flex: 1,
+    flexDirection: 'row',
+    height: 30,
+    // justifyContent: 'center',
   },
 });
 
