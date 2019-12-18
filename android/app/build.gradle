@@ -196,7 +196,7 @@ dependencies {
     implementation project(':react-native-image-picker')
     implementation project(':RCTWeChat')
     implementation project(':@react-native-community_cameraroll')
-    // implementation project(':react-native-qq')
+    // compile project(':react-native-qq')
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

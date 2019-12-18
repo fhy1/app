@@ -12,6 +12,10 @@ import java.util.List;
 import com.imagepicker.ImagePickerPackage;
 import com.theweflex.react.WeChatPackage;
 import com.reactnativecommunity.cameraroll.CameraRollPackage;
+import com.xmfl.xmfking.invokenative.DplusReactPackage;
+import com.xmfl.xmfking.invokenative.RNUMConfigure;
+import com.umeng.socialize.PlatformConfig;
+import com.umeng.commonsdk.UMConfigure;
 // import cn.reactnative.modules.qq.QQPackage;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -29,6 +33,8 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           new ImagePickerPackage();
           new CameraRollPackage();
+          // new DplusReactPackage();
+          packages.add(new DplusReactPackage());
           // new QQPackage();
           packages.add(new WeChatPackage());
           // Packages that cannot be autolinked yet can be added manually here, for example:
@@ -52,6 +58,14 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this); // Remove this line if you don't want Flipper enabled
+    UMConfigure.setLogEnabled(true);
+    RNUMConfigure.init(this, "5df9b20d4ca35705d9000d8a", "Umeng", UMConfigure.DEVICE_TYPE_PHONE, "");
+  }
+
+  {
+    // PlatformConfig.setQQZone("100424468", "c7394704798a158208a74ab60104f0ba");
+    // PlatformConfig.setQQZone("101568934","e912c0ffb846b50f3d2b42fc15b04cfc");
+    PlatformConfig.setQQZone("1106399454", "n3e1dihw0YZAQSjv");
   }
 
   /**

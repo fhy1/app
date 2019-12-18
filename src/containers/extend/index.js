@@ -17,6 +17,8 @@ import * as WeChat from 'react-native-wechat';
 import {WToast} from 'react-native-smart-tip';
 // import * as QQAPI from 'react-native-qq';
 
+import ShareUtil from '../../utils/ShareUtil';
+
 class ExtendScreen extends React.Component {
   static navigationOptions = {
     title: '推广有礼',
@@ -169,6 +171,26 @@ class ExtendScreen extends React.Component {
         '&upUID=' +
         login.uid,
     };
+    console.log(ShareUtil);
+    console.log(ShareUtil.share);
+    ShareUtil.share(
+      qqshareInfo.description,
+      qqshareInfo.imageUrl,
+      qqshareInfo.webpageUrl,
+      qqshareInfo.title,
+      [0],
+      (code, message) => {
+        console.log(message);
+        // this.setState({result: message});
+        if (code == 0) {
+          toastOpts.data = '分享成功';
+          WToast.show(toastOpts);
+        } else {
+          toastOpts.data = '分享失败';
+          WToast.show(toastOpts);
+        }
+      },
+    );
     // QQAPI.isQQInstalled().then(
     //   install => {
     //     QQAPI.shareToQQ(qqshareInfo)
@@ -192,20 +214,38 @@ class ExtendScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
-    // let qqshareInfo = {
-    //   type: 'news',
-    //   imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
-    //   title: '小蜜罐',
-    //   description: '大家一起赚钱拉',
-    //   webpageUrl: 'http://www.lcode.org',
-    // };
-    // // QQAPI.isQQInstalledAction().then(res => {
+    let qqshareInfo = {
+      type: 'news',
+      imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+      title: '小蜜罐',
+      description: '大家一起赚钱拉',
+      webpageUrl: 'http://www.lcode.org',
+    };
+    ShareUtil.share(
+      qqshareInfo.description,
+      qqshareInfo.imageUrl,
+      qqshareInfo.webpageUrl,
+      qqshareInfo.title,
+      [4],
+      (code, message) => {
+        console.log(message);
+        // this.setState({result: message});
+        if (code == 0) {
+          toastOpts.data = '分享成功';
+          WToast.show(toastOpts);
+        } else {
+          toastOpts.data = '分享失败';
+          WToast.show(toastOpts);
+        }
+      },
+    );
+    // QQAPI.isQQInstalledAction().then(res => {
     // QQAPI.shareToQzone(qqshareInfo)
     //   .then(res => {})
     //   .catch(err => {
     //     console.log('分享失败');
     //   });
-    // // });
+    // });
   };
 
   render() {
@@ -218,14 +258,15 @@ class ExtendScreen extends React.Component {
     for (let i = 0; i < 70; i++) {
       dashView.push(<View key={i} style={styles.extendDashed} />);
     }
-    let myInvite = login.uid
-      ? 'http://212.64.70.14/web/resign/main.html?nickName=' +
-        login.nickname +
-        '&headImg=' +
-        login.headimgurl +
-        '&upUID=' +
-        login.uid
-      : '1';
+    let myInvite =
+      login && login.uid
+        ? 'http://212.64.70.14/web/resign/main.html?nickName=' +
+          login.nickname +
+          '&headImg=' +
+          login.headimgurl +
+          '&upUID=' +
+          login.uid
+        : '1';
     return (
       <View style={styles.extendView}>
         <ScrollView>
