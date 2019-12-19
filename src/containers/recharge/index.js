@@ -16,7 +16,7 @@ import {getWxPay, getZfbPay} from '../../api/pay';
 import * as WeChat from 'react-native-wechat';
 import {WToast} from 'react-native-smart-tip';
 import {fetchMoneyAll, saveMoney} from '../../api/myinfo';
-import Alipay from 'react-native-yunpeng-alipay';
+// import Alipay from 'react-native-yunpeng-alipay';
 
 class RechargeScreen extends React.Component {
   static navigationOptions = {
@@ -117,19 +117,22 @@ class RechargeScreen extends React.Component {
     } else {
       getZfbPay(login.userId, sendMoney, 2, '').then(zfb => {
         console.log('hahaha1', zfb.data);
-        Alipay.pay(zfb.data).then(
-          data => {
-            toastOpts.data = '支付成功';
-            WToast.show(toastOpts);
-            this.setState({
-              modalVisible: false,
-            });
-            fetchMoneyAll(login.userId).then(money => {
-              this.props.saveMoney(money.data);
-            });
-          },
-          err => {},
-        );
+
+        toastOpts.data = '暂不支持支付宝';
+        WToast.show(toastOpts);
+        // Alipay.pay(zfb.data).then(
+        //   data => {
+        //     toastOpts.data = '支付成功';
+        //     WToast.show(toastOpts);
+        //     this.setState({
+        //       modalVisible: false,
+        //     });
+        //     fetchMoneyAll(login.userId).then(money => {
+        //       this.props.saveMoney(money.data);
+        //     });
+        //   },
+        //   err => {},
+        // );
       });
     }
   };
@@ -461,7 +464,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     fontWeight: 'normal',
-    marginRight: 10,
+    marginRight: 6,
   },
   opinionInp: {
     height: 40,
@@ -492,13 +495,13 @@ const styles = StyleSheet.create({
   releaseListCheckImg: {
     width: 22,
     height: 22,
-    marginRight: 11,
+    marginRight: 8,
   },
   releaseListCheckOne: {
-    marginLeft: 12,
+    marginLeft: 8,
   },
   releaseListCheckTwo: {
-    marginLeft: 55,
+    marginLeft: 45,
   },
   releaseListCheck: {
     // flex: 1,

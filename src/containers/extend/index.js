@@ -16,8 +16,7 @@ import QRCode from 'react-native-qrcode-svg';
 import * as WeChat from 'react-native-wechat';
 import {WToast} from 'react-native-smart-tip';
 // import * as QQAPI from 'react-native-qq';
-
-import ShareUtil from '../../utils/ShareUtil';
+import ShareUtile from '../../utils/ShareUtil';
 
 class ExtendScreen extends React.Component {
   static navigationOptions = {
@@ -31,7 +30,7 @@ class ExtendScreen extends React.Component {
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
-      fontWeight: 'bold',
+      fontWeight: 'normal',
     },
     /// 注意：如果右边没有视图，那么添加一个空白视图即可
     headerRight: <View />,
@@ -48,7 +47,7 @@ class ExtendScreen extends React.Component {
   componentDidMount = async () => {
     let {login, navigation} = this.props;
     console.log(login);
-    if (login) {
+    if (login && login.userId) {
       console.log(1);
       const [invite, user] = await Promise.all([
         fetchExtendInvite(),
@@ -69,7 +68,7 @@ class ExtendScreen extends React.Component {
   };
 
   OnShareWxFriend = () => {
-    const {login} = this.props;
+    const {login, navigation} = this.props;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -77,40 +76,43 @@ class ExtendScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
-    console.log(1);
-    WeChat.isWXAppInstalled().then(isInstalled => {
-      if (isInstalled) {
-        WeChat.shareToSession({
-          title: '小蜜罐',
-          description:
-            '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
-          thumbImage:
-            'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
-          type: 'news',
-          webpageUrl:
-            'http://212.64.70.14/web/resign/main.html?nickName=' +
-            login.nickname +
-            '&headImg=' +
-            login.headimgurl +
-            '&upUID=' +
-            login.uid,
-          // type: 'text',
-          // description: '大家一起赚钱拉',
-        }).catch(error => {
-          // ToastShort(error.message);
-          toastOpts.data = error.message;
+    if (login && login.uid) {
+      WeChat.isWXAppInstalled().then(isInstalled => {
+        if (isInstalled) {
+          WeChat.shareToSession({
+            title: '小蜜罐',
+            description:
+              '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
+            thumbImage:
+              'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
+            type: 'news',
+            webpageUrl:
+              'http://212.64.70.14/web/resign/main.html?nickName=' +
+              login.nickname +
+              '&headImg=' +
+              login.headimgurl +
+              '&upUID=' +
+              login.uid,
+            // type: 'text',
+            // description: '大家一起赚钱拉',
+          }).catch(error => {
+            // ToastShort(error.message);
+            toastOpts.data = error.message;
+            WToast.show(toastOpts);
+          });
+        } else {
+          toastOpts.data = '没有安装微信软件，请您安装微信之后再试';
           WToast.show(toastOpts);
-        });
-      } else {
-        toastOpts.data = '没有安装微信软件，请您安装微信之后再试';
-        WToast.show(toastOpts);
-        // ToastShort('没有安装微信软件，请您安装微信之后再试');
-      }
-    });
+          // ToastShort('没有安装微信软件，请您安装微信之后再试');
+        }
+      });
+    } else {
+      navigation.navigate('Login');
+    }
   };
 
   OnShareWxFriends = () => {
-    const {login} = this.props;
+    const {login, navigation} = this.props;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -118,33 +120,37 @@ class ExtendScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
-    WeChat.isWXAppInstalled().then(isInstalled => {
-      if (isInstalled) {
-        WeChat.shareToTimeline({
-          title: '小蜜罐',
-          description:
-            '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
-          thumbImage:
-            'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
-          type: 'news',
-          webpageUrl:
-            'http://212.64.70.14/web/resign/main.html?nickName=' +
-            login.nickname +
-            '&headImg=' +
-            login.headimgurl +
-            '&upUID=' +
-            login.uid,
-          // type: 'text',
-          // description: '大家一起赚钱拉',
-        }).catch(error => {
-          toastOpts.data = error.message;
+    if (login && login.uid) {
+      WeChat.isWXAppInstalled().then(isInstalled => {
+        if (isInstalled) {
+          WeChat.shareToTimeline({
+            title: '小蜜罐',
+            description:
+              '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
+            thumbImage:
+              'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
+            type: 'news',
+            webpageUrl:
+              'http://212.64.70.14/web/resign/main.html?nickName=' +
+              login.nickname +
+              '&headImg=' +
+              login.headimgurl +
+              '&upUID=' +
+              login.uid,
+            // type: 'text',
+            // description: '大家一起赚钱拉',
+          }).catch(error => {
+            toastOpts.data = error.message;
+            WToast.show(toastOpts);
+          });
+        } else {
+          toastOpts.data = '没有安装微信软件，请您安装微信之后再试';
           WToast.show(toastOpts);
-        });
-      } else {
-        toastOpts.data = '没有安装微信软件，请您安装微信之后再试';
-        WToast.show(toastOpts);
-      }
-    });
+        }
+      });
+    } else {
+      navigation.navigate('Login');
+    }
   };
 
   OnShareQqFriend = () => {
@@ -155,42 +161,43 @@ class ExtendScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
-    const {login} = this.props;
-    let qqshareInfo = {
-      type: 'news',
-      imageUrl:
-        'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
-      title: '小蜜罐',
-      description:
+    const {login, navigation} = this.props;
+    if (login && login.uid) {
+      let qqshareInfo = {
+        type: 'news',
+        imageUrl:
+          'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
+        title: '小蜜罐',
+        description:
+          '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
+        webpageUrl:
+          'http://212.64.70.14/web/resign/main.html?nickName=' +
+          login.nickname +
+          '&headImg=' +
+          login.headimgurl +
+          '&upUID=' +
+          login.uid,
+      };
+      ShareUtile.share(
         '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
-      webpageUrl:
-        'http://212.64.70.14/web/resign/main.html?nickName=' +
-        login.nickname +
-        '&headImg=' +
-        login.headimgurl +
-        '&upUID=' +
-        login.uid,
-    };
-    console.log(ShareUtil);
-    console.log(ShareUtil.share);
-    ShareUtil.share(
-      qqshareInfo.description,
-      qqshareInfo.imageUrl,
-      qqshareInfo.webpageUrl,
-      qqshareInfo.title,
-      [0],
-      (code, message) => {
-        console.log(message);
-        // this.setState({result: message});
-        if (code == 0) {
-          toastOpts.data = '分享成功';
-          WToast.show(toastOpts);
-        } else {
-          toastOpts.data = '分享失败';
-          WToast.show(toastOpts);
-        }
-      },
-    );
+        qqshareInfo.imageUrl,
+        qqshareInfo.webpageUrl,
+        qqshareInfo.title,
+        0,
+        code => {
+          console.log(('code', code));
+          if (code == 0) {
+            toastOpts.data = '分享成功';
+            WToast.show(toastOpts);
+          } else {
+            toastOpts.data = '分享失败';
+            WToast.show(toastOpts);
+          }
+        },
+      );
+    } else {
+      navigation.navigate('Login');
+    }
     // QQAPI.isQQInstalled().then(
     //   install => {
     //     QQAPI.shareToQQ(qqshareInfo)
@@ -207,6 +214,7 @@ class ExtendScreen extends React.Component {
   };
 
   OnShareQqFriends = () => {
+    const {login, navigation} = this.props;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -214,59 +222,68 @@ class ExtendScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
-    let qqshareInfo = {
-      type: 'news',
-      imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
-      title: '小蜜罐',
-      description: '大家一起赚钱拉',
-      webpageUrl: 'http://www.lcode.org',
-    };
-    ShareUtil.share(
-      qqshareInfo.description,
-      qqshareInfo.imageUrl,
-      qqshareInfo.webpageUrl,
-      qqshareInfo.title,
-      [4],
-      (code, message) => {
-        console.log(message);
-        // this.setState({result: message});
-        if (code == 0) {
-          toastOpts.data = '分享成功';
-          WToast.show(toastOpts);
-        } else {
-          toastOpts.data = '分享失败';
-          WToast.show(toastOpts);
-        }
-      },
-    );
-    // QQAPI.isQQInstalledAction().then(res => {
+    if (login && login.uid) {
+      let qqshareInfo = {
+        type: 'news',
+        imageUrl:
+          'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
+        title: '小蜜罐',
+        description:
+          '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
+        webpageUrl:
+          'http://212.64.70.14/web/resign/main.html?nickName=' +
+          login.nickname +
+          '&headImg=' +
+          login.headimgurl +
+          '&upUID=' +
+          login.uid,
+      };
+      ShareUtile.share(
+        qqshareInfo.description,
+        qqshareInfo.imageUrl,
+        qqshareInfo.webpageUrl,
+        qqshareInfo.title,
+        4,
+        code => {
+          console.log(('code', code));
+          if (code == 0) {
+            toastOpts.data = '分享成功';
+            WToast.show(toastOpts);
+          } else {
+            toastOpts.data = '分享失败';
+            WToast.show(toastOpts);
+          }
+        },
+      );
+    } else {
+      navigation.navigate('Login');
+    }
+    // let qqshareInfo = {
+    //   type: 'news',
+    //   imageUrl: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+    //   title: '小蜜罐',
+    //   description: '大家一起赚钱拉',
+    //   webpageUrl: 'http://www.lcode.org',
+    // };
+    // // QQAPI.isQQInstalledAction().then(res => {
     // QQAPI.shareToQzone(qqshareInfo)
     //   .then(res => {})
     //   .catch(err => {
     //     console.log('分享失败');
     //   });
-    // });
+    // // });
   };
 
   render() {
     const {login} = this.props;
     const {invite, user} = this.state;
     const {width} = Dimensions.get('window');
-    const newwidth = (width - 420) / 2;
+    const newwidth = (width - width * 0.9) / 2;
     const navImageHeight = (width / 748) * 433;
     let dashView = [];
     for (let i = 0; i < 70; i++) {
       dashView.push(<View key={i} style={styles.extendDashed} />);
     }
-    let myInvite =
-      login && login.uid
-        ? 'http://212.64.70.14/web/resign/main.html?nickName=' +
-          login.nickname +
-          '&headImg=' +
-          login.headimgurl +
-          '&upUID=' +
-          login.uid
-        : '1';
     return (
       <View style={styles.extendView}>
         <ScrollView>
@@ -274,7 +291,7 @@ class ExtendScreen extends React.Component {
             <FitImage
               // @ts-ignore
               source={require('../../assets/friend.png')}
-              style={styles.extendTopImg}
+              style={{width: width * 0.9, height: 10}}
               resizeMode="contain"
             />
           </View>

@@ -9,17 +9,10 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    
-    <!--share-->
-    <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> 
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> 
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>  -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> 
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
 
+
+
+    
     <application
       android:name=".MainApplication"
       android:usesCleartextTraffic="true"
@@ -48,28 +41,25 @@
         android:label="@string/app_name"
         android:exported="true"
       />
-      <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
-
+      
       <activity
         android:name="com.tencent.tauth.AuthActivity"
         android:launchMode="singleTask"
         android:noHistory="true" >
         <intent-filter>
-          <action android:name="android.intent.action.VIEW" />
-          <category android:name="android.intent.category.DEFAULT" />
-          <category android:name="android.intent.category.BROWSABLE" />
-          <data android:scheme="tencent1106399454" />
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="tencent1106399454" />
         </intent-filter>
       </activity>
-        <activity
+      <activity
         android:name="com.tencent.connect.common.AssistActivity"
         android:theme="@android:style/Theme.Translucent.NoTitleBar"
         android:configChanges="orientation|keyboardHidden|screenSize"/>
 
-      <meta-data
-          android:name="UMENG_APPKEY"
-          android:value="5df9b20d4ca35705d9000d8a" >   
-      </meta-data>
+      <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+      
     </application>
 
 </manifest>

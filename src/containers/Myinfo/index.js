@@ -233,9 +233,9 @@ class MyInfoScreen extends React.Component {
                   </View>
                 </TouchableOpacity> */}
                 </View>
-                <View style={styles.navViewLine}>
+                {/* <View style={styles.navViewLine}>
                   <View style={styles.navViewLineIn}></View>
-                </View>
+                </View> */}
                 <View style={styles.navViewMoney}>
                   <View>
                     <Text style={styles.navViewMoneyTopTxt}>我的奖励</Text>
@@ -248,9 +248,9 @@ class MyInfoScreen extends React.Component {
                     </Text>
                   </View>
                 </View>
-                <View style={styles.navViewLine}>
+                {/* <View style={styles.navViewLine}>
                   <View style={styles.navViewLineIn}></View>
-                </View>
+                </View> */}
                 <View style={styles.navViewMoney}>
                   <View>
                     <Text style={styles.navViewMoneyTopTxt}>我的余额</Text>
@@ -272,9 +272,9 @@ class MyInfoScreen extends React.Component {
                 </TouchableOpacity> */}
                 </View>
               </View>
-              <View style={{height: 0.5, paddingLeft: 15, paddingRight: 15}}>
+              {/* <View style={{height: 0.5, paddingLeft: 15, paddingRight: 15}}>
                 <View style={styles.navViewLineIn}></View>
-              </View>
+              </View> */}
               <View style={{flexDirection: 'row', height: 40}}>
                 <TouchableOpacity
                   style={{flex: 1}}
@@ -283,17 +283,22 @@ class MyInfoScreen extends React.Component {
                   }}>
                   <View
                     style={{
-                      height: 40,
+                      flexDirection: 'row',
                       flex: 1,
                       alignItems: 'center',
                       justifyContent: 'center',
+                      backgroundColor: '#FFDB44',
                     }}>
                     <Text style={styles.navViewMoneyTopTxt}>会员中心</Text>
+                    <Image
+                      style={{width: 13, height: 26, marginLeft: 10}}
+                      // @ts-ignore
+                      source={require('../../assets/go.png')}
+                      resizeMode="contain"
+                    />
                   </View>
                 </TouchableOpacity>
-                <View style={styles.navViewLine}>
-                  <View style={styles.navViewLineIn}></View>
-                </View>
+                <View style={styles.navViewLine}></View>
                 <TouchableOpacity
                   style={{flex: 1}}
                   onPress={() => {
@@ -309,6 +314,7 @@ class MyInfoScreen extends React.Component {
                       flex: 1,
                       alignItems: 'center',
                       justifyContent: 'center',
+                      backgroundColor: '#FFDB44',
                     }}>
                     <Text style={styles.navViewMoneyTopTxt}>充值提现</Text>
                     <Image
@@ -723,7 +729,6 @@ const styles = StyleSheet.create({
   navView: {
     backgroundColor: '#FFFFFF',
     paddingTop: 5,
-    paddingBottom: 5,
     // flexDirection: 'row',
     marginBottom: 15,
     borderRadius: 4,

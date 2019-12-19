@@ -52,3 +52,35 @@ export function wxUpMoney(userId, cashOutType, cashOutMoney) {
       return Promise.reject(e.message);
     });
 }
+
+export function zfbUpMoney(
+  userId,
+  cashOutType,
+  cashOutMoney,
+  zfbName,
+  zfbAccount,
+) {
+  const url = paramToQuery(
+    `${CASHOUT}?userId=${userId}&cashOutType=${cashOutType}&tradeType=1&cashOutMoney=${cashOutMoney}&zfbName=${zfbName}&zfbAccount=${zfbAccount}`,
+  );
+  console.log('url', url);
+  return fetch(url, {
+    method: 'POST',
+  })
+    .then(res => {
+      console.log(res.status);
+      return res.json();
+    })
+    .then(async data => {
+      console.log('enroll', data);
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
+    })
+    .catch(e => {
+      console.log(e.message);
+      return Promise.reject(e.message);
+    });
+}

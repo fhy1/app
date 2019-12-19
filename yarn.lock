@@ -5846,11 +5846,6 @@ react-native-wechat@^1.9.12:
   dependencies:
     events "1.0.2"
 
-react-native-yunpeng-alipay@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-yunpeng-alipay/-/react-native-yunpeng-alipay-2.0.0.tgz#a9d3d68a5eef2e5c75bb66c460384e1288d9aaad"
-  integrity sha512-zjgDYMkOxidH6zDMkX+OM2ik8sGyPkSYPHXc+K1JNSbGm8Y1a5HLEGxdjZl98N/HJuZMTZInCeuviHVrqbfPSg==
-
 react-native@0.61.3:
   version "0.61.3"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.61.3.tgz#0c7e299ccfa3a5efc6e87e88563f9dc444389aca"

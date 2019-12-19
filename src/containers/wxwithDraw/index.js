@@ -13,7 +13,7 @@ import * as WeChat from 'react-native-wechat';
 
 class WxwithDrawScreen extends React.Component {
   static navigationOptions = {
-    title: '提现',
+    title: '微信提现',
     headerStyle: {
       backgroundColor: '#FFDB44',
       borderBottomWidth: 0,
@@ -51,6 +51,8 @@ class WxwithDrawScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
+    let newMoney = parseInt(dragmoney);
+    console.log(newMoney, dragmoney);
     if (!login.openid) {
       toastOpts.data = '请先登录微信';
       WToast.show(toastOpts);
@@ -59,6 +61,9 @@ class WxwithDrawScreen extends React.Component {
       WToast.show(toastOpts);
     } else if (parseInt(dragmoney) < 1) {
       toastOpts.data = '提现金额必须大于1元';
+      WToast.show(toastOpts);
+    } else if (newMoney != dragmoney) {
+      toastOpts.data = '提现金额必须为1的倍数';
       WToast.show(toastOpts);
     } else {
       let typeId = '';
@@ -74,6 +79,9 @@ class WxwithDrawScreen extends React.Component {
           if (data.status == 2) {
             toastOpts.data = '您已被加入黑名单，提现申请失败';
             WToast.show(toastOpts);
+          } else if (data.status == 0) {
+            toastOpts.data = data.msg;
+            WToast.show(toastOpts);
           } else {
             toastOpts.data = '申请成功，请等待审核';
             WToast.show(toastOpts);
@@ -88,9 +96,8 @@ class WxwithDrawScreen extends React.Component {
   };
 
   handelOnChange = e => {
-    console.log(e);
     this.setState({
-      dragmoney: parseInt(e),
+      dragmoney: e,
     });
   };
 

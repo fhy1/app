@@ -50,7 +50,7 @@ class WithdrawScreen extends React.Component {
   };
 
   withdrawWx = () => {
-    const {navigation, money} = this.props;
+    const {navigation} = this.props;
     const {type} = this.state;
     navigation.navigate('WxwithDraw', {
       type: type,
@@ -58,15 +58,11 @@ class WithdrawScreen extends React.Component {
   };
 
   withdrawZfb = () => {
-    let toastOpts = {
-      data: '',
-      textColor: '#ffffff',
-      backgroundColor: '#444444',
-      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
-      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
-    };
-    toastOpts.data = '暂不支持提现至支付宝';
-    WToast.show(toastOpts);
+    const {navigation} = this.props;
+    const {type} = this.state;
+    navigation.navigate('ZfbwithDraw', {
+      type: type,
+    });
   };
 
   render() {
