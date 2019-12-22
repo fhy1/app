@@ -274,6 +274,15 @@ class ExtendScreen extends React.Component {
     // // });
   };
 
+  GotoMyinvite = () => {
+    const {login, navigation} = this.props;
+    if (login && login.uid) {
+      navigation.navigate('MyInvite');
+    } else {
+      navigation.navigate('Login');
+    }
+  };
+
   render() {
     const {login} = this.props;
     const {invite, user} = this.state;
@@ -427,14 +436,17 @@ class ExtendScreen extends React.Component {
                     }}>
                     邀请好友
                   </Text>
-                  <Text
-                    style={{
-                      color: '#F75139',
-                      fontWeight: 'bold',
-                      fontSize: 18,
-                    }}>
-                    {user.totalNum || 0} 人
-                  </Text>
+                  <TouchableOpacity onPress={this.GotoMyinvite}>
+                    <Text
+                      style={{
+                        color: '#F75139',
+                        fontWeight: 'bold',
+                        fontSize: 18,
+                        textDecorationLine: 'underline',
+                      }}>
+                      {user.totalNum || 0} 人
+                    </Text>
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.extendShareBodyView}>
                   <Text

@@ -61,7 +61,7 @@ class ZfbwithDrawScreen extends React.Component {
     } else if (parseInt(dragmoney) > money[type]) {
       toastOpts.data = '您输入的提现金额大于那您的可提现资产';
       WToast.show(toastOpts);
-    } else if (parseInt(dragmoney) < 1) {
+    } else if (parseInt(dragmoney) < 100) {
       toastOpts.data = '提现金额必须大于100元';
       WToast.show(toastOpts);
     } else if (newMoney != dragmoney) {

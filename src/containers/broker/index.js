@@ -1,10 +1,15 @@
 import React from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, Image, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import HTMLView from 'react-native-htmlview';
+import {WebView} from 'react-native-webview';
 import {fetchRule} from '../../api/broker';
 import styled from 'styled-components';
+const {width, height} = Dimensions.get('window');
 // import {AutoSizedImage} from '../../components/AutoSizedImage/AutoSizedImage.js';
+
+const injectedJs =
+  'setInterval(() => {window.parent.postMessage(document.getElementById("content").clientHeight)}, 500)';
 
 class BrokerScreen extends React.Component {
   constructor(props) {
@@ -64,7 +69,52 @@ class BrokerScreen extends React.Component {
   render() {
     const {wrapper} = this.state;
     console.log(wrapper);
-    return <HTMLView value={wrapper} renderNode={this.renderNode} />;
+    return (
+      <View style={styles.brokerView}>
+        <WebView
+          style={{width: width, height: height}}
+          injectedJavaScript={injectedJs}
+          automaticallyAdjustContentInsets={true}
+          source={{
+            html: `<!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+                <title></title>
+              </head>
+              <body>
+              ${wrapper}
+              </body>
+            </html>`,
+          }}
+          scalesPageToFit={true}
+          javaScriptEnabled={true} // 仅限Android平台。iOS平台JavaScript是默认开启的。
+          domStorageEnabled={true} // 适用于安卓a
+          scrollEnabled={false}
+        />
+      </View>
+    );
+    // <WebView
+    //   style={{
+    //     width: Dimensions.get('window').width,
+    //     height: this.state.height,
+    //   }}
+    //   injectedJavaScript={injectedJs}
+    //   automaticallyAdjustContentInsets={true}
+    //   source={{
+    //     html: wrapper,
+    //   }}
+    // scalesPageToFit={true}
+    // javaScriptEnabled={true} // 仅限Android平台。iOS平台JavaScript是默认开启的。
+    // domStorageEnabled={true} // 适用于安卓a
+    // scrollEnabled={false}
+    // onMessage={event => {
+    //   console.log(event.nativeEvent.data);
+    //   this.setState({height: +event.nativeEvent.data});
+    // }}
+    // />;
+    // return <HTMLView value={wrapper} renderNode={this.renderNode} />;
   }
 }
 import {from} from 'rxjs';
@@ -72,6 +122,8 @@ import {from} from 'rxjs';
 const styles = StyleSheet.create({
   brokerView: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#F5F5F5',
   },
 });

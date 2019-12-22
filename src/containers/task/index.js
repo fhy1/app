@@ -67,6 +67,7 @@ class TaskScreen extends React.Component {
       login.userId,
       labelStatus,
     );
+    console.log(task);
     this.setState({
       task: task.data,
       taskList: task.data.list,
@@ -312,10 +313,19 @@ class TaskScreen extends React.Component {
             >
               <View style={styles.taskList}>
                 <View style={styles.taskListIcon}>
-                  <Image
-                    style={styles.taskListIconImg}
-                    // @ts-ignore
-                    source={require('../../assets/head.png')}></Image>
+                  {item.headimgurl ? (
+                    <Image
+                      style={styles.taskListIconImg}
+                      // @ts-ignore
+                      source={{uri: item.headimgurl}}
+                    />
+                  ) : (
+                    <Image
+                      style={styles.taskListIconImg}
+                      // @ts-ignore
+                      source={require('../../assets/head.png')}
+                    />
+                  )}
                 </View>
                 <View style={styles.taskListBody}>
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>

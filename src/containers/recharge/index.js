@@ -47,6 +47,12 @@ class RechargeScreen extends React.Component {
 
   componentDidMount = () => {};
 
+  componentWillUnmount = () => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
   moneyIn = () => {
     this.setState({
       modalVisible: true,

@@ -15,6 +15,9 @@ import {connect} from 'react-redux';
 import {WToast} from 'react-native-smart-tip';
 import {fetchChartRecord, addChart, fetchChart} from '../../api/chart';
 import {saveChart} from '../../api/myinfo';
+import ImagePicker from 'react-native-image-picker';
+import {upLoadImg} from '../../api/upload';
+import {paramToQuery2} from '../../utils/fetch';
 
 class ChartScreen extends React.Component {
   static navigationOptions = {
@@ -42,6 +45,7 @@ class ChartScreen extends React.Component {
       refreshing: false,
       page: 1,
       size: 5,
+      imgsize: [],
     };
   }
 
@@ -88,10 +92,21 @@ class ChartScreen extends React.Component {
             res.data.list.forEach(item => {
               newList.splice(0, 0, item);
             });
-            this.setState({
-              chartList: newList,
-              page: res.data.pageNum,
-            });
+            this.setState(
+              {
+                chartList: newList,
+                page: res.data.pageNum,
+              },
+              () => {
+                console.log(111);
+                const {chartList} = this.state;
+                chartList.forEach((item, index) => {
+                  if (item.type == 2) {
+                    this.setSize(paramToQuery2(item.content), index);
+                  }
+                });
+              },
+            );
           }
         }
         fetchChart(data).then(news => {
@@ -135,16 +150,41 @@ class ChartScreen extends React.Component {
               chartList.splice(0, 0, item);
             });
             console.log(res);
-            this.setState({
-              page: res.data.pageNum,
-              chartList: chartList,
-              refreshing: false,
-            });
+            this.setState(
+              {
+                page: res.data.pageNum,
+                chartList: chartList,
+                refreshing: false,
+              },
+              () => {
+                const {chartList} = this.state;
+                chartList.forEach((item, index) => {
+                  console.log(111);
+                  if (item.type == 2) {
+                    this.setSize(paramToQuery2(item.content), index);
+                  }
+                });
+              },
+            );
           },
           () => {},
         );
       },
     );
+  };
+
+  setSize = (uri, index) => {
+    let {imgsize} = this.state;
+    console.log(uri);
+    Image.getSize(uri, (w, h) => {
+      imgsize[index] = {
+        width: w,
+        height: h,
+      };
+      this.setState({
+        imgsize: imgsize,
+      });
+    });
   };
 
   handelOnSerchHall = () => {
@@ -163,6 +203,7 @@ class ChartScreen extends React.Component {
         userId: login.userId,
         targetId: chartUserId,
         newsContent: chartTxt,
+        type: 1,
       };
       let data2 = {
         userId: login.userId,
@@ -187,12 +228,96 @@ class ChartScreen extends React.Component {
       chartTxt: e,
     });
   };
+
   _onRefresh = () => {
     this.setState({refreshing: true});
     this.fetchHistoryChart();
   };
+
+  selectPhotoTapped = () => {
+    const {login} = this.props;
+    const {chartUserId} = this.state;
+    const options = {
+      title: '选择图片',
+      cancelButtonTitle: '取消',
+      takePhotoButtonTitle: '拍照',
+      chooseFromLibraryButtonTitle: '选择照片',
+      // customButtons: [{name: 'fb', title: 'Choose Photo from Facebook'}],
+      cameraType: 'back',
+      mediaType: 'photo',
+      videoQuality: 'high',
+      durationLimit: 10,
+      maxWidth: 300,
+      maxHeight: 300,
+      quality: 0.8,
+      angle: 0,
+      allowsEditing: false,
+      noData: false,
+      storageOptions: {
+        skipBackup: true,
+      },
+      permissionDenied: {
+        title: '没有权限',
+        text: '需要调用您的摄像头权限，可去设置-应用-权限中赋予',
+        reTryTitle: '重试',
+        okTitle: '确定',
+      },
+    };
+
+    ImagePicker.showImagePicker(options, response => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled photo picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        let source = {
+          uri: response.uri,
+          name: response.fileName,
+          type: 'image/png',
+        };
+        upLoadImg(source).then(img => {
+          console.log('source', img);
+
+          let data = {
+            userId: login.userId,
+            targetId: chartUserId,
+            newsContent: img.data,
+            type: 2,
+          };
+          let data2 = {
+            userId: login.userId,
+            targetId: chartUserId,
+            pageNo: 1,
+            pageSize: 5,
+          };
+          addChart(data).then(() => {
+            this.setState({
+              chartTxt: '',
+            });
+            this.fetchChart(data2);
+          });
+          // this.setState({
+          //   imgUrl: img.data,
+          // });
+        });
+        // let source = {uri: response.uri};
+
+        // // You can also display the image using data:
+        // // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+        // this.setState({
+        //   avatarSource: source,
+        // });
+      }
+    });
+  };
+
   render() {
-    const {chartTxt, chartList} = this.state;
+    const {chartTxt, chartList, imgsize} = this.state;
     const {login} = this.props;
     return (
       <View style={styles.chartView}>
@@ -211,9 +336,19 @@ class ChartScreen extends React.Component {
               {item.sendId == login.userId ? (
                 <View style={styles.listRight}>
                   <View style={styles.listRightChart}>
-                    <Text style={styles.listRightChartView}>
-                      {item.content}
-                    </Text>
+                    {item.type == 2 ? (
+                      <Image
+                        style={{
+                          width: imgsize[index] ? imgsize[index].width : 0,
+                          height: imgsize[index] ? imgsize[index].height : 0,
+                        }}
+                        source={{uri: paramToQuery2(item.content)}}
+                      />
+                    ) : (
+                      <Text style={styles.listRightChartView}>
+                        {item.content}
+                      </Text>
+                    )}
                   </View>
                   <View style={styles.listRightImg}>
                     <Image
@@ -231,7 +366,19 @@ class ChartScreen extends React.Component {
                     />
                   </View>
                   <View style={styles.listLeftChart}>
-                    <Text style={styles.listLeftChartTxt}>{item.content}</Text>
+                    {item.type == 2 ? (
+                      <Image
+                        style={{
+                          width: imgsize[index] ? imgsize[index].width : 0,
+                          height: imgsize[index] ? imgsize[index].height : 0,
+                        }}
+                        source={{uri: paramToQuery2(item.content)}}
+                      />
+                    ) : (
+                      <Text style={styles.listLeftChartTxt}>
+                        {item.content}
+                      </Text>
+                    )}
                   </View>
                 </View>
               )}
@@ -251,6 +398,11 @@ class ChartScreen extends React.Component {
           <TouchableOpacity onPress={this.handelOnSerchHall}>
             <View style={styles.navSearchBtn}>
               <Text>发 送</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.selectPhotoTapped}>
+            <View style={styles.navSearchRole}>
+              <Text style={{fontSize: 20}}>+</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -288,6 +440,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFDB44',
     marginLeft: 10,
     borderRadius: 4,
+  },
+  navSearchRole: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFDB44',
+    marginLeft: 10,
+    borderRadius: 22,
   },
 
   flatList: {

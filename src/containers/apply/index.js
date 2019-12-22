@@ -15,6 +15,7 @@ import {fetchAudit, editAudit} from '../../api/apply';
 import {WToast} from 'react-native-smart-tip';
 import {paramToQuery2} from '../../utils/fetch';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import {DownloadImage} from '../../utils/downloadImage';
 
 class ApplyScreen extends React.Component {
   static navigationOptions = {
@@ -170,6 +171,31 @@ class ApplyScreen extends React.Component {
     });
   };
 
+  handelSavePicture = uri => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    DownloadImage(uri)
+      .then(res => {
+        if (res.statusCode == 200) {
+          toastOpts.data = '图片保存成功';
+          WToast.show(toastOpts);
+        } else {
+          toastOpts.data = '图片保存失败';
+          WToast.show(toastOpts);
+        }
+      })
+      .catch(error => {
+        toastOpts.data = '图片保存失败';
+        WToast.show(toastOpts);
+        console.log(error);
+      });
+  };
+
   render() {
     const {
       labels,
@@ -260,9 +286,34 @@ class ApplyScreen extends React.Component {
                         source={{uri: paramToQuery2(item2)}}
                         style={{width: 100, height: 100, resizeMode: 'cover'}}
                       />
+                      <TouchableOpacity
+                        onPress={this.handelSavePicture.bind(
+                          this,
+                          paramToQuery2(item2),
+                        )}>
+                        <View style={styles.savePicture}>
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              color: '#444444',
+                            }}>
+                            保存图片
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
                     </TouchableOpacity>
                   );
                 })}
+              </View>
+              <View style={styles.applyListNav}>
+                <Text
+                  style={[
+                    styles.applyListNavTxt,
+                    {paddingTop: 15, paddingBottom: 15},
+                  ]}
+                  selectable={true}>
+                  提交信息: {item.commitInfo}
+                </Text>
               </View>
               <View style={styles.applyListNav}>
                 <Text style={styles.applyListNavTxt}>{item.commitTime}</Text>
@@ -557,6 +608,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#444444',
     fontWeight: 'normal',
+  },
+
+  savePicture: {
+    width: 80,
+    height: 28,
+    backgroundColor: '#FFDB44',
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    marginLeft: 10,
   },
 });
 
