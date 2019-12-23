@@ -9,6 +9,7 @@ import {
   TextInput,
   Dimensions,
   Image,
+  Clipboard,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {fetchAudit, editAudit} from '../../api/apply';
@@ -196,6 +197,19 @@ class ApplyScreen extends React.Component {
       });
   };
 
+  clickTxt = txt => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    Clipboard.setString(txt);
+    toastOpts.data = '已成功复制到剪切板';
+    WToast.show(toastOpts);
+  };
+
   render() {
     const {
       labels,
@@ -280,9 +294,9 @@ class ApplyScreen extends React.Component {
                 {item.imgList.map((item2, index2) => {
                   return (
                     <TouchableOpacity
+                      key={index2}
                       onPress={this.onShowImg.bind(this, paramToQuery2(item2))}>
                       <Image
-                        key={index2}
                         source={{uri: paramToQuery2(item2)}}
                         style={{width: 100, height: 100, resizeMode: 'cover'}}
                       />
@@ -311,7 +325,8 @@ class ApplyScreen extends React.Component {
                     styles.applyListNavTxt,
                     {paddingTop: 15, paddingBottom: 15},
                   ]}
-                  selectable={true}>
+                  selectable={true}
+                  onLongPress={this.clickTxt.bind(this, item.commitInfo)}>
                   提交信息: {item.commitInfo}
                 </Text>
               </View>

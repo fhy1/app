@@ -45,6 +45,7 @@ export function fetchHomeImg() {
       return res.json();
     })
     .then(data => {
+      console.log(data);
       if (data.error) {
         return Promise.reject(data);
       } else {

@@ -548,6 +548,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     backgroundColor: '#FFFFFF',
+    height: '100%',
   },
   hallFlatListLine: {
     width: '100%',

@@ -316,9 +316,9 @@ class HallDetailScreen extends React.Component {
       mediaType: 'photo',
       videoQuality: 'high',
       durationLimit: 10,
-      maxWidth: 300,
-      maxHeight: 300,
-      quality: 0.8,
+      maxWidth: 800,
+      maxHeight: 800,
+      quality: 1,
       angle: 0,
       allowsEditing: false,
       noData: false,
@@ -721,6 +721,7 @@ class HallDetailScreen extends React.Component {
           onRequestClose={() => this.setState({imgVisible: false})}>
           <ImageViewer
             onClick={() => this.setState({imgVisible: false})}
+            enableImageZoom={true}
             imageUrls={images}
             index={0}
           />

@@ -41,6 +41,7 @@ class ExtendScreen extends React.Component {
     this.state = {
       invite: [],
       user: {},
+      myuri: 'http://lxiaomifeng.cn',
     };
   }
 
@@ -69,6 +70,7 @@ class ExtendScreen extends React.Component {
 
   OnShareWxFriend = () => {
     const {login, navigation} = this.props;
+    const {myuri} = this.state;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -84,11 +86,13 @@ class ExtendScreen extends React.Component {
             description:
               '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
             thumbImage:
-              'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
+              myuri +
+              ':9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
             type: 'news',
             webpageUrl:
-              'http://212.64.70.14/web/resign/main.html?nickName=' +
-              login.nickname +
+              myuri +
+              '/web/resign/main.html?nickName=' +
+              encodeURI(login.nickname) +
               '&headImg=' +
               login.headimgurl +
               '&upUID=' +
@@ -113,6 +117,7 @@ class ExtendScreen extends React.Component {
 
   OnShareWxFriends = () => {
     const {login, navigation} = this.props;
+    const {myuri} = this.state;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -128,11 +133,13 @@ class ExtendScreen extends React.Component {
             description:
               '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
             thumbImage:
-              'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
+              myuri +
+              ':9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
             type: 'news',
             webpageUrl:
-              'http://212.64.70.14/web/resign/main.html?nickName=' +
-              login.nickname +
+              myuri +
+              '/web/resign/main.html?nickName=' +
+              encodeURI(login.nickname) +
               '&headImg=' +
               login.headimgurl +
               '&upUID=' +
@@ -162,17 +169,20 @@ class ExtendScreen extends React.Component {
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
     const {login, navigation} = this.props;
+    const {myuri} = this.state;
     if (login && login.uid) {
       let qqshareInfo = {
         type: 'news',
         imageUrl:
-          'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
+          myuri +
+          '/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
         title: '小蜜罐',
         description:
           '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
         webpageUrl:
-          'http://212.64.70.14/web/resign/main.html?nickName=' +
-          login.nickname +
+          myuri +
+          '/web/resign/main.html?nickName=' +
+          encodeURI(login.nickname) +
           '&headImg=' +
           login.headimgurl +
           '&upUID=' +
@@ -215,6 +225,7 @@ class ExtendScreen extends React.Component {
 
   OnShareQqFriends = () => {
     const {login, navigation} = this.props;
+    const {myuri} = this.state;
     let toastOpts = {
       data: '',
       textColor: '#ffffff',
@@ -226,13 +237,15 @@ class ExtendScreen extends React.Component {
       let qqshareInfo = {
         type: 'news',
         imageUrl:
-          'http://212.64.70.14:9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
+          myuri +
+          '/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
         title: '小蜜罐',
         description:
           '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
         webpageUrl:
-          'http://212.64.70.14/web/resign/main.html?nickName=' +
-          login.nickname +
+          myuri +
+          '/web/resign/main.html?nickName=' +
+          encodeURI(login.nickname) +
           '&headImg=' +
           login.headimgurl +
           '&upUID=' +

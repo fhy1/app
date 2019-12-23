@@ -50,10 +50,12 @@ class HomeScreen extends React.Component {
     if (data && data !== 'err') {
       this.props.getLogin(data);
     }
+    console.log(222);
     const [homeImgs, recommend] = await Promise.all([
       fetchHomeImg(),
       fetchHomeRecommend(1, 10),
     ]);
+    console.log(111);
     let signStatus = null;
     if (data && data.userId) {
       signStatus = await fetchHomeSignIn(data.userId);
