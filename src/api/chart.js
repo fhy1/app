@@ -32,6 +32,7 @@ export function fetchChartRecord(data) {
       return res.json();
     })
     .then(data => {
+      console.log(data);
       if (data.error) {
         return Promise.reject(data);
       } else {
@@ -45,7 +46,7 @@ export function fetchChartRecord(data) {
 
 export function addChart(data) {
   const url = paramToQuery(
-    `${RECORD}?userId=${data.userId}&targetId=${data.targetId}&newsContent=${data.newsContent}`,
+    `${RECORD}?userId=${data.userId}&targetId=${data.targetId}&newsContent=${data.newsContent}&type=${data.type}`,
   );
   return fetch(url, {
     method: 'post',

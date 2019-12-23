@@ -305,7 +305,7 @@ class HallDetailScreen extends React.Component {
   };
 
   //选择图片
-  selectPhotoTapped(index) {
+  selectPhotoTapped = index => {
     const options = {
       title: '选择图片',
       cancelButtonTitle: '取消',
@@ -370,7 +370,7 @@ class HallDetailScreen extends React.Component {
         // });
       }
     });
-  }
+  };
 
   clickToPerson = () => {
     const {login} = this.props;

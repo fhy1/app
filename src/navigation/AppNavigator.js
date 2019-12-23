@@ -37,6 +37,7 @@ import ReportedScreen from '../containers/reported/index';
 import ServiceScreen from '../containers/service/index';
 import RuleScreen from '../containers/rule/index';
 import FootScreen from '../containers/foot/index';
+import MyInviteScreen from '../containers/myInvite/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -389,6 +390,17 @@ export default createAppContainer(
     },
     Foot: {
       screen: FootScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    MyInvite: {
+      screen: MyInviteScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image

@@ -622,7 +622,9 @@ class HomeScreen extends React.Component {
                           </View>
                           <View style={styles.homeListBody}>
                             <View>
-                              <Text style={styles.homeListBodyText}>
+                              <Text
+                                style={styles.homeListBodyText}
+                                numberOfLines={1}>
                                 {item.jobTitle}
                               </Text>
                             </View>

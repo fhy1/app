@@ -6,13 +6,16 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  Modal,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {WToast} from 'react-native-smart-tip';
-import {getWxPay} from '../../api/pay';
+import {getWxPay, banancePay} from '../../api/pay';
 import * as WeChat from 'react-native-wechat';
 import {getData, setData} from '../../utils/storage';
+import {fetchMoneyAll, saveMoney} from '../../api/myinfo';
 
 class MemberScreen extends React.Component {
   static navigationOptions = {
@@ -78,12 +81,31 @@ class MemberScreen extends React.Component {
           before: true,
         },
       ],
+      modalVisible: false,
+      money: 0,
+      sendType: 0,
+      payType: '',
     };
   }
 
   componentDidMount = () => {};
 
+  componentWillUnmount = () => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
   memberPross = async (sendMoney, index) => {
+    this.setState({
+      money: sendMoney,
+      sendType: index,
+      modalVisible: true,
+    });
+  };
+
+  wxPross = async (sendMoney, index) => {
+    console.log(sendMoney, index);
     const {login} = this.props;
     let toastOpts = {
       data: '',
@@ -115,6 +137,9 @@ class MemberScreen extends React.Component {
                 this.props.getLogin(loginThing);
                 setData('userNews', loginThing);
               }
+              this.setState({
+                modalVisible: false,
+              });
             })
             .catch(err => {
               toastOpts.data = '支付失败';
@@ -128,8 +153,71 @@ class MemberScreen extends React.Component {
     });
   };
 
+  BalancePay = (sendMoney, index) => {
+    const {login, money} = this.props;
+    console.log(money);
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    if (sendMoney > money.repaidBalance) {
+      toastOpts.data = '余额不足';
+      WToast.show(toastOpts);
+    } else {
+      banancePay(login.userId, sendMoney, index).then(
+        () => {
+          toastOpts.data = '充值成功';
+          WToast.show(toastOpts);
+          this.setState({
+            modalVisible: false,
+          });
+          fetchMoneyAll(login.userId).then(money => {
+            this.props.saveMoney(money.data);
+          });
+        },
+        () => {
+          toastOpts.data = '充值失败';
+          WToast.show(toastOpts);
+        },
+      );
+    }
+  };
+
+  CloseModel = () => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
+  ChangeCheck = type => {
+    this.setState({payType: type});
+  };
+
+  addSubmit = () => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    const {money, sendType, payType} = this.state;
+    if (payType == 'wx') {
+      this.wxPross(money, sendType);
+    } else if (payType == 'zfb') {
+      toastOpts.data = '暂不支持支付宝支付';
+      WToast.show(toastOpts);
+    } else if (payType == 'balance') {
+      this.BalancePay(money, sendType);
+    }
+  };
+
   render() {
-    const {rules} = this.state;
+    const {rules, modalVisible, payType} = this.state;
+    const {width} = Dimensions.get('window');
     return (
       <View style={styles.memberView}>
         <ScrollView>
@@ -244,6 +332,113 @@ class MemberScreen extends React.Component {
             </Text>
           </View>
         </ScrollView>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={this.CloseModel}>
+          <View style={styles.taskModal}>
+            <View style={[styles.opinionModalView, {width: width * 0.8}]}>
+              <View style={styles.opinionTopTitle}>
+                <Text style={styles.opinionTopTitleTxt}>会员充值</Text>
+              </View>
+              <Text style={styles.opinionTitle}>支付方式</Text>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={styles.releaseListCheck}>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 'balance')}>
+                    {payType == 'balance' ? (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckOne,
+                        ]}
+                        source={require('../../assets/checkbox.png')}
+                      />
+                    ) : (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckOne,
+                        ]}
+                        source={require('../../assets/checkboxno.png')}
+                      />
+                    )}
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 'balance')}>
+                    <View>
+                      <Text style={styles.releaseListCheckTxt}>余额</Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 'wx')}>
+                    {payType == 'wx' ? (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckTwo,
+                        ]}
+                        source={require('../../assets/checkbox.png')}
+                      />
+                    ) : (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckTwo,
+                        ]}
+                        source={require('../../assets/checkboxno.png')}
+                      />
+                    )}
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 'wx')}>
+                    <Text style={styles.releaseListCheckTxt}>微信</Text>
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 'zfb')}>
+                    {payType == 'zfb' ? (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckTwo,
+                        ]}
+                        source={require('../../assets/checkbox.png')}
+                      />
+                    ) : (
+                      <Image
+                        style={[
+                          styles.releaseListCheckImg,
+                          styles.releaseListCheckTwo,
+                        ]}
+                        source={require('../../assets/checkboxno.png')}
+                      />
+                    )}
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={this.ChangeCheck.bind(this, 'zfb')}>
+                    <Text style={styles.releaseListCheckTxt}>支付宝</Text>
+                  </TouchableWithoutFeedback>
+                </View>
+              </View>
+
+              <View style={styles.opinionBtnView}>
+                <TouchableOpacity onPress={this.CloseModel}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#DDDDDD'}]}>
+                    <Text style={styles.opinionTxt}>取消</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.addSubmit}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#FFDB44'}]}>
+                    <Text style={styles.opinionTxt}>充值</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -327,7 +522,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   memberTrOne: {
-    flex: 2,
+    flex: 3,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -352,7 +547,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   memberTdOne: {
-    flex: 2,
+    flex: 3,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -365,17 +560,95 @@ const styles = StyleSheet.create({
   memberTab: {
     flexDirection: 'row',
   },
+
+  //弹框
+  taskModal: {
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    flex: 1,
+    alignItems: 'center',
+  },
+
+  opinionModalView: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 96,
+    padding: 13,
+    borderRadius: 4,
+  },
+  opinionTopTitle: {
+    alignItems: 'center',
+  },
+  opinionTopTitleTxt: {
+    fontSize: 16,
+    color: '#444444',
+    fontWeight: 'bold',
+  },
+  opinionTitle: {
+    marginTop: 20,
+    marginBottom: 16.5,
+    fontSize: 14,
+    color: '#444444',
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 'normal',
+    marginRight: 6,
+  },
+  opinionInp: {
+    height: 40,
+    backgroundColor: '#F3F3F3',
+  },
+  opinionBtnView: {
+    marginTop: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  opinionBtn: {
+    width: 120,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  opinionTxt: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'normal',
+  },
+
+  releaseListCheckTxt: {
+    color: '#666666',
+  },
+  releaseListCheckImg: {
+    width: 22,
+    height: 22,
+    marginRight: 8,
+  },
+  releaseListCheckOne: {
+    marginLeft: 8,
+  },
+  releaseListCheckTwo: {
+    marginLeft: 35,
+  },
+  releaseListCheck: {
+    // flex: 1,
+    flexDirection: 'row',
+    height: 30,
+    // justifyContent: 'center',
+  },
 });
 
 function mapStateToProps(state) {
   return {
     login: state.login.login,
+    money: state.myinfo.money,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     getLogin: data => dispatch(getLogin(data)),
+    saveMoney: data => dispatch(saveMoney(data)),
   };
 }
 

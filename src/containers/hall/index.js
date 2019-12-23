@@ -316,7 +316,9 @@ class HallScreen extends React.Component {
                 </View>
                 <View style={styles.hallListBody}>
                   <View>
-                    <Text style={styles.hallListBodyText}>{item.jobTitle}</Text>
+                    <Text style={styles.hallListBodyText} numberOfLines={1}>
+                      {item.jobTitle}
+                    </Text>
                   </View>
                   <View style={styles.hallListBodyView}>
                     <View style={styles.hallListBodybtn1}>
