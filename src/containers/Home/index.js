@@ -24,6 +24,7 @@ import {
 } from '../../api/home';
 import {paramToQuery2} from '../../utils/fetch';
 import {WToast} from 'react-native-smart-tip';
+import SplashScreen from 'react-native-splash-screen';
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -57,6 +58,7 @@ class HomeScreen extends React.Component {
     if (data && data.userId) {
       signStatus = await fetchHomeSignIn(data.userId);
     }
+    SplashScreen.hide();
     this.setState({
       homeImgs: homeImgs.data ? homeImgs.data : [],
       signFlag: signStatus && signStatus.data == 2 ? true : false,

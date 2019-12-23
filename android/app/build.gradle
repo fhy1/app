@@ -196,6 +196,7 @@ dependencies {
     implementation project(':react-native-image-picker')
     implementation project(':RCTWeChat')
     implementation project(':@react-native-community_cameraroll')
+    implementation project(':react-native-splash-screen')
     // compile project(':react-native-qq')
 
     if (enableHermes) {

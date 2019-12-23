@@ -9,9 +9,11 @@ import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
 import com.imagepicker.ImagePickerPackage;
 import com.theweflex.react.WeChatPackage;
 import com.reactnativecommunity.cameraroll.CameraRollPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 // import cn.reactnative.modules.qq.QQPackage;
 
 import com.umeng.commonsdk.UMConfigure;
@@ -32,9 +34,10 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
+          // new QQPackage();
           new ImagePickerPackage();
           new CameraRollPackage();
-          // new QQPackage();
+          new SplashScreenReactPackage();
           packages.add(new WeChatPackage());
           packages.add(new DplusReactPackage());
           // Packages that cannot be autolinked yet can be added manually here, for example:

@@ -8,6 +8,8 @@ import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
+import org.devio.rn.splashscreen.SplashScreen; // 启动页设置添加代码
+
 import com.umeng.socialize.UMShareAPI;
 import com.xmfl.xmfking.invokenative.ShareModule;
 
@@ -19,6 +21,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    SplashScreen.show(this); // 展示启动页设置代码
     super.onCreate(savedInstanceState);
     ShareModule.initSocialSDK(this);
   }
