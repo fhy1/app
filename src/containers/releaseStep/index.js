@@ -221,6 +221,18 @@ class ReleaseStepScreen extends React.Component {
 
   addSubmit = () => {
     const {stepDetail, imgUrl} = this.state;
+    if (stepDetail.type == 1 && imgUrl == '') {
+      let toastOpts = {
+        data: '',
+        textColor: '#ffffff',
+        backgroundColor: '#444444',
+        duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+        position: WToast.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+      };
+      toastOpts.data = '请选择图片';
+      WToast.show(toastOpts);
+      return;
+    }
     this.setState(state => {
       const newsteps =
         stepDetail.type == 1
@@ -292,11 +304,9 @@ class ReleaseStepScreen extends React.Component {
               fetchMoneyAll(login.userId).then(money => {
                 this.props.saveMoney(money.data);
               });
-              setTimeout(() => {
-                navigation.navigate('MyInfo');
-              }, 1000);
+              navigation.navigate('MyInfo');
+              this.state.isclick = false;
             }
-            this.state.isclick = false;
           },
           () => {
             this.state.isclick = false;

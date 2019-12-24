@@ -302,7 +302,7 @@ class TaskScreen extends React.Component {
               </View>
             ) : null
           }
-          onEndReachedThreshold={0}
+          onEndReachedThreshold={1}
           onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
             <TouchableOpacity
@@ -329,7 +329,9 @@ class TaskScreen extends React.Component {
                 </View>
                 <View style={styles.taskListBody}>
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={styles.taskListBodyText}>{item.jobId}</Text>
+                    <Text style={styles.taskListBodyText} numberOfLines={1}>
+                      {item.jobTitle}
+                    </Text>
                     {labelStatus == 5 ? (
                       <TouchableOpacity
                         onPress={this.clickReport.bind(this, item.taskId)}>

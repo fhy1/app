@@ -148,7 +148,9 @@ class footScreen extends React.Component {
                 </View>
                 <View style={styles.footListBody}>
                   <View>
-                    <Text style={styles.footListBodyText}>{item.jobTitle}</Text>
+                    <Text style={styles.footListBodyText} numberOfLines={1}>
+                      {item.jobTitle}
+                    </Text>
                   </View>
                   <View style={styles.footListBodyView}>
                     <View style={styles.footListBodybtn1}>
@@ -267,7 +269,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   footListBodyText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#444444',
     fontWeight: 'bold',
   },

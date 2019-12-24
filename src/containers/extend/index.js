@@ -41,7 +41,8 @@ class ExtendScreen extends React.Component {
     this.state = {
       invite: [],
       user: {},
-      myuri: 'http://lxiaomifeng.cn',
+      // myuri: 'http://lxiaomifeng.cn',
+      myuri: 'http://212.64.70.14',
     };
   }
 
@@ -175,7 +176,7 @@ class ExtendScreen extends React.Component {
         type: 'news',
         imageUrl:
           myuri +
-          '/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
+          ':9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
         title: '小蜜罐',
         description:
           '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
@@ -238,7 +239,7 @@ class ExtendScreen extends React.Component {
         type: 'news',
         imageUrl:
           myuri +
-          '/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
+          ':9099/resource/2019-12-12/png/1576135998492_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191212153250.png',
         title: '小蜜罐',
         description:
           '躺在家里就能赚钱了，真实，靠谱，高效的手机赚钱平台，抓紧加入吧',
@@ -296,9 +297,19 @@ class ExtendScreen extends React.Component {
     }
   };
 
+  ClickShowPerson = () => {
+    const {login, navigation} = this.props;
+    const {myuri} = this.state;
+    if (login && login.uid) {
+      navigation.navigate('PerExtend');
+    } else {
+      navigation.navigate('Login');
+    }
+  };
+
   render() {
     const {login} = this.props;
-    const {invite, user} = this.state;
+    const {invite, user, myuri} = this.state;
     const {width} = Dimensions.get('window');
     const newwidth = (width - width * 0.9) / 2;
     const navImageHeight = (width / 748) * 433;
@@ -341,8 +352,9 @@ class ExtendScreen extends React.Component {
                 {login && login.uid ? (
                   <QRCode
                     value={
-                      'http://212.64.70.14/web/resign/main.html?nickName=' +
-                      login.nickname +
+                      myuri +
+                      '/web/resign/main.html?nickName=' +
+                      encodeURI(login.nickname) +
                       '&headImg=' +
                       login.headimgurl +
                       '&upUID=' +
@@ -429,9 +441,11 @@ class ExtendScreen extends React.Component {
               </View>
             </View>
             <View style={styles.extendBtnView}>
-              <View style={styles.extendBtn}>
-                <Text style={styles.extendBtnTxt}>立即邀请</Text>
-              </View>
+              <TouchableOpacity onPress={this.ClickShowPerson}>
+                <View style={styles.extendBtn}>
+                  <Text style={styles.extendBtnTxt}>点击生成个人专属海报</Text>
+                </View>
+              </TouchableOpacity>
             </View>
             <View style={styles.extendShareView}>
               <View style={styles.extendShareTitle}>
@@ -670,7 +684,7 @@ const styles = StyleSheet.create({
   },
   extendBtn: {
     marginTop: 15,
-    width: 235,
+    width: 275,
     height: 38.5,
     backgroundColor: '#fefeb8',
     borderRadius: 30,
@@ -679,7 +693,7 @@ const styles = StyleSheet.create({
   },
   extendBtnTxt: {
     color: '#D41E00',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   extendRankListTitle: {

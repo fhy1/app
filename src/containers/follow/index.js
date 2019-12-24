@@ -10,6 +10,7 @@ import {
 import {connect} from 'react-redux';
 import {allFollow, delFollow} from '../../api/follow';
 import {WToast} from 'react-native-smart-tip';
+import {TabRouter} from 'react-navigation';
 
 class FollowScreen extends React.Component {
   static navigationOptions = {
@@ -43,6 +44,7 @@ class FollowScreen extends React.Component {
     const {login} = this.props;
     const {pageNo, pageSize} = this.state;
     allFollow(login.userId, pageNo, pageSize).then(follow => {
+      console.log(follow);
       this.setState({
         follow: follow.data,
         followList: follow.data.list,
@@ -91,6 +93,14 @@ class FollowScreen extends React.Component {
     });
   };
 
+  gotoFllowDetail = userId => {
+    const {navigation} = this.props;
+    console.log(userId);
+    navigation.navigate('FollowTask', {
+      id: userId,
+    });
+  };
+
   render() {
     const {follow, followList} = this.state;
     return (
@@ -115,45 +125,48 @@ class FollowScreen extends React.Component {
               </View>
             ) : null
           }
-          onEndReachedThreshold={0}
+          onEndReachedThreshold={1}
           onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
-            <View style={styles.followList}>
-              <TouchableOpacity>
-                <View style={styles.followListView}>
-                  <Image
-                    style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 18,
-                      marginRight: 15,
-                    }}
-                    source={{uri: item.headimgurl}}
-                  />
-                  <Text style={{color: '#444444'}}>{item.nickName}</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={this.deleteFloow.bind(this, item.userId, index)}
-                style={{
-                  position: 'absolute',
-                  right: 15,
-                }}>
-                <View
+            <TouchableOpacity
+              onPress={this.gotoFllowDetail.bind(this, item.userId)}>
+              <View style={styles.followList}>
+                <TouchableOpacity>
+                  <View style={styles.followListView}>
+                    <Image
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 18,
+                        marginRight: 15,
+                      }}
+                      source={{uri: item.headimgurl}}
+                    />
+                    <Text style={{color: '#444444'}}>{item.nickName}</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={this.deleteFloow.bind(this, item.userId, index)}
                   style={{
-                    width: 80,
-                    height: 25,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderColor: '#FFDB44',
-                    borderWidth: 1,
-                    borderRadius: 2,
-                    marginLeft: 5,
+                    position: 'absolute',
+                    right: 15,
                   }}>
-                  <Text style={{color: '#666666'}}>取消关注</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
+                  <View
+                    style={{
+                      width: 80,
+                      height: 25,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      borderColor: '#FFDB44',
+                      borderWidth: 1,
+                      borderRadius: 2,
+                      marginLeft: 5,
+                    }}>
+                    <Text style={{color: '#666666'}}>取消关注</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
           )}
           keyExtractor={(item, index) => JSON.stringify(index)}
         />
@@ -195,6 +208,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingLeft: 15,
     paddingRight: 15,
+    borderRadius: 5,
   },
   followListView: {
     flex: 1,

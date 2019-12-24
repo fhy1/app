@@ -5765,6 +5765,11 @@ react-native-image-zoom-viewer@^2.2.27:
   dependencies:
     react-native-image-pan-zoom "^2.1.9"
 
+react-native-page-scrollview@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-page-scrollview/-/react-native-page-scrollview-1.0.2.tgz#90e6f88d08f149b9190b9591c390fb81fe85e216"
+  integrity sha512-ZsQemhcS3Bym1UUq+GmHSnzZLP92fZsDacAvXx+iLay9rpaWfoOhkuF/jC1EasNhC8xNqWI3gFg2oaliTF4s8w==
+
 react-native-qrcode-svg@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/react-native-qrcode-svg/-/react-native-qrcode-svg-5.3.2.tgz#6d82c50f4bd264e8eecc08533b0ac2fade8178d3"

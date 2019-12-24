@@ -38,6 +38,9 @@ import ServiceScreen from '../containers/service/index';
 import RuleScreen from '../containers/rule/index';
 import FootScreen from '../containers/foot/index';
 import MyInviteScreen from '../containers/myInvite/index';
+import FollowTaskScreen from '../containers/followTask/index';
+import PerExtendScreen from '../containers/perExtend/index';
+import ImgDetailScreen from '../containers/imgDetail/index';
 
 export default createAppContainer(
   createStackNavigator({
@@ -401,6 +404,39 @@ export default createAppContainer(
     },
     MyInvite: {
       screen: MyInviteScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    FollowTask: {
+      screen: FollowTaskScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    PerExtend: {
+      screen: PerExtendScreen,
+      navigationOptions: () => ({
+        headerBackImage: () => (
+          <Image
+            style={{width: 21, height: 21}}
+            source={require('../assets/back.png')}
+          />
+        ),
+      }),
+    },
+    ImgDetail: {
+      screen: ImgDetailScreen,
       navigationOptions: () => ({
         headerBackImage: () => (
           <Image

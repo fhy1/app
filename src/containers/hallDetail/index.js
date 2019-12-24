@@ -384,6 +384,7 @@ class HallDetailScreen extends React.Component {
     };
     const {isFollow, jobDetail} = this.state;
     if (!isFollow) {
+      console.log(login.userId, jobDetail.userId);
       addFollow(login.userId, jobDetail.userId).then(
         () => {
           toastOpts.data = '关注成功';
@@ -530,7 +531,12 @@ class HallDetailScreen extends React.Component {
           <View style={styles.hallViewDetail}>
             <View style={styles.hallViewTitle}>
               <View style={styles.hallViewTitleLeft}></View>
-              <Text style={styles.hallViewTitleTxt}>任务要求</Text>
+              <Text style={styles.hallViewTitleTxt}>
+                任务要求{' '}
+                <Text style={{fontSize: 13}}>
+                  （{jobDetail.audit} 小时内审核通过）
+                </Text>
+              </Text>
             </View>
             <View style={styles.hallDetailTitle}>
               <Text style={styles.hallDetailTitleTxt}>
@@ -549,7 +555,6 @@ class HallDetailScreen extends React.Component {
               <Text style={styles.hallViewTitleTxt}>任务步骤</Text>
             </View>
             {jobStepList.map((item, index) => {
-              console.log(paramToQuery2(item.picture));
               return (
                 <View style={styles.hallDetailStep} key={item.stepId}>
                   <View style={styles.hallStepIndex}>

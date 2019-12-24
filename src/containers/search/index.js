@@ -181,7 +181,7 @@ class SearchScreen extends React.Component {
               </View>
             ) : null
           }
-          onEndReachedThreshold={0}
+          onEndReachedThreshold={1}
           onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
             <TouchableOpacity
@@ -216,7 +216,7 @@ class SearchScreen extends React.Component {
                 </View>
                 <View style={styles.searchListBody}>
                   <View>
-                    <Text style={styles.searchListBodyText}>
+                    <Text style={styles.searchListBodyText} numberOfLines={1}>
                       {item.jobTitle}
                     </Text>
                   </View>
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   searchListBodyText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#444444',
     fontWeight: 'bold',
   },

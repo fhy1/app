@@ -328,7 +328,7 @@ class ReleaseScreen extends React.Component {
               </View>
             ) : null
           }
-          onEndReachedThreshold={0}
+          onEndReachedThreshold={1}
           onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
             <View style={styles.releaseList} key={item.id}>

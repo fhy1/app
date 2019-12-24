@@ -40,11 +40,12 @@ class ReleaseTaskScreen extends React.Component {
         jobSource: '',
         jobTitle: '',
         introduce: '',
-        submissionTime: 24,
+        submissionTime: '',
         jobRate: 1,
         jobPrice: '',
         jobNum: '',
         typeId: '',
+        audit: '',
       },
       modalVisible: false,
       modalVisible2: false,
@@ -93,6 +94,9 @@ class ReleaseTaskScreen extends React.Component {
       WToast.show(toastOpts);
     } else if (taskJob.typeId === '') {
       toastOpts.data = '请选择任务类型';
+      WToast.show(toastOpts);
+    } else if (taskJob.audit === '') {
+      toastOpts.data = '请输入审核通过时间';
       WToast.show(toastOpts);
     } else {
       if (parseFloat(taskJob.jobPrice) >= 0.2) {
@@ -230,6 +234,16 @@ class ReleaseTaskScreen extends React.Component {
               placeholder="限制提交时间 （小时）"
               onChangeText={this.handelOnChange.bind(this, 'submissionTime')}
               value={`${taskJob.submissionTime}`}
+            />
+          </View>
+          <View style={styles.releaseList}>
+            <Text style={styles.releaseListTxt}>审核时间</Text>
+            <TextInput
+              keyboardType="numeric"
+              style={styles.releaseListInput}
+              placeholder="限制审核通过时间 （小时）"
+              onChangeText={this.handelOnChange.bind(this, 'audit')}
+              value={`${taskJob.audit}`}
             />
           </View>
           {/* <TouchableOpacity onPress={this.ShowModel}>

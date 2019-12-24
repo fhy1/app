@@ -109,6 +109,7 @@ class HallScreen extends React.Component {
       hallType: [],
       jobList: [],
       job: {},
+      flag: true,
     };
   }
 
@@ -188,20 +189,23 @@ class HallScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {job} = this.state;
-    if (job.pageNum < job.pages) {
+    const {job, flag} = this.state;
+    if (job.pageNum < job.pages && flag) {
       console.log(111);
       const {pageNo} = this.state;
       this.setState(
         {
           pageNo: pageNo + 1,
+          flag: false,
         },
         () => {
           const {pageNo, pageSize, labelStatus, typeId, jobList} = this.state;
           fetchHalljob(pageNo, pageSize, labelStatus, typeId).then(job => {
+            console.log(jobList.concat(job.data.list));
             this.setState({
               job: job.data,
               jobList: jobList.concat(job.data.list),
+              flag: true,
             });
           });
         },
@@ -281,7 +285,7 @@ class HallScreen extends React.Component {
               </View>
             ) : null
           }
-          onEndReachedThreshold={0}
+          onEndReachedThreshold={1}
           onEndReached={this.fetchListNext}
           renderItem={({item, index, separators}) => (
             <TouchableOpacity
@@ -503,7 +507,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   hallListBodyText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#444444',
     fontWeight: 'bold',
   },

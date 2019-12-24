@@ -123,8 +123,12 @@ class HomeScreen extends React.Component {
     navigation.navigate('Search');
   };
 
-  goImgDetail = () => {
-    console.log(111);
+  goImgDetail = detail => {
+    const {navigation} = this.props;
+    console.log(detail);
+    navigation.navigate('ImgDetail', {
+      detail: detail ? detail : '',
+    });
   };
 
   img(flag, url) {
@@ -164,7 +168,7 @@ class HomeScreen extends React.Component {
         showsPagination={true} //为false不显示下方圆点
         dot={<View style={styles.noDot} />}
         activeDot={<View style={styles.dot} />}>
-        <TouchableWithoutFeedback onPress={this.goImgDetail}>
+        <TouchableWithoutFeedback>
           <Image
             // source={require('../../assets/banner.png')}
             source={{
@@ -188,7 +192,8 @@ class HomeScreen extends React.Component {
           showsPagination={true} //为false不显示下方圆点
           dot={<View style={styles.noDot} />}
           activeDot={<View style={styles.dot} />}>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[0].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -213,7 +218,8 @@ class HomeScreen extends React.Component {
           showsPagination={true} //为false不显示下方圆点
           dot={<View style={styles.noDot} />}
           activeDot={<View style={styles.dot} />}>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[0].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -222,7 +228,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[1].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -247,7 +254,8 @@ class HomeScreen extends React.Component {
           showsPagination={true} //为false不显示下方圆点
           dot={<View style={styles.noDot} />}
           activeDot={<View style={styles.dot} />}>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[0].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -256,7 +264,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[1].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -265,7 +274,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[2].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -290,7 +300,8 @@ class HomeScreen extends React.Component {
           showsPagination={true} //为false不显示下方圆点
           dot={<View style={styles.noDot} />}
           activeDot={<View style={styles.dot} />}>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[0].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -299,7 +310,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[1].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -308,7 +320,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[2].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -317,7 +330,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[3].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -342,7 +356,8 @@ class HomeScreen extends React.Component {
           showsPagination={true} //为false不显示下方圆点
           dot={<View style={styles.noDot} />}
           activeDot={<View style={styles.dot} />}>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[0].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -351,7 +366,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[1].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -360,7 +376,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[2].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -369,7 +386,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[3].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -378,7 +396,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[4].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -403,7 +422,8 @@ class HomeScreen extends React.Component {
           showsPagination={true} //为false不显示下方圆点
           dot={<View style={styles.noDot} />}
           activeDot={<View style={styles.dot} />}>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[0].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -412,7 +432,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[1].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -421,7 +442,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[2].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -430,7 +452,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[3].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -439,7 +462,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[4].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -448,7 +472,8 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          <TouchableWithoutFeedback
+            onPress={this.goImgDetail.bind(this, homeImgs[5].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -457,7 +482,7 @@ class HomeScreen extends React.Component {
               style={styles.swiperImage}
             />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this.goImgDetail}>
+          {/* <TouchableWithoutFeedback onPress={this.goImgDetail.bind(this, homeImgs[6].details)}>
             <Image
               // source={require('../../assets/banner.png')}
               source={{
@@ -465,7 +490,7 @@ class HomeScreen extends React.Component {
               }}
               style={styles.swiperImage}
             />
-          </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback> */}
         </Swiper>
       );
     }
@@ -817,7 +842,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   homeListBodyText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#444444',
     fontWeight: 'bold',
   },
