@@ -5770,6 +5770,11 @@ react-native-page-scrollview@^1.0.2:
   resolved "https://registry.yarnpkg.com/react-native-page-scrollview/-/react-native-page-scrollview-1.0.2.tgz#90e6f88d08f149b9190b9591c390fb81fe85e216"
   integrity sha512-ZsQemhcS3Bym1UUq+GmHSnzZLP92fZsDacAvXx+iLay9rpaWfoOhkuF/jC1EasNhC8xNqWI3gFg2oaliTF4s8w==
 
+react-native-permissions@^2.0.8:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-2.0.8.tgz#e6d20a7b6e3df5333a3d80cc83024686fa2f49e3"
+  integrity sha512-qK8Thp+9PTl/YjhKkRr8LPHfX5Evv5Zj/3CmAiqE45qCTB5UbWTKBWUfg3iqfMrjv9nE2rcS1PrIjZCDh6s/gQ==
+
 react-native-qrcode-svg@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/react-native-qrcode-svg/-/react-native-qrcode-svg-5.3.2.tgz#6d82c50f4bd264e8eecc08533b0ac2fade8178d3"
