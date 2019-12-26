@@ -1,6 +1,7 @@
 import {Platform} from 'react-native';
 import CameraRoll from '@react-native-community/cameraroll';
 import RNFS from 'react-native-fs';
+import {WToast} from 'react-native-smart-tip';
 
 export const DownloadImage = uri => {
   if (!uri) return null;
@@ -29,12 +30,26 @@ export const DownloadImage = uri => {
           // console.log('success', res);
           // console.log('file://' + downloadDest)
           var promise = CameraRoll.saveToCameraRoll(downloadDest);
+
+          let toastOpts = {
+            data: '',
+            textColor: '#ffffff',
+            backgroundColor: '#444444',
+            duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+            position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+          };
+
           promise
             .then(function(result) {
+              toastOpts.data = '图片保存成功,地址' + result;
+              WToast.show(toastOpts);
               // alert('保存成功！地址如下：\n' + result);
             })
             .catch(function(error) {
-              console.log('error', error);
+              toastOpts.data =
+                '图片保存失败,需要调用您的相册权限，可去设置-应用-权限中赋予';
+              WToast.show(toastOpts);
+              // console.log('error', error);
               // alert('保存失败！\n' + error);
             });
           resolve(res);

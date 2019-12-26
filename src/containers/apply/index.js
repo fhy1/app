@@ -187,11 +187,11 @@ class ApplyScreen extends React.Component {
           this.setState({
             imgVisible: false,
           });
-          toastOpts.data = '图片保存成功';
-          WToast.show(toastOpts);
+          // toastOpts.data = '图片保存成功';
+          // WToast.show(toastOpts);
         } else {
-          toastOpts.data = '图片保存失败';
-          WToast.show(toastOpts);
+          // toastOpts.data = '图片保存失败';
+          // WToast.show(toastOpts);
         }
       })
       .catch(error => {

@@ -71,11 +71,11 @@ class RechargeScreen extends React.Component {
     DownloadImage(imgUrl)
       .then(res => {
         if (res.statusCode == 200) {
-          toastOpts.data = '图片保存成功';
-          WToast.show(toastOpts);
+          // toastOpts.data = '图片保存成功';
+          // WToast.show(toastOpts);
         } else {
-          toastOpts.data = '图片保存失败';
-          WToast.show(toastOpts);
+          // toastOpts.data = '图片保存失败';
+          // WToast.show(toastOpts);
         }
       })
       .catch(error => {
@@ -97,15 +97,18 @@ class RechargeScreen extends React.Component {
           },
         ]}>
         <ScrollView>
-          <Image
-            style={{
-              width: width * 0.7,
-              height: (imgHeight * width * 0.7) / imgWidth,
-            }}
-            source={{
-              uri: imgUrl,
-            }}
-          />
+          {imgUrl ? (
+            <Image
+              style={{
+                width: width * 0.7,
+                height: (imgHeight * width * 0.7) / imgWidth,
+              }}
+              source={{
+                uri: imgUrl,
+              }}
+            />
+          ) : null}
+
           <TouchableOpacity
             onPress={this.handelSavePicture}
             style={{alignItems: 'center'}}>
