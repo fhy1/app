@@ -28,6 +28,7 @@ class PayDetailScreen extends React.Component {
       pageSize: 15,
       payDetailList: [],
       payDetail: {},
+      flag: true,
     };
   }
 
@@ -43,20 +44,28 @@ class PayDetailScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {payDetail, pageNo} = this.state;
-    if (payDetail.pageNum < payDetail.pages) {
+    const {payDetail, pageNo, flag} = this.state;
+    const {login} = this.props;
+    if (payDetail.pageNum < payDetail.pages && flag) {
       this.setState(
         {
           pageNo: pageNo + 1,
+          flag: false,
         },
         () => {
           const {pageNo, pageSize, payDetailList} = this.state;
-          fetchHalljob(login.userId, pageNo, pageSize).then(payDetail => {
-            this.setState({
-              payDetail: payDetail.data,
-              payDetailList: payDetailList.concat(payDetail.data.list),
-            });
-          });
+          fetchHalljob(login.userId, pageNo, pageSize).then(
+            payDetail => {
+              this.setState({
+                payDetail: payDetail.data,
+                payDetailList: payDetailList.concat(payDetail.data.list),
+                flag: true,
+              });
+            },
+            () => {
+              this.setState({flag: false});
+            },
+          );
         },
       );
     }

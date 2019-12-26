@@ -158,6 +158,9 @@ class HallDetailScreen extends React.Component {
     DownloadImage(uri)
       .then(res => {
         if (res.statusCode == 200) {
+          this.setState({
+            imgVisible: false,
+          });
           toastOpts.data = '图片保存成功';
           WToast.show(toastOpts);
         } else {
@@ -442,6 +445,11 @@ class HallDetailScreen extends React.Component {
   GotoRule = id => {
     const {navigation} = this.props;
     navigation.navigate('Rule', {id: id});
+  };
+
+  savePhoto = () => {
+    let {images} = this.state;
+    this.handelSavePicture(images[0].url);
   };
 
   render() {
@@ -729,6 +737,10 @@ class HallDetailScreen extends React.Component {
             enableImageZoom={true}
             imageUrls={images}
             index={0}
+            menuContext={{saveToLocal: '保存图片', cancel: '取消'}}
+            onSave={url => {
+              this.savePhoto(url);
+            }}
           />
         </Modal>
         {ruleShow ? (

@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Linking,
+  Modal,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import {getData} from '../../utils/storage';
@@ -21,6 +22,7 @@ import {
   fetchHomeSignIn,
   SignInHome,
   fetchHomeRecommend,
+  fetchVersion,
 } from '../../api/home';
 import {paramToQuery2} from '../../utils/fetch';
 import {WToast} from 'react-native-smart-tip';
@@ -36,6 +38,7 @@ class HomeScreen extends React.Component {
       recommendList: [],
       recommend: {},
       homeImgs: [],
+      modalVisible: false,
     };
   }
 
@@ -45,17 +48,20 @@ class HomeScreen extends React.Component {
       swiperHeight: (180 * width) / 350,
       width: width,
     });
+    fetchVersion().then(verson => {
+      console.log('版本', verson);
+      if (verson.data != '1.0.0') {
+        this.setState({modalVisible: true});
+      }
+    });
     const data = await getData('userNews');
-    console.log('持久化', data);
     if (data && data !== 'err') {
       this.props.getLogin(data);
     }
-    console.log(222);
     const [homeImgs, recommend] = await Promise.all([
       fetchHomeImg(),
       fetchHomeRecommend(1, 10),
     ]);
-    console.log(111);
     let signStatus = null;
     if (data && data.userId) {
       signStatus = await fetchHomeSignIn(data.userId);
@@ -68,6 +74,32 @@ class HomeScreen extends React.Component {
       recommendList: recommend.data.list,
     });
   }
+
+  async componentDidUpdate(prevProps) {
+    console.log(prevProps);
+    console.log(this.props);
+    if (
+      prevProps.login &&
+      this.props.login &&
+      this.props.login.userId !== prevProps.login.userId
+    ) {
+      try {
+        let signStatus = null;
+        if (this.props.login && this.props.login.userId) {
+          signStatus = await fetchHomeSignIn(this.props.login.userId);
+        }
+        this.setState({
+          signFlag: signStatus && signStatus.data == 2 ? true : false,
+        });
+      } catch (error) {}
+    }
+  }
+
+  componentWillUnmount = () => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
 
   handelOnClickSign = () => {
     const {login} = this.props;
@@ -142,6 +174,31 @@ class HomeScreen extends React.Component {
     }
   }
 
+  addSubmit = () => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    let httpDetail = 'http://212.64.70.14/app/miaomiguan.apk';
+
+    Linking.canOpenURL(httpDetail)
+      .then(supported => {
+        if (!supported) {
+          toastOpts.data = '不支持链接至: ' + httpDetail;
+          WToast.show(toastOpts);
+        } else {
+          return Linking.openURL(httpDetail);
+        }
+      })
+      .catch(err => {
+        toastOpts.data = '链接错误 : ' + httpDetail;
+        WToast.show(toastOpts);
+      });
+  };
+
   handelOnClickKeFu = () => {
     const {navigation, login} = this.props;
     if (login && login.userId) {
@@ -151,8 +208,17 @@ class HomeScreen extends React.Component {
     }
   };
 
+  CloseModel = () => {};
+
   render() {
-    const {swiperHeight, width, signFlag, recommendList, homeImgs} = this.state;
+    const {
+      swiperHeight,
+      width,
+      signFlag,
+      recommendList,
+      homeImgs,
+      modalVisible,
+    } = this.state;
 
     let homeimg = null;
     if (homeImgs.length == 0) {
@@ -699,13 +765,37 @@ class HomeScreen extends React.Component {
             </View>
           </View>
         </ScrollView>
-        {/* <Modal
+        <Modal
           animationType="slide"
           transparent={true}
           visible={modalVisible}
           onRequestClose={this.CloseModel}>
-          <View style={styles.taskModal}>kw</View>
-        </Modal> */}
+          <View style={styles.taskModal}>
+            <View style={[styles.opinionModalView, {width: width * 0.8}]}>
+              <View style={styles.opinionTopTitle}>
+                <Text style={styles.opinionTopTitleTxt}>版本更新</Text>
+              </View>
+              <View style={styles.opinionTopTitle}>
+                <Text style={styles.opinionInp}>
+                  小密罐，有新的版本啦，快点击更新吧
+                </Text>
+              </View>
+              <View style={styles.opinionBtnView}>
+                <TouchableOpacity>
+                  <View style={[styles.opinionBtn]}>
+                    <Text style={styles.opinionTxt}></Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.addSubmit}>
+                  <View
+                    style={[styles.opinionBtn, {backgroundColor: '#FFDB44'}]}>
+                    <Text style={styles.opinionTxt}>点击更新</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -904,6 +994,63 @@ const styles = StyleSheet.create({
     marginRight: 9,
     marginTop: 9,
     marginBottom: 9,
+  },
+  //弹框
+  taskModal: {
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    flex: 1,
+    alignItems: 'center',
+  },
+  opinionModalView: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 96,
+    padding: 13,
+    borderRadius: 4,
+  },
+  opinionTopTitle: {
+    alignItems: 'center',
+  },
+  opinionTopTitleTxt: {
+    fontSize: 16,
+    color: '#444444',
+    fontWeight: 'bold',
+  },
+  opinionTitle: {
+    marginTop: 16.5,
+    marginBottom: 16.5,
+    fontSize: 14,
+    color: '#444444',
+    lineHeight: 30,
+    fontWeight: 'normal',
+  },
+  opinionInp: {
+    paddingTop: 15,
+    paddingBottom: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  opinionInp2: {
+    height: 40,
+    backgroundColor: '#F3F3F3',
+    textAlignVertical: 'top',
+  },
+  opinionBtnView: {
+    marginTop: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  opinionBtn: {
+    width: 120,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  opinionTxt: {
+    fontSize: 14,
+    color: '#444444',
+    fontWeight: 'normal',
   },
 });
 

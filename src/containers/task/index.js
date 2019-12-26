@@ -55,6 +55,7 @@ class TaskScreen extends React.Component {
       imgUrl: '',
       reportDetail: '',
       taskId: '',
+      flag: true,
     };
   }
 
@@ -93,13 +94,14 @@ class TaskScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {task} = this.state;
+    const {task, flag} = this.state;
     const {login} = this.props;
-    if (task.pageNum < task.pages) {
+    if (task.pageNum < task.pages && flag) {
       const {pageNo} = this.state;
       this.setState(
         {
           pageNo: pageNo + 1,
+          flag: false,
         },
         () => {
           const {pageNo, pageSize, labelStatus, taskList} = this.state;
@@ -108,7 +110,11 @@ class TaskScreen extends React.Component {
               this.setState({
                 task: task.data,
                 taskList: taskList.concat(task.data.list),
+                flag: true,
               });
+            },
+            () => {
+              this.setState({flag: false});
             },
           );
         },

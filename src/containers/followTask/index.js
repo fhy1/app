@@ -47,6 +47,7 @@ class FollowTaskScreen extends React.Component {
       taskList: [],
       task: {},
       userId: 0,
+      flag: true,
     };
   }
 
@@ -65,21 +66,28 @@ class FollowTaskScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {task, userId} = this.state;
-    if (task.pageNum < task.pages) {
+    const {task, userId, flag} = this.state;
+    if (task.pageNum < task.pages && flag) {
       const {pageNo} = this.state;
       this.setState(
         {
           pageNo: pageNo + 1,
+          flag: false,
         },
         () => {
           const {pageNo, pageSize, labelStatus, taskList} = this.state;
-          fetchJobRelease(userId, 3, pageNo, pageSize).then(task => {
-            this.setState({
-              task: task.data,
-              taskList: taskList.concat(task.data.list),
-            });
-          });
+          fetchJobRelease(userId, 3, pageNo, pageSize).then(
+            task => {
+              this.setState({
+                task: task.data,
+                taskList: taskList.concat(task.data.list),
+                flag: true,
+              });
+            },
+            () => {
+              this.setState({flag: false});
+            },
+          );
         },
       );
     }

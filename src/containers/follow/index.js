@@ -37,6 +37,7 @@ class FollowScreen extends React.Component {
       pageSize: 15,
       followList: [],
       follow: {},
+      flag: true,
     };
   }
 
@@ -53,20 +54,28 @@ class FollowScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {follow, pageNo} = this.state;
-    if (follow.pageNum < follow.pages) {
+    const {follow, pageNo, flag} = this.state;
+    const {login} = this.props;
+    if (follow.pageNum < follow.pages && flag) {
       this.setState(
         {
           pageNo: pageNo + 1,
+          flag: false,
         },
         () => {
           const {pageNo, pageSize, followList} = this.state;
-          fetchHalljob(login.userId, pageNo, pageSize).then(follow => {
-            this.setState({
-              follow: follow.data,
-              followList: followList.concat(follow.data.list),
-            });
-          });
+          fetchHalljob(login.userId, pageNo, pageSize).then(
+            follow => {
+              this.setState({
+                follow: follow.data,
+                followList: followList.concat(follow.data.list),
+                flag: true,
+              });
+            },
+            () => {
+              this.setState({flag: false});
+            },
+          );
         },
       );
     }

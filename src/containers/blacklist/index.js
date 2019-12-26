@@ -28,6 +28,7 @@ class blacklistScreen extends React.Component {
       pageNo: 1,
       pageSize: 15,
       blacklist: [],
+      flag: true,
       black: {},
     };
   }
@@ -43,21 +44,28 @@ class blacklistScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {black} = this.state;
-    if (black.pageNum < black.pages) {
+    const {black, flag} = this.state;
+    if (black.pageNum < black.pages && flag) {
       const {pageNo} = this.state;
       this.setState(
         {
           pageNo: pageNo + 1,
+          flag: false,
         },
         () => {
           const {pageNo, pageSize, blacklist} = this.state;
-          fetchBlacklistUser(pageNo, pageSize).then(black => {
-            this.setState({
-              black: black.data,
-              blacklist: blacklist.concat(black.data.list),
-            });
-          });
+          fetchBlacklistUser(pageNo, pageSize).then(
+            black => {
+              this.setState({
+                black: black.data,
+                blacklist: blacklist.concat(black.data.list),
+                flag: true,
+              });
+            },
+            () => {
+              this.setState({flag: false});
+            },
+          );
         },
       );
     }

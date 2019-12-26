@@ -191,7 +191,6 @@ class HallScreen extends React.Component {
   fetchListNext = () => {
     const {job, flag} = this.state;
     if (job.pageNum < job.pages && flag) {
-      console.log(111);
       const {pageNo} = this.state;
       this.setState(
         {
@@ -200,14 +199,19 @@ class HallScreen extends React.Component {
         },
         () => {
           const {pageNo, pageSize, labelStatus, typeId, jobList} = this.state;
-          fetchHalljob(pageNo, pageSize, labelStatus, typeId).then(job => {
-            console.log(jobList.concat(job.data.list));
-            this.setState({
-              job: job.data,
-              jobList: jobList.concat(job.data.list),
-              flag: true,
-            });
-          });
+          fetchHalljob(pageNo, pageSize, labelStatus, typeId).then(
+            job => {
+              console.log(jobList.concat(job.data.list));
+              this.setState({
+                job: job.data,
+                jobList: jobList.concat(job.data.list),
+                flag: true,
+              });
+            },
+            () => {
+              this.setState({flag: false});
+            },
+          );
         },
       );
     }

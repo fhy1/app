@@ -69,6 +69,7 @@ class ReleaseScreen extends React.Component {
       releaseList: [],
       modalVisible: false,
       jobId: '',
+      flag: true,
     };
   }
 
@@ -184,32 +185,42 @@ class ReleaseScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {release} = this.state;
+    const {release, flag} = this.state;
     const {login} = this.props;
-    if (release.pageNum < release.pages) {
-      console.log(111);
+    if (release.pageNum < release.pages && flag) {
       const {pageNo} = this.state;
       this.setState(
         {
           pageNo: pageNo + 1,
+          flag: false,
         },
         () => {
           const {pageNo, pageSize, labelStatus, releaseList} = this.state;
           if (labelStatus == 5) {
-            fetchReleaseEnd(login.userId, 1, 15).then(release => {
-              console.log(release);
-              this.setState({
-                release: release.data,
-                releaseList: release.data.list,
-              });
-            });
+            fetchReleaseEnd(login.userId, 1, 15).then(
+              release => {
+                console.log(release);
+                this.setState({
+                  release: release.data,
+                  releaseList: release.data.list,
+                  flag: true,
+                });
+              },
+              () => {
+                this.setState({flag: false});
+              },
+            );
           } else {
             fetchJobRelease(login.userId, labelStatus, pageNo, pageSize).then(
               release => {
                 this.setState({
                   release: release.data,
                   releaseList: releaseList.concat(release.data.list),
+                  flag: true,
                 });
+              },
+              () => {
+                this.setState({flag: false});
               },
             );
           }

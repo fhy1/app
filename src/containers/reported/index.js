@@ -55,6 +55,7 @@ class ReportedScreen extends React.Component {
       reply: '',
       imgUrl: '',
       reportId: '',
+      flag: true,
     };
   }
 
@@ -100,30 +101,43 @@ class ReportedScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {report} = this.state;
+    const {report, flag} = this.state;
     const {login} = this.props;
-    if (report.pageNum < report.pages) {
+    if (report.pageNum < report.pages && flag) {
       const {page} = this.state;
       this.setState(
         {
           page: page + 1,
+          flag: false,
         },
         () => {
           const {page, size, reportList, labelStatus} = this.state;
           if (labelStatus != 4) {
-            fetchReward(login.userId, labelStatus, page, size).then(report => {
-              this.setState({
-                report: report.data,
-                reportList: reportList.concat(report.data.list),
-              });
-            });
+            fetchReward(login.userId, labelStatus, page, size).then(
+              report => {
+                this.setState({
+                  report: report.data,
+                  reportList: reportList.concat(report.data.list),
+                  flag: true,
+                });
+              },
+              () => {
+                this.setState({flag: false});
+              },
+            );
           } else {
-            fetchRewardAudit(login.userId, 1, 15).then(report => {
-              this.setState({
-                report: report.data,
-                reportList: report.data.list,
-              });
-            });
+            fetchRewardAudit(login.userId, 1, 15).then(
+              report => {
+                this.setState({
+                  report: report.data,
+                  reportList: report.data.list,
+                  flag: true,
+                });
+              },
+              () => {
+                this.setState({flag: false});
+              },
+            );
           }
         },
       );

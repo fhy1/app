@@ -55,6 +55,7 @@ class ApplyScreen extends React.Component {
       clickIndex: 0,
       imgVisible: false,
       images: [],
+      flag: true,
     };
   }
   componentDidMount = async () => {
@@ -183,6 +184,9 @@ class ApplyScreen extends React.Component {
     DownloadImage(uri)
       .then(res => {
         if (res.statusCode == 200) {
+          this.setState({
+            imgVisible: false,
+          });
           toastOpts.data = '图片保存成功';
           WToast.show(toastOpts);
         } else {
@@ -208,6 +212,40 @@ class ApplyScreen extends React.Component {
     Clipboard.setString(txt);
     toastOpts.data = '已成功复制到剪切板';
     WToast.show(toastOpts);
+  };
+
+  savePhoto = () => {
+    let {images} = this.state;
+    this.handelSavePicture(images[0].url);
+  };
+
+  fetchListNext = () => {
+    const {apply, flag} = this.state;
+    const {login} = this.props;
+    if (apply.pageNum < apply.pages && flag) {
+      const {pageNo} = this.state;
+      this.setState(
+        {
+          pageNo: pageNo + 1,
+          flag: false,
+        },
+        () => {
+          const {pageNo, pageSize, labelStatus, applyList} = this.state;
+          fetchAudit(pageNo, pageSize, login.userId, labelStatus).then(
+            apply => {
+              this.setState({
+                apply: apply.data,
+                applyList: applyList.concat(apply.data.list),
+                flag: true,
+              });
+            },
+            () => {
+              this.setState({flag: false});
+            },
+          );
+        },
+      );
+    }
   };
 
   render() {
@@ -375,7 +413,7 @@ class ApplyScreen extends React.Component {
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={this.CloseModel}>
+          onRequestClose={this.addBack}>
           <View style={styles.taskModal}>
             <View style={[styles.opinionModalView, {width: width * 0.8}]}>
               <View style={styles.opinionTopTitle}>
@@ -412,6 +450,10 @@ class ApplyScreen extends React.Component {
           onRequestClose={() => this.setState({imgVisible: false})}>
           <ImageViewer
             onClick={() => this.setState({imgVisible: false})}
+            menuContext={{saveToLocal: '保存图片', cancel: '取消'}}
+            onSave={url => {
+              this.savePhoto(url);
+            }}
             imageUrls={images}
             index={0}
           />

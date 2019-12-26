@@ -10,6 +10,7 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
+  Modal,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {WToast} from 'react-native-smart-tip';
@@ -18,6 +19,8 @@ import {saveChart} from '../../api/myinfo';
 import ImagePicker from 'react-native-image-picker';
 import {upLoadImg} from '../../api/upload';
 import {paramToQuery2} from '../../utils/fetch';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import {DownloadImage} from '../../utils/downloadImage';
 
 class ChartScreen extends React.Component {
   static navigationOptions = {
@@ -46,6 +49,8 @@ class ChartScreen extends React.Component {
       page: 1,
       size: 5,
       imgsize: [],
+      imgVisible: false,
+      images: [],
     };
   }
 
@@ -76,6 +81,9 @@ class ChartScreen extends React.Component {
 
   componentWillUnmount = () => {
     clearInterval(this.Time);
+    this.setState({
+      imgVisible: false,
+    });
   };
 
   fetchChart = data => {
@@ -175,12 +183,25 @@ class ChartScreen extends React.Component {
 
   setSize = (uri, index) => {
     let {imgsize} = this.state;
-    console.log(uri);
     Image.getSize(uri, (w, h) => {
-      imgsize[index] = {
-        width: w,
-        height: h,
-      };
+      if (w > 320 || h > 320) {
+        if (w > h) {
+          imgsize[index] = {
+            width: 300,
+            height: (h * 300) / w,
+          };
+        } else {
+          imgsize[index] = {
+            width: (w * 300) / h,
+            height: 300,
+          };
+        }
+      } else {
+        imgsize[index] = {
+          width: w,
+          height: h,
+        };
+      }
       this.setState({
         imgsize: imgsize,
       });
@@ -316,9 +337,49 @@ class ChartScreen extends React.Component {
     });
   };
 
+  onShowImg = uri => {
+    let img = [{url: uri}];
+    this.setState({
+      images: img,
+      imgVisible: true,
+    });
+  };
+
+  savePhoto = () => {
+    let {images} = this.state;
+    this.handelSavePicture(images[0].url);
+  };
+
+  handelSavePicture = uri => {
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
+    };
+    DownloadImage(uri)
+      .then(res => {
+        if (res.statusCode == 200) {
+          this.setState({imgVisible: false});
+          toastOpts.data = '图片保存成功';
+          WToast.show(toastOpts);
+        } else {
+          toastOpts.data = '图片保存失败';
+          WToast.show(toastOpts);
+        }
+      })
+      .catch(error => {
+        toastOpts.data = '图片保存失败';
+        WToast.show(toastOpts);
+        console.log(error);
+      });
+  };
+
   render() {
-    const {chartTxt, chartList, imgsize} = this.state;
+    const {chartTxt, chartList, imgsize, imgVisible, images} = this.state;
     const {login} = this.props;
+    console.log(imgsize);
     return (
       <View style={styles.chartView}>
         <FlatList
@@ -332,18 +393,31 @@ class ChartScreen extends React.Component {
             />
           }
           renderItem={({item, index, separators}) => (
-            <View style={{flex: 1, marginBottom: 10}}>
+            <View
+              style={{
+                paddingBottom: 10,
+                paddingLeft: 15,
+                paddingRight: 15,
+                paddingTop: 0,
+              }}>
               {item.sendId == login.userId ? (
                 <View style={styles.listRight}>
                   <View style={styles.listRightChart}>
                     {item.type == 2 ? (
-                      <Image
-                        style={{
-                          width: imgsize[index] ? imgsize[index].width : 0,
-                          height: imgsize[index] ? imgsize[index].height : 0,
-                        }}
-                        source={{uri: paramToQuery2(item.content)}}
-                      />
+                      <TouchableOpacity
+                        onPress={this.onShowImg.bind(
+                          this,
+                          paramToQuery2(item.content),
+                        )}>
+                        <Image
+                          style={{
+                            width: imgsize[index] ? imgsize[index].width : 0,
+                            height: imgsize[index] ? imgsize[index].height : 0,
+                            resizeMode: 'cover',
+                          }}
+                          source={{uri: paramToQuery2(item.content)}}
+                        />
+                      </TouchableOpacity>
                     ) : (
                       <Text style={styles.listRightChartView}>
                         {item.content}
@@ -406,6 +480,20 @@ class ChartScreen extends React.Component {
             </View>
           </TouchableOpacity>
         </View>
+        <Modal
+          visible={this.state.imgVisible}
+          transparent={true}
+          onRequestClose={() => this.setState({imgVisible: false})}>
+          <ImageViewer
+            onClick={() => this.setState({imgVisible: false})}
+            menuContext={{saveToLocal: '保存图片', cancel: '取消'}}
+            onSave={url => {
+              this.savePhoto(url);
+            }}
+            imageUrls={images}
+            index={0}
+          />
+        </Modal>
       </View>
     );
   }
@@ -415,6 +503,7 @@ const styles = StyleSheet.create({
   chartView: {
     flex: 1,
     backgroundColor: '#F3F3F3',
+    paddingTop: 15,
   },
   bottomView: {
     padding: 15,
@@ -453,7 +542,7 @@ const styles = StyleSheet.create({
   },
 
   flatList: {
-    padding: 15,
+    flex: 1,
   },
 
   flatListEmpty: {
