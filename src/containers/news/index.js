@@ -38,6 +38,7 @@ class NewsScreen extends React.Component {
       pageSize: 15,
       newsList: [],
       news: {},
+      flag: true,
     };
   }
 
@@ -58,12 +59,13 @@ class NewsScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {news, pageNo} = this.state;
+    const {news, pageNo, flag} = this.state;
     const {login} = this.props;
-    if (news.pageNum < news.pages) {
+    if (news.pageNum < news.pages && flag) {
       this.setState(
         {
           pageNo: pageNo + 1,
+          flag: false,
         },
         () => {
           const {pageNo, pageSize, newsList} = this.state;
@@ -72,12 +74,18 @@ class NewsScreen extends React.Component {
             pageSize: pageSize,
             userId: login.userId,
           };
-          fetchChart(data).then(news => {
-            this.setState({
-              news: news.data,
-              newsList: newsList.concat(news.data.list),
-            });
-          });
+          fetchChart(data).then(
+            news => {
+              this.setState({
+                news: news.data,
+                newsList: newsList.concat(news.data.list),
+                flag: true,
+              });
+            },
+            () => {
+              this.setState({flag: false});
+            },
+          );
         },
       );
     }

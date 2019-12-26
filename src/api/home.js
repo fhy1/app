@@ -9,6 +9,7 @@ import {
 const IMG = 'home/img';
 const SIGNIN = 'home/sign_in';
 const RECOMMEND = 'home/recommend';
+const VERSION = 'version';
 
 export const getHomeImg = json => {
   return {
@@ -99,6 +100,24 @@ export function fetchHomeRecommend(pageNo, pageSize) {
   const url = paramToQuery(
     `${RECOMMEND}?pageNo=${pageNo}&pageSize=${pageSize}`,
   );
+  return fetch(url)
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      if (data.error) {
+        return Promise.reject(data);
+      } else {
+        return data;
+      }
+    })
+    .catch(e => {
+      return Promise.reject(e.message);
+    });
+}
+
+export function fetchVersion() {
+  const url = paramToQuery(`${VERSION}`);
   return fetch(url)
     .then(res => {
       return res.json();

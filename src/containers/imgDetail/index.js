@@ -83,7 +83,6 @@ class BrokerScreen extends React.Component {
 
   render() {
     const {wrapper} = this.state;
-    console.log(wrapper);
     return (
       <View style={styles.brokerView}>
         <WebView

@@ -38,6 +38,7 @@ class OpinionScreen extends React.Component {
       pageSize: 15,
       option: {},
       optionList: [],
+      flag: true,
     };
   }
 
@@ -111,22 +112,29 @@ class OpinionScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {option} = this.state;
-    if (option.pageNum < option.pages) {
+    const {option, flag} = this.state;
+    if (option.pageNum < option.pages && flag) {
       const {pageNo} = this.state;
       this.setState(
         {
           pageNo: pageNo + 1,
+          flag: false,
         },
         () => {
           const {pageNo, pageSize, optionList} = this.state;
-          fetchOptionAll(pageNo, pageSize).then(option => {
-            console.log(option);
-            this.setState({
-              option: option.data,
-              optionList: optionList.concat(option.data.list),
-            });
-          });
+          fetchOptionAll(pageNo, pageSize).then(
+            option => {
+              console.log(option);
+              this.setState({
+                option: option.data,
+                optionList: optionList.concat(option.data.list),
+                flag: true,
+              });
+            },
+            () => {
+              this.setState({flag: false});
+            },
+          );
         },
       );
     }

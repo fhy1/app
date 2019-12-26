@@ -37,6 +37,7 @@ class FollowScreen extends React.Component {
       pageSize: 15,
       inviteList: [],
       invite: {},
+      flag: true,
     };
   }
 
@@ -52,20 +53,28 @@ class FollowScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {invite, pageNo} = this.state;
-    if (invite.pageNum < invite.pages) {
+    const {invite, pageNo, flag} = this.state;
+    const {login} = this.props;
+    if (invite.pageNum < invite.pages && flag) {
       this.setState(
         {
           pageNo: pageNo + 1,
+          flag: false,
         },
         () => {
           const {pageNo, pageSize, inviteList} = this.state;
-          fetchHalljob(login.userId, pageNo, pageSize).then(invite => {
-            this.setState({
-              invite: invite.data,
-              inviteList: inviteList.concat(invite.data.list),
-            });
-          });
+          fetchHalljob(login.userId, pageNo, pageSize).then(
+            invite => {
+              this.setState({
+                invite: invite.data,
+                inviteList: inviteList.concat(invite.data.list),
+                flag: true,
+              });
+            },
+            () => {
+              this.setState({flag: false});
+            },
+          );
         },
       );
     }

@@ -42,6 +42,7 @@ class SearchScreen extends React.Component {
       searchTxt: '',
       page: 1,
       size: 15,
+      flag: true,
     };
   }
 
@@ -102,12 +103,13 @@ class SearchScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {search} = this.state;
-    if (search.pageNum < search.pages) {
+    const {search, flag} = this.state;
+    if (search.pageNum < search.pages && flag) {
       const {page} = this.state;
       this.setState(
         {
           page: page + 1,
+          flag: false,
         },
         () => {
           const {page, size, searchList, searchTxt} = this.state;
@@ -117,11 +119,15 @@ class SearchScreen extends React.Component {
                 search: search.data,
                 searchFlag: true,
                 searchList: searchList.concat(search.data.list),
+                flag: true,
               });
             },
             () => {
               toastOpts.data = '搜索失败';
               WToast.show(toastOpts);
+              this.setState({
+                flag: false,
+              });
             },
           );
         },

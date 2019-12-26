@@ -55,6 +55,7 @@ class ReportScreen extends React.Component {
       size: 15,
       refuteReason: '',
       reportId: '',
+      flag: true,
       modalVisible: false,
     };
   }
@@ -101,13 +102,14 @@ class ReportScreen extends React.Component {
   };
 
   fetchListNext = () => {
-    const {report} = this.state;
+    const {report, flag} = this.state;
     const {login} = this.props;
-    if (report.pageNum < report.pages) {
+    if (report.pageNum < report.pages && flag) {
       const {page} = this.state;
       this.setState(
         {
           page: page + 1,
+          flag: false,
         },
         () => {
           const {page, size, reportList, labelStatus} = this.state;
@@ -117,16 +119,26 @@ class ReportScreen extends React.Component {
                 this.setState({
                   report: report.data,
                   reportList: reportList.concat(report.data.list),
+                  flag: true,
                 });
+              },
+              () => {
+                this.setState({flag: false});
               },
             );
           } else {
-            fetchUserReportAudit(login.userId, 1, 15).then(report => {
-              this.setState({
-                report: report.data,
-                reportList: reportList.concat(report.data.list),
-              });
-            });
+            fetchUserReportAudit(login.userId, 1, 15).then(
+              report => {
+                this.setState({
+                  report: report.data,
+                  reportList: reportList.concat(report.data.list),
+                  flag: true,
+                });
+              },
+              () => {
+                this.setState({flag: false});
+              },
+            );
           }
         },
       );

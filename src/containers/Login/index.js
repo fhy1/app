@@ -155,7 +155,8 @@ class LoginScreen extends React.Component {
         // console.log('成功啦');
         fetchCheckEnroll({phone, code}).then(
           data => {
-            if (data.openid) {
+            console.log(data);
+            if (data && data.openid) {
               this.props.getLogin(data);
               fetchMoneyAll(data.userId).then(
                 money => {
@@ -341,10 +342,18 @@ class LoginScreen extends React.Component {
                   height: topHeight,
                 },
               ]}>
-              <Image
-                style={{width: 127, height: 127}}
-                source={require('../../assets/logo.png')}
-              />
+              <View
+                style={{
+                  width: 127,
+                  height: 127,
+                  borderRadius: 200,
+                  overflow: 'hidden',
+                }}>
+                <Image
+                  style={{width: 127, height: 127}}
+                  source={require('../../assets/logo.jpg')}
+                />
+              </View>
             </View>
           </View>
           <View style={styles.loginTitle}>

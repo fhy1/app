@@ -40,6 +40,7 @@ class footScreen extends React.Component {
       footList: [],
       page: 1,
       size: 15,
+      flag: true,
     };
   }
 
@@ -72,12 +73,13 @@ class footScreen extends React.Component {
 
   fetchListNext = () => {
     const {login} = this.props;
-    const {foot} = this.state;
-    if (foot.pageNum < foot.pages) {
+    const {foot, flag} = this.state;
+    if (foot.pageNum < foot.pages && flag) {
       const {page} = this.state;
       this.setState(
         {
           page: page + 1,
+          flag: false,
         },
         () => {
           const {page, size, footList} = this.state;
@@ -86,12 +88,18 @@ class footScreen extends React.Component {
             page: page,
             size: size,
           };
-          fetchFoot(data).then(foot => {
-            this.setState({
-              foot: foot.data,
-              footList: footList.concat(foot.data.list),
-            });
-          });
+          fetchFoot(data).then(
+            foot => {
+              this.setState({
+                foot: foot.data,
+                footList: footList.concat(foot.data.list),
+                flag: true,
+              });
+            },
+            () => {
+              this.setState({flag: false});
+            },
+          );
         },
       );
     }
