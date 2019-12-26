@@ -87,7 +87,7 @@ class RechargeScreen extends React.Component {
 
   render() {
     const {width} = Dimensions.get('window');
-    const {imgArr, imgWidth, imgHeight} = this.state;
+    const {imgUrl, imgWidth, imgHeight} = this.state;
     return (
       <View
         style={[
@@ -103,7 +103,7 @@ class RechargeScreen extends React.Component {
               height: (imgHeight * width * 0.7) / imgWidth,
             }}
             source={{
-              uri: 'http://212.64.70.14:9099/resource/poster/27/poster.png',
+              uri: imgUrl,
             }}
           />
           <TouchableOpacity
