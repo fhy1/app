@@ -182,7 +182,7 @@ class HomeScreen extends React.Component {
       duration: WToast.duration.SHORT, //1.SHORT 2.LONG
       position: WToast.position.CENTER, // 1.TOP 2.CENTER 3.BOTTOM
     };
-    let httpDetail = 'http://212.64.70.14/app/miaomiguan.apk';
+    let httpDetail = 'http://212.64.70.14/app/xiaomiguan.apk';
 
     Linking.canOpenURL(httpDetail)
       .then(supported => {

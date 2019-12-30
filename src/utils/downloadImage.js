@@ -28,8 +28,8 @@ export const DownloadImage = uri => {
       ret.promise
         .then(res => {
           // console.log('success', res);
-          // console.log('file://' + downloadDest)
-          var promise = CameraRoll.saveToCameraRoll(downloadDest);
+          // console.log('file://' + downloadDest);
+          var promise = CameraRoll.saveToCameraRoll('file://' + downloadDest);
 
           let toastOpts = {
             data: '',
@@ -41,7 +41,7 @@ export const DownloadImage = uri => {
 
           promise
             .then(function(result) {
-              toastOpts.data = '图片保存成功,地址' + result;
+              toastOpts.data = '图片保存成功';
               WToast.show(toastOpts);
               // alert('保存成功！地址如下：\n' + result);
             })
