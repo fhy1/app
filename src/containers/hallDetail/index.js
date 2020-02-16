@@ -157,6 +157,7 @@ class HallDetailScreen extends React.Component {
     };
     DownloadImage(uri)
       .then(res => {
+        console.log(res);
         if (res.statusCode == 200) {
           this.setState({
             imgVisible: false,

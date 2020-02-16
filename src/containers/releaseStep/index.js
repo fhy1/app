@@ -221,15 +221,35 @@ class ReleaseStepScreen extends React.Component {
 
   addSubmit = () => {
     const {stepDetail, imgUrl} = this.state;
+    let toastOpts = {
+      data: '',
+      textColor: '#ffffff',
+      backgroundColor: '#444444',
+      duration: WToast.duration.SHORT, //1.SHORT 2.LONG
+      position: WToast.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
+    };
     if (stepDetail.type == 1 && imgUrl == '') {
-      let toastOpts = {
-        data: '',
-        textColor: '#ffffff',
-        backgroundColor: '#444444',
-        duration: WToast.duration.SHORT, //1.SHORT 2.LONG
-        position: WToast.position.BOTTOM, // 1.TOP 2.CENTER 3.BOTTOM
-      };
       toastOpts.data = '请选择图片';
+      WToast.show(toastOpts);
+      return;
+    }
+    if (!stepDetail.introduce) {
+      toastOpts.data = '请输入步骤说明';
+      WToast.show(toastOpts);
+      return;
+    }
+    if (!stepDetail.checkPicture) {
+      toastOpts.data = '请选择是否需要验证图';
+      WToast.show(toastOpts);
+      return;
+    }
+    if (stepDetail.type == 3 && !stepDetail.website) {
+      toastOpts.data = '请输入网址';
+      WToast.show(toastOpts);
+      return;
+    }
+    if (stepDetail.type == 2 && !stepDetail.website) {
+      toastOpts.data = '请输入' + stepDetail.title;
       WToast.show(toastOpts);
       return;
     }
